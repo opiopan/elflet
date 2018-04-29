@@ -1,0 +1,24 @@
+#!/bin/sh
+TOOLDIR=~/Downloads/gerbtool-0.9
+BASE=elflet
+EXTS="GBL GBO GBP GBS GML GTL GTO GTP GTS TXT"
+
+GEO=`perl $TOOLDIR/gerbgeom.pl $BASE.GTL`
+
+for EXT in $EXTS; do
+    if [ $EXT = "TXT" ];then
+	CMD="perl $TOOLDIR/drdmerge.pl"
+    else
+	CMD="perl $TOOLDIR/gerbmerge.pl"
+    fi
+
+    ARGS=""
+    ARGS="$ARGS -g $GEO -x 0mm -y 0mm $BASE.$EXT"
+    ARGS="$ARGS -g $GEO -x 320mm -y 0mm $BASE.$EXT"
+    ARGS="$ARGS -g $GEO -x 640mm -y 0mm $BASE.$EXT"
+
+    $CMD $ARGS > $BASE-panelized.$EXT
+done
+
+perl $TOOLDIR/drdshrink.pl $BASE-panelized.TXT > $BASE-panelized.TXT2
+mv $BASE-panelized.TXT2 $BASE-panelized.TXT

@@ -1,7 +1,7 @@
 #!/bin/sh
 TOOLDIR=~/Downloads/gerbtool-0.9
 BASE=elflet
-EXTS="GBL GBO GBP GBS GML GTL GTO GTP GTS TXT"
+EXTS="GBL GBO GBP GBS GTL GTO GTP GTS TXT"
 
 GEO=`perl $TOOLDIR/gerbgeom.pl $BASE.GTL`
 
@@ -19,6 +19,9 @@ for EXT in $EXTS; do
 
     $CMD $ARGS > $BASE-panelized.$EXT
 done
+
+perl $TOOLDIR/gerbmerge.pl -g `perl $TOOLDIR/gerbgeom.pl dimension.GML` \
+     -x 0mm -y 0mm dimension.GML > $BASE-panelized.GML
 
 perl $TOOLDIR/drdshrink.pl $BASE-panelized.TXT > $BASE-panelized.TXT2
 mv $BASE-panelized.TXT2 $BASE-panelized.TXT

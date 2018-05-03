@@ -4,6 +4,7 @@ BASE=elflet
 EXTS="GBL GBO GBP GBS GTL GTO GTP GTS TXT"
 
 GEO=`perl $TOOLDIR/gerbgeom.pl $BASE.GTL`
+GEOG=`perl $TOOLDIR/gerbgeom.pl dimension.GML`
 
 for EXT in $EXTS; do
     if [ $EXT = "TXT" ];then
@@ -16,11 +17,14 @@ for EXT in $EXTS; do
     ARGS="$ARGS -g $GEO -x 0mm -y 0mm $BASE.$EXT"
     ARGS="$ARGS -g $GEO -x 320mm -y 0mm $BASE.$EXT"
     ARGS="$ARGS -g $GEO -x 640mm -y 0mm $BASE.$EXT"
+    if [ $EXT = "GTO" ];then
+	ARGS="$ARGS -g $GEOG -x 0mm -y 0mm dimension.GTO"
+    fi
 
     $CMD $ARGS > $BASE-panelized.$EXT
 done
 
-perl $TOOLDIR/gerbmerge.pl -g `perl $TOOLDIR/gerbgeom.pl dimension.GML` \
+perl $TOOLDIR/gerbmerge.pl -g $GEOG \
      -x 0mm -y 0mm dimension.GML > $BASE-panelized.GML
 
 perl $TOOLDIR/drdshrink.pl $BASE-panelized.TXT > $BASE-panelized.TXT2

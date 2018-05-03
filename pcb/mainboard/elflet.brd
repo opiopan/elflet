@@ -129,13 +129,6 @@
 <rectangle x1="31.3" y1="0" x2="32" y2="58" layer="42"/>
 <rectangle x1="0" y1="0" x2="32" y2="0.7" layer="42"/>
 <dimension x1="0" y1="0" x2="32" y2="0" x3="16" y3="-7.62" textsize="1.778" layer="47" visible="yes"/>
-<polygon width="0.1" layer="21">
-<vertex x="32" y="59"/>
-<vertex x="32.9" y="59.944"/>
-<vertex x="31.1" y="59.944"/>
-</polygon>
-<wire x1="32" y1="63.119" x2="32" y2="59.563" width="0.3" layer="21"/>
-<text x="32.004" y="64.262" size="2.5" layer="21" font="vector" align="bottom-center">V-CUT</text>
 </plain>
 <libraries>
 <library name="rcl" urn="urn:adsk.eagle:library:334">

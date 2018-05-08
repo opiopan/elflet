@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.7.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -8479,8 +8479,8 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <wire x1="-7.5" y1="5.112" x2="-7.5" y2="3.978" width="0.127" layer="21"/>
 <wire x1="0" y1="4.995" x2="0" y2="3.861" width="0.127" layer="21"/>
 <circle x="-5.278" y="7.424" radius="0.1194" width="0.254" layer="25"/>
-<smd name="2" x="-4.4" y="6.327" dx="1.35" dy="0.2" layer="1" rot="R90"/>
-<smd name="4" x="-3.1" y="6.327" dx="1.35" dy="0.2" layer="1" rot="R90"/>
+<smd name="2" x="-4.4" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
+<smd name="4" x="-3.1" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
 <pad name="8V" x="-4.9" y="2.75" drill="1.2" diameter="1.9" shape="square"/>
 <pad name="9V" x="-2.6" y="2.75" drill="1.2" diameter="1.9" shape="square"/>
 </package>

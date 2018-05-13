@@ -1,5 +1,5 @@
 (gerbv-file-version! "2.0A")
-(define-layer! 7 (cons 'filename "elflet-panelized.GBL")(cons 'visible #f)(cons 'color #(29555 29555 57054)))
+(define-layer! 7 (cons 'filename "elflet-panelized.GBL")(cons 'visible #f)(cons 'color #(60827 7212 5054)))
 (define-layer! 6 (cons 'filename "elflet-panelized.GBS")(cons 'visible #f)(cons 'color #(30069 62194 26471)))
 (define-layer! 5 (cons 'filename "elflet-panelized.GBO")(cons 'visible #f)(cons 'color #(65535 54987 53998)))
 (define-layer! 4 (cons 'filename "elflet-panelized.GTL")(cons 'visible #t)(cons 'color #(5252 41251 370)))

@@ -8457,32 +8457,26 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <description>&lt;USB Connectors MICRO B RECEPT RA SMT BTTM MNT&lt;/b&gt;&lt;p&gt;
 &lt;author&gt;Created by SamacSys&lt;/author&gt;</description>
 <packages>
-<package name="ZX62-B-5PA(33)">
-<description>&lt;b&gt;ZX62-B-5PA(33)&lt;/b&gt;&lt;br&gt;
-</description>
-<smd name="1" x="-5.05" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
-<smd name="3" x="-3.75" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
-<smd name="5" x="-2.45" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
-<smd name="6" x="-6.85" y="6.177" dx="2.1" dy="1.6" layer="1"/>
-<smd name="7" x="-0.65" y="6.177" dx="2.1" dy="1.6" layer="1"/>
-<smd name="10" x="-7.75" y="2.75" dx="1.9" dy="1.8" layer="1"/>
-<smd name="11" x="0.25" y="2.75" dx="1.9" dy="1.8" layer="1"/>
-<text x="-3.823" y="4.596" size="1.016" layer="25" font="vector" align="center">&gt;NAME</text>
-<text x="-4.077" y="-1.119" size="1.27" layer="27" align="center">&gt;VALUE</text>
-<wire x1="-7.5" y1="5.6" x2="0" y2="5.6" width="0.254" layer="51"/>
-<wire x1="0" y1="5.6" x2="0" y2="0" width="0.254" layer="51"/>
-<wire x1="0" y1="0" x2="-7.5" y2="0" width="0.254" layer="51"/>
-<wire x1="-7.5" y1="0" x2="-7.5" y2="5.6" width="0.254" layer="51"/>
-<wire x1="-7.5" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
-<wire x1="0" y1="0" x2="0" y2="1.444" width="0.127" layer="21"/>
-<wire x1="-7.5" y1="0" x2="-7.5" y2="1.422" width="0.127" layer="21"/>
-<wire x1="-7.5" y1="5.112" x2="-7.5" y2="3.978" width="0.127" layer="21"/>
-<wire x1="0" y1="4.995" x2="0" y2="3.861" width="0.127" layer="21"/>
-<circle x="-5.278" y="7.424" radius="0.1194" width="0.254" layer="25"/>
-<smd name="2" x="-4.4" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
-<smd name="4" x="-3.1" y="6.327" dx="1.35" dy="0.4" layer="1" rot="R90"/>
-<pad name="8V" x="-4.9" y="2.75" drill="1.2" diameter="1.9" shape="square"/>
-<pad name="9V" x="-2.6" y="2.75" drill="1.2" diameter="1.9" shape="square"/>
+<package name="ZX62-B-5PA(33)-TRUE-HANDSOLD">
+<smd name="11" x="4" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="10" x="-4" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="3" x="0" y="2.875" dx="0.4" dy="1.75" layer="1"/>
+<smd name="4" x="0.65" y="2.875" dx="0.4" dy="1.75" layer="1"/>
+<smd name="2" x="-0.65" y="2.875" dx="0.4" dy="1.75" layer="1"/>
+<smd name="5" x="1.3" y="2.875" dx="0.4" dy="1.75" layer="1"/>
+<smd name="1" x="-1.3" y="2.875" dx="0.4" dy="1.75" layer="1"/>
+<smd name="7" x="3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
+<smd name="6" x="-3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
+<wire x1="-3.75" y1="-1.45" x2="3.75" y2="-1.45" width="0.127" layer="51" style="shortdash"/>
+<wire x1="-3.75" y1="2.85" x2="3.75" y2="2.85" width="0.127" layer="51"/>
+<wire x1="3.75" y1="2.85" x2="3.75" y2="-1.45" width="0.127" layer="51"/>
+<wire x1="3.75" y1="-1.45" x2="3.75" y2="-2.75" width="0.127" layer="51"/>
+<wire x1="3.75" y1="-2.75" x2="-3.75" y2="-2.75" width="0.127" layer="51"/>
+<wire x1="-3.75" y1="-2.75" x2="-3.75" y2="-1.45" width="0.127" layer="51"/>
+<wire x1="-3.75" y1="-1.45" x2="-3.75" y2="2.85" width="0.127" layer="51"/>
+<text x="0" y="3.937" size="1.016" layer="25" font="vector" align="bottom-center">&gt;NAME</text>
+<pad name="8" x="-1.2" y="0" drill="1.2" diameter="1.9" shape="square"/>
+<pad name="9" x="1.2" y="0" drill="1.2" diameter="1.9" shape="square"/>
 </package>
 </packages>
 <symbols>
@@ -8506,23 +8500,14 @@ Source: &lt;a href="http://www.mouser.com/ds/2/185/ZX_catalog-939768.pdf"&gt; Da
 <gate name="G$1" symbol="ZX62-B-5PA(33)" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="ZX62-B-5PA(33)">
+<device name="" package="ZX62-B-5PA(33)-TRUE-HANDSOLD">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
 <connect gate="G$1" pin="3" pad="3"/>
 <connect gate="G$1" pin="5" pad="5"/>
 </connects>
 <technologies>
-<technology name="">
-<attribute name="ARROW_PART_NUMBER" value="ZX62-B-5PA(33)" constant="no"/>
-<attribute name="ARROW_PRICE/STOCK" value="http://uk.rs-online.com/web/p/products/1362267" constant="no"/>
-<attribute name="DESCRIPTION" value="USB Connectors MICRO B RECEPT RA SMT BTTM MNT" constant="no"/>
-<attribute name="HEIGHT" value="mm" constant="no"/>
-<attribute name="MANUFACTURER_NAME" value="Hirose" constant="no"/>
-<attribute name="MANUFACTURER_PART_NUMBER" value="ZX62-B-5PA(33)" constant="no"/>
-<attribute name="RS_PART_NUMBER" value="1362267" constant="no"/>
-<attribute name="RS_PRICE/STOCK" value="http://uk.rs-online.com/web/p/products/1362267" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -8990,10 +8975,10 @@ Source: &lt;a href="http://www.mouser.com/ds/2/143/201407061531031645-365293.pdf
 <package name="SMT(4.2X3.2)">
 <description>&lt;b&gt;SMT(4.2x3.2)&lt;/b&gt;&lt;br&gt;
 </description>
-<smd name="1" x="-2.075" y="1.075" dx="1.05" dy="0.65" layer="1"/>
-<smd name="2" x="2.075" y="1.075" dx="1.05" dy="0.65" layer="1"/>
-<smd name="3" x="-2.075" y="-1.075" dx="1.05" dy="0.65" layer="1"/>
-<smd name="4" x="2.075" y="-1.075" dx="1.05" dy="0.65" layer="1"/>
+<smd name="1" x="-2.275" y="1.075" dx="1.45" dy="0.65" layer="1"/>
+<smd name="2" x="2.275" y="1.075" dx="1.45" dy="0.65" layer="1"/>
+<smd name="3" x="-2.275" y="-1.075" dx="1.45" dy="0.65" layer="1"/>
+<smd name="4" x="2.275" y="-1.075" dx="1.45" dy="0.65" layer="1"/>
 <text x="-0.23333125" y="2.5907" size="1.016" layer="25" font="vector" align="center">&gt;NAME</text>
 <text x="-0.23333125" y="-2.4893" size="1.016" layer="27" font="vector" align="center">&gt;VALUE</text>
 <wire x1="-2.1" y1="1.6" x2="2.1" y2="1.6" width="0.2" layer="51"/>
@@ -9004,7 +8989,7 @@ Source: &lt;a href="http://www.mouser.com/ds/2/143/201407061531031645-365293.pdf
 <wire x1="2.1" y1="-1.6" x2="-2.1" y2="-1.6" width="0.127" layer="21"/>
 <wire x1="-2.1" y1="0.5" x2="-2.1" y2="-0.5" width="0.127" layer="21"/>
 <wire x1="2.1" y1="0.5" x2="2.1" y2="-0.5" width="0.127" layer="21"/>
-<circle x="-2.906" y="1.089" radius="0.05336875" width="0.2" layer="25"/>
+<circle x="-2.825" y="1.851" radius="0.05336875" width="0.2" layer="25"/>
 </package>
 </packages>
 <symbols>
@@ -12761,7 +12746,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <part name="U2" library="vreg" deviceset="ADP3338" device="" package3d_urn="urn:adsk.eagle:package:29214/2" value="ADP3338AKCZ-3.3"/>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="GND2" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C3216" package3d_urn="urn:adsk.eagle:package:23628/2" value="2uF/50V(10%)"/>
+<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C3216" package3d_urn="urn:adsk.eagle:package:23628/2" value="1uF/25V(+80-20%)"/>
 <part name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C3216" package3d_urn="urn:adsk.eagle:package:23628/2" value="2uF/50V(10%)"/>
 <part name="+3V1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+3V3" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
@@ -12941,10 +12926,10 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <instance part="R12" gate="G$1" x="243.84" y="111.76"/>
 <instance part="R13" gate="G$1" x="243.84" y="101.6"/>
 <instance part="GND17" gate="1" x="256.54" y="93.98"/>
-<instance part="SW1" gate="G$1" x="304.8" y="116.84"/>
-<instance part="+3V11" gate="G$1" x="332.74" y="132.08"/>
-<instance part="R14" gate="G$1" x="297.18" y="106.68" rot="R90"/>
-<instance part="GND18" gate="1" x="297.18" y="93.98"/>
+<instance part="SW1" gate="G$1" x="289.56" y="116.84"/>
+<instance part="+3V11" gate="G$1" x="284.48" y="132.08"/>
+<instance part="R14" gate="G$1" x="314.96" y="106.68" rot="R90"/>
+<instance part="GND18" gate="1" x="314.96" y="93.98"/>
 <instance part="J2" gate="G$1" x="246.38" y="35.56"/>
 <instance part="GND6" gate="1" x="226.06" y="45.72"/>
 <instance part="R15" gate="G$1" x="203.2" y="27.94"/>
@@ -13083,7 +13068,7 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <segment>
 <pinref part="R14" gate="G$1" pin="1"/>
 <pinref part="GND18" gate="1" pin="GND"/>
-<wire x1="297.18" y1="101.6" x2="297.18" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="314.96" y1="101.6" x2="314.96" y2="96.52" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="J2" gate="G$1" pin="2"/>
@@ -13227,16 +13212,16 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <wire x1="271.78" y1="195.58" x2="271.78" y2="203.2" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="+3V11" gate="G$1" pin="+3V3"/>
-<pinref part="SW1" gate="G$1" pin="3"/>
-<wire x1="332.74" y1="129.54" x2="332.74" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="332.74" y1="116.84" x2="325.12" y2="116.84" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="J3" gate="G$1" pin="1"/>
 <wire x1="320.04" y1="35.56" x2="314.96" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="+3V13" gate="G$1" pin="+3V3"/>
 <wire x1="314.96" y1="35.56" x2="314.96" y2="50.8" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="SW1" gate="G$1" pin="1"/>
+<pinref part="+3V11" gate="G$1" pin="+3V3"/>
+<wire x1="289.56" y1="116.84" x2="284.48" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="284.48" y1="116.84" x2="284.48" y2="129.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="BOOT" class="0">
@@ -13488,25 +13473,25 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <label x="124.46" y="127" size="1.778" layer="95" rot="MR0"/>
 </segment>
 <segment>
-<pinref part="SW1" gate="G$1" pin="1"/>
-<label x="281.94" y="116.84" size="1.778" layer="95"/>
-<wire x1="304.8" y1="116.84" x2="297.18" y2="116.84" width="0.1524" layer="91"/>
+<pinref part="SW1" gate="G$1" pin="3"/>
+<wire x1="309.88" y1="116.84" x2="314.96" y2="116.84" width="0.1524" layer="91"/>
 <pinref part="R14" gate="G$1" pin="2"/>
-<wire x1="297.18" y1="116.84" x2="281.94" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="297.18" y1="111.76" x2="297.18" y2="116.84" width="0.1524" layer="91"/>
-<junction x="297.18" y="116.84"/>
+<wire x1="314.96" y1="116.84" x2="335.28" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="314.96" y1="111.76" x2="314.96" y2="116.84" width="0.1524" layer="91"/>
+<junction x="314.96" y="116.84"/>
+<label x="335.28" y="116.84" size="1.778" layer="95" rot="MR0"/>
 </segment>
 </net>
 <net name="LEDB" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="IO34"/>
-<wire x1="106.68" y1="129.54" x2="124.46" y2="129.54" width="0.1524" layer="91"/>
-<label x="124.46" y="129.54" size="1.778" layer="95" rot="MR0"/>
-</segment>
-<segment>
 <pinref part="LED3" gate="G$1" pin="AB"/>
 <wire x1="215.9" y1="121.92" x2="200.66" y2="121.92" width="0.1524" layer="91"/>
 <label x="200.66" y="121.92" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="IO27"/>
+<wire x1="106.68" y1="137.16" x2="124.46" y2="137.16" width="0.1524" layer="91"/>
+<label x="124.46" y="137.16" size="1.778" layer="95" rot="MR0"/>
 </segment>
 </net>
 <net name="LEDR" class="0">

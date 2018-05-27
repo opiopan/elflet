@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [ $# -ne 2 ];then
+    echo "usage: `basename $0` <SIGNNING-KEY> <IMAGE-FILE>" >&2
+    exit 1
+fi
+
+KEY="$1"
+IMAGE="$2"
+DIR=`dirname $2`
+BASE=`basename $2 .bin`
+OUT="$DIR/$BASE.sbin"
+
+cleanexit() {
+    rm -f ${OUT}
+    exit 1
+}
+
+openssl dgst -sha256 -sign "$KEY" "$IMAGE" > "$OUT" || cleanexit
+cat "$IMAGE" >> "$OUT" || cleanexit

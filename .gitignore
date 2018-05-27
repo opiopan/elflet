@@ -15,3 +15,10 @@
 *.pdf
 *.pro
 *.job
+firmware/build
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/components/cpp_utils
+firmware/components/posix
+*.o
+hosttool/irtx

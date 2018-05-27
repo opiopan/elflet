@@ -1,0 +1,3 @@
+[submodule "firmware/components/mongoose/src"]
+	path = firmware/components/mongoose/src
+	url = https://github.com/cesanta/mongoose.git

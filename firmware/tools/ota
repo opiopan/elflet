@@ -1,0 +1,42 @@
+#!/bin/sh
+
+if [ $# -ne 4 ];then
+    echo "usage: `basename $0` <USER> <PASS> <ADDR> <IMAGE-FILE>" >&2
+    exit 1
+fi
+
+cleanup() {
+    rm -f ${OUT} ${HEADER}
+}
+
+trap cleanup EXIT
+
+USER="$1"
+PASS="$2"
+ADDR="$3"
+IMAGE="$4"
+
+OUT=`mktemp`
+HEADER=`mktemp`
+
+IMAGESIZE=`wc -c $IMAGE | while read a b; do echo $a;done`
+
+echo "Image size: $IMAGESIZE bytes"
+echo "erasing flash... (it may need a couple of seconds)"
+
+curl -F"image=@${IMAGE};type=application/octet-stream" \
+     -H "X-OTA-Image-Size: $IMAGESIZE" \
+     --expect100-timeout 10 \
+     --anyauth --user "${USER}:${PASS}" \
+     --dump-header ${HEADER} --progress-bar -o ${OUT}\
+     "http://${ADDR}/download" || exit 1
+
+RESULT=`grep '^HTTP/1\.1' ${HEADER} | tail -1`
+echo $RESULT | while read P CODE MSG;do
+    if ! [ "$CODE" = "200" ];then
+	echo "Cannot update firmware: $MSG" >&2
+	exit 1
+    fi
+done || exit 1
+
+cat ${OUT}

@@ -5,7 +5,7 @@
 
 #include "sdkconfig.h"
 
-static const char* tag = "WebServerHandler";
+static const char tag[] = "WebServerHandler";
 
 //----------------------------------------------------------------------
 //  handle comlete request message

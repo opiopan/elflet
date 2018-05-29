@@ -1,3 +1,4 @@
+COMPONENT_OBJS			 = src/mongoose.o
 COMPONENT_SRCDIRS                = src
 COMPONENT_ADD_INCLUDEDIRS        = src
 

@@ -16,7 +16,7 @@ $(IMAGE): $(PDATA) $(VKEY)
 	mkspiffs -c $(FSSRCDIR) -b 4096 -p 256 -s 0x10000 $@
 
 $(PDATA): $(FSSRCDIR) $(COMPONENT_PATH)/pdata.json.in
-	m4 -DHW_VERSION=$(CONFIG_HW_VERSION) \
+	m4 -DHW_VERSION='"'$(CONFIG_HW_VERSION)'"' \
 	   $(COMPONENT_PATH)/pdata.json.in > $@
 
 #$(VKEY): $(FSSRCDIR) $(CONFIG_OTA_IMAGE__VERIFICATION_KEY)

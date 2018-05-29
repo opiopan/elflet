@@ -16,5 +16,6 @@ cleanexit() {
     exit 1
 }
 
+#printf "%s" "ESP32 signed FW " > "$OUT" || cleanexit
 openssl dgst -sha256 -sign "$KEY" "$IMAGE" > "$OUT" || cleanexit
 cat "$IMAGE" >> "$OUT" || cleanexit

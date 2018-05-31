@@ -35,6 +35,9 @@ static const std::string JSON_BOARDVERSION = "BoardVersion";
 static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 
+static const int MAX_NODENAME_LEN = 32;
+static const int MAX_PASSWORD_LEN = 64;
+
 Config* elfletConfig = NULL;
 
 //----------------------------------------------------------------------
@@ -74,6 +77,7 @@ bool initConfig(){
 	return false;
     }
     
+    // load configuration
     elfletConfig = new Config();
     return elfletConfig->load();
 }
@@ -223,19 +227,25 @@ bool Config::setbootMode(BootMode mode){
 }
     
 bool Config::setNodeName(const std::string& name){
+    if (name.length() > MAX_NODENAME_LEN){
+	return false;
+    }
     nodeName = name;
     isDirty = true;
     return true;
 }
 
 bool Config::setAPSSID(const std::string& ssid){
+    if (ssid.length() > MAX_NODENAME_LEN){
+	return false;
+    }
     apssid = ssid;
     isDirty = true;
     return true;
 }
 
 bool Config::setAdminPassword(const std::string& pass){
-    if (pass.length() < 8){
+    if (pass.length() < 8 || pass.length() > MAX_PASSWORD_LEN){
 	return false;
     }
     adminPassword = pass;
@@ -244,13 +254,23 @@ bool Config::setAdminPassword(const std::string& pass){
 }
 
 bool Config::setSSIDtoConnect(std::string& ssid){
+    if (ssid.length() > MAX_NODENAME_LEN){
+	return false;
+    }
     ssidToConnect = ssid;
     isDirty = true;
     return true;
 }
 
 bool Config::setWifiPassword(std::string& pass){
+    if (pass.length() > MAX_PASSWORD_LEN){
+	return false;
+    }
     wifiPassword = pass;
     isDirty = true;
     return true;
+}
+
+const char* Config::getVerificationKeyPath(){
+    return VERIFICATION_KEY_PATH;
 }

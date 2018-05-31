@@ -1,7 +1,7 @@
 {
-    "NodeName" : "elflet-0000",
+    "NodeName" : "elflet-000000",
     "AP_SSID" : "",
-    "AdminPassword" : "elflet-0000",
+    "AdminPassword" : "elflet00",
 
     "BoardVersion" : HW_VERSION
 }

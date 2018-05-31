@@ -23,3 +23,6 @@ public:
 
 OTARESULT startOTA(const char* pubkey_path, size_t imageSize, OTA** outp);
 OTARESULT endOTA(const OTA* handle, bool needCommit);
+
+class WebServerHandler;
+WebServerHandler* getOTAWebHandler(const char* vkyepath, bool needDigestAuth);

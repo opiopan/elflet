@@ -10,7 +10,8 @@ extern "C" {
 #endif
     
 void htdigestfs_init(const char* mp);
-void htdigestfs_register(const char* user, const char* domain, void* digest);
+void htdigestfs_register(const char* user, const char* domain,
+			 const char* pass);
 FILE* htdigestfs_fp();
 
 #ifdef __cplusplus

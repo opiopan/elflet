@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-bool startWifiApService();
+bool startWebService();
 
 #ifdef __cplusplus
 }

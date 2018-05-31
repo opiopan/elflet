@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <mongoose.h>
 #include "htdigestfs.h"
 
 static const char* tag = "htdigestfs";
@@ -145,10 +146,23 @@ void htdigestfs_init(const char* mp)
     represent_fp = fopen(path, "r");
 }
 
-void htdigestfs_register(const char* user, const char* domain, void* digest)
+void htdigestfs_register(const char* user, const char* domain,
+			 const char* pass)
 {
+    // calculate md5 hash
     size_t ulen = strlen(user);
     size_t dlen = strlen(domain);
+    size_t plen = strlen(pass);
+    char* ibuf = malloc(ulen + dlen + plen + 3);
+    sprintf(ibuf, "%s:%s:%s", user, domain, pass);
+    cs_md5_ctx c;
+    cs_md5_init(&c);
+    cs_md5_update(&c, (const unsigned char*)ibuf, ulen + dlen + plen + 2);
+    unsigned char hash[16];
+    cs_md5_final(hash, &c);
+    free(ibuf);
+
+    // generate htdigest file contents
     size_t size = ulen + dlen + HTDIGESTLENGTH * 2 + 2;
     if (digestData.data){
 	free(digestData.data);
@@ -157,7 +171,7 @@ void htdigestfs_register(const char* user, const char* domain, void* digest)
     digestData.length = size;
     sprintf((char*)digestData.data, "%s:%s:", user, domain);
     uint8_t* buf = digestData.data + ulen + dlen + 2;
-    uint8_t* bytes = (uint8_t*)digest;
+    uint8_t* bytes = (uint8_t*)hash;
     for (int i = 0; i < HTDIGESTLENGTH * 2; i++){
 	int data = (bytes[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
 	static const uint8_t dic[] = "0123456789abcdef";

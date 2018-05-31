@@ -2,6 +2,7 @@
 #include <esp_ota_ops.h>
 #include <string.h>
 #include "signature.h"
+#include "webserver.h"
 #include "ota.h"
 
 static const char tag[] = "ota";

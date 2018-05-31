@@ -29,9 +29,9 @@ curl -F"image=@${IMAGE};type=application/octet-stream" \
      --expect100-timeout 10 \
      --anyauth --user "${USER}:${PASS}" \
      --dump-header ${HEADER} --progress-bar -o ${OUT}\
-     "http://${ADDR}/download" || exit 1
+     "http://${ADDR}/manage/otaupdate" || exit 1
 
-RESULT=`grep '^HTTP/1\.1' ${HEADER} | tail -1`
+RESULT=`grep '^HTTP/1\.' ${HEADER} | tail -1`
 echo $RESULT | while read P CODE MSG;do
     if ! [ "$CODE" = "200" ];then
 	echo "Cannot update firmware: $MSG" >&2
@@ -40,3 +40,4 @@ echo $RESULT | while read P CODE MSG;do
 done || exit 1
 
 cat ${OUT}
+echo

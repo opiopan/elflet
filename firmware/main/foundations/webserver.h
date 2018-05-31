@@ -93,6 +93,24 @@ public:
     const mg_str* operator ()() const{
 	return (const mg_str*)this;
     };
+    int32_t intvalue() const{
+	int32_t rc = 0;
+	int32_t sign = 1;
+	if (len > 1 && p[0] == '-'){
+	    sign = -1;
+	}
+	for (int i = 0; i < len; i++){
+	    int digit = p[i];
+	    if (digit >= '0' && digit <= '9'){
+		rc *= 10;
+		rc += digit - '0';
+	    }else{
+		rc = 0;
+		break;
+	    }
+	}
+	return rc * sign;
+    };
 
     int compareTo(const char* dest, size_t destLen) const{
 	size_t clen = len < destLen ? len : destLen;

@@ -40,7 +40,6 @@ static WebString webStringWithoutCopy(const mg_str& src){
 };
 
 void HttpRequest::reset(http_message* msg, bool copy){
-    ESP_LOGI(tag, "HttpRequest::reset");
     headerData.clear();
     parametersData.clear();
     delete[] parametersBuf;
@@ -200,7 +199,6 @@ void HttpResponse::flush(mg_connection* con){
 void WebServerConnection::dispatchEvent(int ev, void* p){
     switch (ev){
     case MG_EV_HTTP_REQUEST: {
-	ESP_LOGI(tag, "EV_HTTP_REQUEST");
 	auto hm = (http_message*)p;
 	requestData.reset(hm, false);
 	responseData.reset();
@@ -210,7 +208,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	break;
     }
     case MG_EV_HTTP_MULTIPART_REQUEST: {
-	ESP_LOGI(tag, "EV_HTTP_MULTIPART_REQUEST");
 	status = CON_MPART_INIT;
 	auto hm = (http_message*)p;
 	requestData.reset(hm, true);
@@ -238,7 +235,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	break;
     }
     case MG_EV_HTTP_MULTIPART_REQUEST_END:{
-	ESP_LOGI(tag, "EV_HTTP_MULTIPART_REQUEST_END");
 	if (handler){
 	    handler->endMultipart(*this);
 	}
@@ -246,7 +242,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	break;
     }
     case MG_EV_HTTP_PART_BEGIN: {
-	ESP_LOGI(tag, "EV_HTTP_PART_BEGIN");
 	if (status == CON_COMPLETE){
 	    break;
 	}
@@ -258,7 +253,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	break;
     }
     case MG_EV_HTTP_PART_DATA: {
-	ESP_LOGI(tag, "EV_HTTP_PART_DATA");
 	if (status == CON_COMPLETE){
 	    break;
 	}
@@ -270,7 +264,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	break;
     }
     case MG_EV_HTTP_PART_END: {
-	ESP_LOGI(tag, "EV_HTTP_PART_END");
 	if (handler && responseData.getStatus() == HttpResponse::ST_OPEN){
 	    handler->endMultipartData(*this);
 	}
@@ -283,7 +276,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 
     if (status == CON_COMPLETE &&
 	responseData.getStatus() != HttpResponse::ST_FLUSHED){
-	ESP_LOGI(tag, "proceed http response");
 	if (responseData.getStatus() == HttpResponse::ST_OPEN){
 	    if (handler){
 		handler->recieveRequest(*this);

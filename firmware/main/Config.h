@@ -46,14 +46,14 @@ public:
 
     const char* getVerificationKeyPath();
     
-    bool setbootMode(BootMode mode);
+    bool setBootMode(BootMode mode);
     
     bool setNodeName(const std::string& name);
     bool setAPSSID(const std::string& ssid);
     bool setAdminPassword(const std::string& pass);
 
-    bool setSSIDtoConnect(std::string& ssid);
-    bool setWifiPassword(std::string& pass);
+    bool setSSIDtoConnect(const std::string& ssid);
+    bool setWifiPassword(const std::string& pass);
 
 protected:
     void applyValue(const json11::Json& json, const std::string& key,

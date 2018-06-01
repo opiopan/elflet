@@ -220,7 +220,7 @@ bool Config::commit(){
 //----------------------------------------------------------------------
 // update value
 //----------------------------------------------------------------------
-bool Config::setbootMode(BootMode mode){
+bool Config::setBootMode(BootMode mode){
     bootMode = mode;
     isDirtyBootMode = true;
     return true;
@@ -253,7 +253,7 @@ bool Config::setAdminPassword(const std::string& pass){
     return true;
 }
 
-bool Config::setSSIDtoConnect(std::string& ssid){
+bool Config::setSSIDtoConnect(const std::string& ssid){
     if (ssid.length() > MAX_NODENAME_LEN){
 	return false;
     }
@@ -262,7 +262,7 @@ bool Config::setSSIDtoConnect(std::string& ssid){
     return true;
 }
 
-bool Config::setWifiPassword(std::string& pass){
+bool Config::setWifiPassword(const std::string& pass){
     if (pass.length() > MAX_PASSWORD_LEN){
 	return false;
     }

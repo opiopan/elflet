@@ -20,14 +20,14 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
     switch(event->event_id) {
     case SYSTEM_EVENT_AP_START:
 	// start mDNS service
-	startmdnsService();
+	//startmdnsService();
 	break;
     case SYSTEM_EVENT_AP_STACONNECTED:
 	break;
     default:
 	break;
     }
-
+    mdns_handle_system_event(ctx, event);
     return ESP_OK;
 }
     
@@ -43,6 +43,8 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 }
 
 bool startWifiApService(){
+    startmdnsService();
+
     tcpip_adapter_init();
 
     //

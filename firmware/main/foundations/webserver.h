@@ -252,8 +252,14 @@ public:
     const std::map<WebString, WebString>& header() const{
 	return headerData;
     };
+    WebString header(const WebString& key) const{
+	return headerData.at(key);
+    };
     const std::map<WebString, WebString>& parameters() const{
 	return parametersData;
+    };
+    WebString parameter(const WebString& key) const{
+	return parametersData.at(key);
     };
 
 protected:

@@ -1,12 +1,10 @@
 #pragma once
 
-#include <mdns.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool startmdnsService();
+bool startWifiService();
 
 #ifdef __cplusplus
 }

@@ -2,8 +2,10 @@
 #include <Task.h>
 #include "Config.h"
 #include "mdnsService.h"
+#include "WifiService.h"
 #include "WifiApService.h"
 #include "WebService.h"
+#include "irserver.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -49,5 +51,10 @@ extern "C" void app_main() {
 	}
 	startWebService();
     }else{
+	if (!startWifiService()){
+	    systemFault();
+	}
+	startWebService();
+	startIRServer();
     }
 }

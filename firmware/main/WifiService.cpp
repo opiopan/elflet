@@ -5,14 +5,55 @@
 #include <mdns.h>
 #include <string.h>
 #include <GeneralUtils.h>
+#include <Task.h>
+#include <freertos/event_groups.h>
 #include "Config.h"
 #include "mdnsService.h"
 #include "WifiService.h"
-
+#include "LEDService.h"
+#include "reboot.h"
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
 static const char tag[] = "WifiService";
+
+//----------------------------------------------------------------------
+// Observing WiFi connection
+//----------------------------------------------------------------------
+class ObserverTask : public Task {
+protected:
+    EventGroupHandle_t events;
+public:
+    ObserverTask(){
+	events = xEventGroupCreate();
+    }
+
+    virtual ~ObserverTask(){
+	vEventGroupDelete(events);
+    }
+
+    void connected(){
+	xEventGroupSetBits(events, 1);
+    }
+    
+protected:
+    void run(void *data) override{
+	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	auto ev = xEventGroupWaitBits(
+	    events, 1, pdTRUE, pdFALSE, 60000 / portTICK_PERIOD_MS);
+	if (ev){
+	    ledSetDefaultMode(LEDDM_STANDBY);
+	    return;
+	}else{
+	    // fall back to configuration mode
+	    elfletConfig->setBootMode(Config::Configuration);
+	    elfletConfig->commit();
+	    rebootIn(0);
+	}
+    };
+};
+
+class ObserverTask* observerTask;
 
 //----------------------------------------------------------------------
 // WiFi event handler
@@ -23,6 +64,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         esp_wifi_connect();
         break;
     case SYSTEM_EVENT_STA_CONNECTED:
+	observerTask->connected();
         /* enable ipv6 */
         tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
         break;
@@ -91,6 +133,9 @@ bool startWifiService(){
     ESPERR_RET(esp_wifi_start(), "esp_wifi_start");
 
     esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
+
+    observerTask = new ObserverTask;
+    observerTask->start();
     
     return true;
 }

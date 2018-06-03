@@ -124,6 +124,7 @@ bool Config::load(){
 	    fileGeneration = 0;
 	}
     }
+    bootModeCurrent = bootMode;
 
     // parse configuration file
     auto path = CONFIGPATH[fileGeneration];

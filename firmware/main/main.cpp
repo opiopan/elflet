@@ -6,6 +6,7 @@
 #include "WifiApService.h"
 #include "WebService.h"
 #include "irserver.h"
+#include "LEDService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -18,11 +19,15 @@ _Noreturn static void systemFault(){
     }
 }
 
-extern "C" void app_main() {
+class MainTask : public Task {
+    void run(void *data) override;
+};
+
+void MainTask::run(void *data){
     //--------------------------------------------------------------
-    // initialize periferals
+    // initialize UI LED
     //--------------------------------------------------------------
-    
+    startLedService();
 
     //--------------------------------------------------------------
     // load configuration
@@ -46,15 +51,24 @@ extern "C" void app_main() {
     // start network related services
     //--------------------------------------------------------------
     if (mode == Config::FactoryReset || mode == Config::Configuration){
+	ledSetDefaultMode(
+	    mode == Config::FactoryReset ? LEDDM_FACTORY_RESET :
+	                                   LEDDM_CONFIGURATION);
 	if (!startWifiApService()){
 	    systemFault();
 	}
 	startWebService();
     }else{
+	ledSetDefaultMode(LEDDM_SCAN_WIFI);
 	if (!startWifiService()){
 	    systemFault();
 	}
 	startWebService();
 	startIRServer();
     }
+}
+
+extern "C" void app_main() {
+    auto task = new MainTask;
+    task->start();
 }

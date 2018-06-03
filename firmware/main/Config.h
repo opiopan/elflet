@@ -14,6 +14,7 @@ protected:
     bool isDirty;
     
     BootMode bootMode;
+    BootMode bootModeCurrent;
     uint32_t fileGeneration;
     
     std::string boardVersion;
@@ -34,7 +35,7 @@ public:
     bool load();
     bool commit();
 
-    BootMode getBootMode() const{return bootMode;};
+    BootMode getBootMode() const{return bootModeCurrent;};
     const std::string& getBoardVersion() const{return boardVersion;};
     const std::string& getNodeName() const{return nodeName;};
     const std::string& getAPSSID() const{

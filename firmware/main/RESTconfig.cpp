@@ -86,7 +86,7 @@ static bool commitAndReboot(){
 
     elfletConfig->setBootMode(Config::Normal);
     elfletConfig->commit();
-    rebootIn(2000);
+    rebootIn(1000);
 
     return true;
 }

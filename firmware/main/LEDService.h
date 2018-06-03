@@ -13,7 +13,7 @@ enum LED_DefaultMode {
 
 enum LED_BlinkMode {
     LEDBM_DEFAULT = -1,
-    LEDRM_SYSTEM_FAULT = 0,
+    LEDBM_SYSTEM_FAULT = 0,
     LEDBM_IRRX = 1
 };
 

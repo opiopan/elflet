@@ -7,6 +7,7 @@
 #include "WebService.h"
 #include "irserver.h"
 #include "LEDService.h"
+#include "ButtonService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -14,6 +15,7 @@
 static const char tag[] = "main";
 
 _Noreturn static void systemFault(){
+    ledSetBlinkMode(LEDBM_SYSTEM_FAULT);
     while (true){
 	vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
@@ -42,10 +44,15 @@ void MainTask::run(void *data){
 	     mode == Config::FactoryReset ? "FACTORY RESET" :
 	     mode == Config::Configuration ? "CONFIGURAtiON" :
 	     "NORMAL");
+    if (mode == Config::Configuration){
+	elfletConfig->setBootMode(Config::Normal);
+	elfletConfig->commit();
+    }
 
     //--------------------------------------------------------------
     // start user interface services
     //--------------------------------------------------------------
+    startButtonService();
     
     //--------------------------------------------------------------
     // start network related services

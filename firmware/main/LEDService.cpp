@@ -14,7 +14,6 @@
 
 static const char tag[] = "LEDService";
 
-
 class LEDTask;
 static LEDTask* ledTask;
 
@@ -49,14 +48,14 @@ BlinkSeqUnit SEQ_SCAN_WIFI[] = {
 };
 
 BlinkSeqUnit SEQ_CONFIGURATION[] = {
-    SEQ_FADE(250, 600, 355, 0),
+    SEQ_FADE(250, 600, 300, 0),
     SEQ_FADE(250, 0, 0, 0),
     SEQ_WAIT(1000),
     SEQ_LOOP
 };
 
 BlinkSeqUnit SEQ_FACTORY_RESET[] = {
-    SEQ_FADE(125, 600, 355, 0),
+    SEQ_FADE(125, 600, 300, 0),
     SEQ_FADE(125, 0, 0, 0),
     SEQ_FADE(125, 600, 355, 0),
     SEQ_FADE(125, 0, 0, 0),
@@ -156,15 +155,15 @@ void IRAM_ATTR LEDTask::isrHandler(void* arg){
 void LEDTask::run(void *data){
     initLED();
     
-    LED_DefaultMode defaultMode;
-    LED_BlinkMode blinkMode;
+    LED_DefaultMode defaultMode = LEDDM_STANDBY;;
+    LED_BlinkMode blinkMode = LEDBM_DEFAULT;
     BlinkSeqUnit* sequence = NULL;
     int unitIndex = 0;
 
     auto reflectNewMode = [&](int timeToWait) -> bool {
 	auto ev = xEventGroupWaitBits(
 	    events, MODE_CHANGE_EVENT, pdTRUE, pdFALSE, timeToWait);
-	LockHolder(this->mutex);
+	LockHolder holder(this->mutex);
 	if (ev & MODE_CHANGE_EVENT &&
 	    (blinkMode != this->blinkMode ||
 	     (blinkMode == LEDBM_DEFAULT &&

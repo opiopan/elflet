@@ -32,7 +32,7 @@ extern bool IRRCInit(IRRC* ctx, IRRC_MODE mode,
 		     IRRC_PROTOCOL protocol, int32_t gpio);
 extern void IRRCDeinit(IRRC* ctx);
 extern void IRRCChangeProtocol(IRRC* ctx, IRRC_PROTOCOL protocol);
-extern void IRRCSend(IRRC* ctx, uint8_t* data, int32_t length);
+extern void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bitlength);
 
 #ifdef __cplusplus
 }

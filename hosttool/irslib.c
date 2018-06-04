@@ -136,21 +136,22 @@ int irsGetRespons(IRSHANDLE handle, void** data, int* dataSize)
 }
 
 int irsInvokeTxFormat(IRSHANDLE handle,
-		      IRSFormat format, void* data, int dataSize)
+		      IRSFormat format, void* data, int bits)
 {
+    int bytes = (bits + 7) / 8;
     IRSCTX* ctx = (IRSCTX*)handle;
 
     char buf[sizeof(ctx->obuf) - sizeof(IRSHeader)];
     IRSTxFormatData* hdr = (IRSTxFormatData*)buf;
-    if (dataSize + sizeof(*hdr) > sizeof(buf)){
+    if (bytes + sizeof(*hdr) > sizeof(buf)){
 	errno = E2BIG;
 	return -1;
     }
     hdr->format = htons(format);
-    hdr->dataLen = htons(dataSize);
-    if (dataSize > 0){
-	memcpy(hdr + 1, data, dataSize);
+    hdr->bits = htons(bits);
+    if (bytes > 0){
+	memcpy(hdr + 1, data, bytes);
     }
     return irsSendRequest(handle, IRServerCmdTxFormat,
-			  buf, dataSize + sizeof(*hdr));
+			  buf, bytes + sizeof(*hdr));
 }

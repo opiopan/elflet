@@ -15,7 +15,7 @@ static const char tag[] = "irrc";
 
 typedef bool (*MakeSendDataFunc)(IRRC* ctx, uint8_t* data, int32_t length);
 static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t length);
-static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length);
+//static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length);
 
 static struct ProtocolDef_t{
     const char*  name;
@@ -120,7 +120,7 @@ static struct ProtocolDef_t{
 	    .duration1 = SONY_UNIT,
 	    .level1 = 1
 	},
-	.make = makeSendDataSony
+	.make = makeSendData
     }
 };
     
@@ -157,54 +157,13 @@ static void changeProtocolTx(IRRC* ctx, IRRC_PROTOCOL protocol)
 	RMT_CARRIER_LEVEL_HIGH));
 }
 
-static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t length)
+static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t bits)
 {
-    if (length < 1){
+    if (bits < 1){
 	ESP_LOGE(tag, "invalid data length");
 	return false;
     }
-
-    struct ProtocolDef_t* protocol = ProtocolDef + ctx->protocol;
-    ctx->usedLen = 0;
-
-    /* leader*/
-    if (protocol->needLeader){
-	ctx->buff[ctx->usedLen] = protocol->leader;
-	ctx->usedLen++;
-    }
-
-    /* data */
-    for (int i = 0; i < length; i++){
-	for (int bit = 0; bit < 8; bit++){
-	    uint8_t on = data[i] & (0x1 << bit);
-	    ctx->buff[ctx->usedLen] = on ? protocol->on : protocol->off;
-	    ctx->usedLen++;
-	}
-    }
-
-    /* trailer */
-    if (protocol->needTrailer){
-	ctx->buff[ctx->usedLen] = protocol->trailer;
-	ctx->usedLen++;
-    }
-
-    return true;
-}
-
-static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length)
-{
-    if (length < 1){
-	ESP_LOGE(tag, "invalid data length");
-	return false;
-    }
-
-    int bits = data[0];
-    if (length != (bits + 15) / 8){
-	ESP_LOGE(tag, "invalid data format: "
-		 "first byte must indicate data bit number");
-	return false;
-    }
-
+    
     struct ProtocolDef_t* protocol = ProtocolDef + ctx->protocol;
     ctx->usedLen = 0;
 
@@ -216,7 +175,7 @@ static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length)
 
     /* data */
     for (int i = 0; i < bits; i++){
-	uint8_t on = data[i / 8 + 1] & (0x1 << (i % 8));
+	uint8_t on = data[i / 8] & (0x1 << (i % 8));
 	ctx->buff[ctx->usedLen] = on ? protocol->on : protocol->off;
 	ctx->usedLen++;
     }
@@ -229,7 +188,6 @@ static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length)
 
     return true;
 }
-
 
 bool IRRCInit(IRRC* ctx, IRRC_MODE mode, IRRC_PROTOCOL protocol, int32_t gpio)
 {
@@ -274,12 +232,12 @@ void IRRCChangeProtocol(IRRC* ctx, IRRC_PROTOCOL protocol)
     }
 }
 
-void IRRCSend(IRRC* ctx, uint8_t* data, int32_t length)
+void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bits)
 {
-    ESP_LOGI(tag, "IRRCSend: format[%s] bytes[%d]",
-	     ProtocolDef[ctx->protocol].name, length);
-    ESP_LOG_BUFFER_HEX(tag, data, length);
-    if (ProtocolDef[ctx->protocol].make(ctx, data, length)){
+    ESP_LOGI(tag, "IRRCSend: format[%s] bits[%d]",
+	     ProtocolDef[ctx->protocol].name, bits);
+    ESP_LOG_BUFFER_HEX(tag, data, (bits + 7) / 8);
+    if (ProtocolDef[ctx->protocol].make(ctx, data, bits)){
 	rmt_write_items(ctx->rmt.channel, ctx->buff, ctx->usedLen, 1);
 	rmt_wait_tx_done(ctx->rmt.channel, portMAX_DELAY);
     }

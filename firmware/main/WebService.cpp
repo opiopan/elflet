@@ -31,5 +31,7 @@ bool startWebService(){
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?
 	"80" : "192.168.55.01:80");
 
+    ESP_LOGI(tag, "http server has been started. port: 80");
+
     return true;
 }

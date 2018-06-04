@@ -235,7 +235,7 @@ bool CommunicationTask::cmdTxFormat(const IRSHeader* hdr,
     {
 	IRSTxFormatData* dhdr = (IRSTxFormatData*)data;
 	IRSFormat format = (IRSFormat)ntohs(dhdr->format);
-	int dataLen = ntohs(dhdr->dataLen);
+	int bits = ntohs(dhdr->bits);
 
 	IRRC_PROTOCOL protocol;
 	if (format == IRSFORMAT_NEC){
@@ -251,7 +251,7 @@ bool CommunicationTask::cmdTxFormat(const IRSHeader* hdr,
 
 	IRRCChangeProtocol(&irrc, protocol);
 	unsigned char* cbuf = (unsigned char*)(dhdr + 1);
-	IRRCSend(&irrc, cbuf, dataLen);
+	IRRCSend(&irrc, cbuf, bits);
     }
 
 END:

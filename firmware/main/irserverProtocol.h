@@ -28,7 +28,7 @@ typedef enum {
     
 typedef struct {
     int16_t   format : 16;
-    int16_t   dataLen;
+    int16_t   bits;
 } IRSTxFormatData;
 
 #define IRSIDSTR "IRSV"

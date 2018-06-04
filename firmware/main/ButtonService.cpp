@@ -13,7 +13,7 @@
 
 static const char tag[] = "ButtonService";
 
-#define FILTER_DELAY (50 / portTICK_PERIOD_MS)
+#define FILTER_DELAY (70 / portTICK_PERIOD_MS)
 
 class ButtonFilterTask;
 class ButtonEventTask;
@@ -43,6 +43,7 @@ ButtonEventTask::ButtonEventTask(): level(false){
 }
 
 void ButtonEventTask::sendEvent(bool level){
+    printf("detected raw button event: %d\n", level);
     LockHolder holder(mutex);
     if (this->level != level){
 	this->level = level;
@@ -51,11 +52,12 @@ void ButtonEventTask::sendEvent(bool level){
 }
 
 void ButtonEventTask::run(void *data){
-    bool level = false;
+    //bool level = gpio_get_level((gpio_num_t)GPIO_BUTTON) != 0;
+    bool level = 0;
     auto waitForEvent = [&](int timeToWait) -> bool {
 	auto ev = xEventGroupWaitBits(events, 1, pdTRUE, pdFALSE, timeToWait);
 	LockHolder holder(this->mutex);
-	level = this;
+	level = this->level;
 	return ev != 0;
     };
 
@@ -127,7 +129,7 @@ void ButtonFilterTask::initButton(){
 void ButtonFilterTask::run(void *data){
     initButton();
 
-    auto level = 0;
+    auto level = gpio_get_level((gpio_num_t)GPIO_BUTTON);
     while (true){
 	uint32_t num;
         if(xQueueReceive(evtQueue, &num, portMAX_DELAY)) {
@@ -148,14 +150,11 @@ void ButtonFilterTask::run(void *data){
 // Set up button function
 //----------------------------------------------------------------------
 bool startButtonService(){
-    if (!eventTask){
-	eventTask = new ButtonEventTask;
-	eventTask->start();
-    }
-    
-    if (!filterTask){
+    if (!eventTask || !filterTask){
 	filterTask = new ButtonFilterTask;
+	eventTask = new ButtonEventTask;
 	filterTask->start();
+	eventTask->start();
     }
 	    
     return true;

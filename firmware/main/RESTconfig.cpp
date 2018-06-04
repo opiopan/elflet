@@ -2,6 +2,8 @@
 #include <esp_system.h>
 #include <GeneralUtils.h>
 #include <json11.hpp>
+#include <iostream>
+#include <sstream>
 #include "webserver.h"
 #include "reboot.h"
 #include "Config.h"
@@ -12,10 +14,15 @@
 
 static const char tag[] = "RESTconfig";
 
+static const std::string JSON_BOARDTYPE = "BoardType";
+static const std::string JSON_BOARDVERSION = "BoardVersion";
+static const std::string JSON_FWVERSION = "FirmwareVersion";
+static const std::string JSON_FWVERSION_MAJOR = "major";
+static const std::string JSON_FWVERSION_MINOR = "minor";
+static const std::string JSON_FWVERSION_BUILD = "build";
 static const std::string JSON_NODENAME = "NodeName";
 static const std::string JSON_APSSID = "AP_SSID";
 static const std::string JSON_ADMINPASSWORD = "AdminPassword";
-static const std::string JSON_BOARDVERSION = "BoardVersion";
 static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 static const std::string JSON_COMMIT = "commit";
@@ -30,6 +37,26 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
 }
 
 enum ApplyResult {AR_ERROR, AR_OK, AR_NEEDCOMMIT};
+
+static void serializeConfig(HttpResponse* resp){
+    auto conf = elfletConfig;
+    std::stringstream ver;
+    ver << FW_VERSION_MAJOR << "." << FW_VERSION_MINOR << "."
+	<< FW_VERSION_BUILD;
+
+    auto obj = json11::Json::object({
+	    {JSON_BOARDTYPE, "elflet"},
+	    {JSON_BOARDVERSION, conf->getBoardVersion()},
+	    {JSON_FWVERSION, ver.str()},
+	    {JSON_NODENAME, conf->getNodeName()},
+	    {JSON_SSID, conf->getSSIDtoConnect()}
+	});
+    if (conf->getNodeName() != conf->getAPSSID()){
+	obj[JSON_APSSID] = conf->getAPSSID();
+    }
+    stringPtr ptr(new std::string(json11::Json(obj).dump()));
+    resp->setBody(ptr);
+}
 
 static ApplyResult applyConfig(const WebString& json, const char** msg){
     std::string err;
@@ -92,15 +119,23 @@ static bool commitAndReboot(){
 }
 
 class SetConfigHandler : public WebServerHandler {
-    bool needDigestAuthentication() override{
-	return elfletConfig->getBootMode() == Config::Normal;;
+    bool needDigestAuthentication(HttpRequest& req) override{
+	if (req.method() == HttpRequest::MethodGet){
+	    return false;
+	}else{
+	    return elfletConfig->getBootMode() == Config::Normal;
+	}
     };
 
     void recieveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	auto httpStatus = HttpResponse::RESP_200_OK;
-	if (req->method() == HttpRequest::MethodPost &&
+	auto contentType = "text/plain";
+	if (req->method() == HttpRequest::MethodGet){
+	    serializeConfig(resp);
+	    contentType = "application/json";
+	}else if (req->method() == HttpRequest::MethodPost &&
 	    req->header("Content-Type") == "application/json"){
 	    const char* msg;
 	    auto result = applyConfig(req->body(), &msg);
@@ -118,7 +153,7 @@ class SetConfigHandler : public WebServerHandler {
 	    resp->setBody("invalid request body or method");
 	}
 	resp->setHttpStatus(httpStatus);
-	resp->addHeader("Content-Type", "text/plain");
+	resp->addHeader("Content-Type", contentType);
 	resp->close();
     };
     

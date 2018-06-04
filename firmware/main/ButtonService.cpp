@@ -13,7 +13,7 @@
 
 static const char tag[] = "ButtonService";
 
-#define FILTER_DELAY (100 / portTICK_PERIOD_MS)
+#define FILTER_DELAY (50 / portTICK_PERIOD_MS)
 
 class ButtonFilterTask;
 class ButtonEventTask;
@@ -127,9 +127,9 @@ void ButtonFilterTask::initButton(){
 void ButtonFilterTask::run(void *data){
     initButton();
 
+    auto level = 0;
     while (true){
 	uint32_t num;
-	auto level = 0;
         if(xQueueReceive(evtQueue, &num, portMAX_DELAY)) {
 	    auto now = gpio_get_level((gpio_num_t)GPIO_BUTTON);
 	    if (now != level){

@@ -438,7 +438,7 @@ public:
     WebServerHandler(){};
     virtual ~WebServerHandler(){};
 
-    virtual bool needDigestAuthentication(){return false;};
+    virtual bool needDigestAuthentication(HttpRequest& req){return false;};
 
     virtual void recieveRequest(WebServerConnection& connection);
 

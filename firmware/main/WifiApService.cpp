@@ -94,7 +94,7 @@ bool startWifiApService(){
 
     ESPERR_RET(esp_wifi_start(), "esp_wifi_start");
 
-    esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
+    //esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
     
     return true;
 }

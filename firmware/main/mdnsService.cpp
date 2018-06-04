@@ -20,7 +20,7 @@ bool startmdnsService(){
     ESP_ERROR_CHECK(mdns_instance_name_set("elflet home IoT unit"));
 
     mdns_txt_item_t serviceTxtData[] = {
-        {(char*)"board", (char*)"elflet"}
+        {(char*)"board", (char*)"elflet home IoT device"}
     };
 
     //initialize service

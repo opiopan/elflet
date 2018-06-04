@@ -315,7 +315,7 @@ void WebServerConnection::makeFileResponse(){
 }
 
 bool WebServerConnection::authenticate(http_message* hm){
-    if (handler && handler->needDigestAuthentication()){
+    if (handler && handler->needDigestAuthentication(requestData)){
 	auto htdigest = server->getHtdigest();
 	fseek(htdigest->fp, 0, SEEK_SET);
 	if (!mg_http_check_digest_auth(hm, htdigest->domain,

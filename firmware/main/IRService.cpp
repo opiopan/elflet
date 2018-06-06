@@ -40,6 +40,7 @@ public:
     bool startReciever();
     bool getRecievedData(IRRC_PROTOCOL* protocol,
 			 int32_t* bits, uint8_t* data);
+    bool getRecievedDataRaw(const rmt_item32_t** data, int32_t* length);
     
 protected:
     void run(void *data) override;
@@ -95,6 +96,14 @@ void RecieverTask::run(void *data){
     }
 }
 
+bool RecieverTask::getRecievedDataRaw(
+    const rmt_item32_t** data, int32_t* length){
+    *data = IRRC_ITEMS(&irContext);
+    *length = IRRC_ITEM_LENGTH(&irContext);
+    return true;
+}
+
+
 //----------------------------------------------------------------------
 // interfaces for outer module
 //----------------------------------------------------------------------
@@ -119,4 +128,8 @@ bool startIRReciever(){
     
 bool getIRRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits, uint8_t* data){
     return rxTask->getRecievedData(protocol, bits, data);
+}
+
+bool getIRRecievedDataRaw(const rmt_item32_t** data, int32_t* length){
+    return rxTask->getRecievedDataRaw(data, length);
 }

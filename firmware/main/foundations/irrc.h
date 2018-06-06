@@ -41,7 +41,7 @@ extern bool IRRCDecodeRecievedData(IRRC* ctx,
 
 #define IRRC_PROTOCOL(ctx) ((ctx)->protocol)
 #define IRRC_ITEM_LENGTH(ctx) ((ctx)->usedLen);
-#define IRRC_ITEMS(ctx) ((const rmt_item32_t)(ctx)->buff);
+#define IRRC_ITEMS(ctx) ((const rmt_item32_t*)(ctx)->buff);
 
 #ifdef __cplusplus
 }

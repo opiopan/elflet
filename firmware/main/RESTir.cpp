@@ -18,6 +18,32 @@ static const std::string JSON_FORMATED = "FormatedIRStream";
 static const std::string JSON_PROTOCOL = "Protocol";
 static const std::string JSON_BITCOUNT = "BitCount";
 static const std::string JSON_DATA = "Data";
+static const std::string JSON_RAW = "RawIRStream";
+static const std::string JSON_LEVEL = "Level";
+static const std::string JSON_DURATION = "Duration";
+
+static void replyRecievedDataRaw(HttpRequest* req, HttpResponse* resp){
+    const rmt_item32_t* items;
+    int32_t itemNum;
+    getIRRecievedDataRaw(&items, &itemNum);
+
+    std::stringstream body;
+    body << "{\"" << JSON_RAW << "\":[";
+    for (int i = 0; i < itemNum; i++){
+	if (i > 0){
+	    body << ",";
+	}
+	body << "{\"" << JSON_LEVEL << "\":1,\""
+	     << JSON_DURATION << "\":" << items[i].duration0 << "},{\""
+	     << JSON_LEVEL << "\":0,\""
+	     << JSON_DURATION << "\":" << items[i].duration1 << "}";
+    }
+    body << "]}";
+
+    stringPtr bodyStr(new std::string(body.str()));
+    resp->setBody(bodyStr);
+    resp->close();
+}
 
 static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
     uint8_t buf[32];
@@ -26,6 +52,13 @@ static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
     if (getIRRecievedData(&protocol, &bits, buf)){
 	resp->setHttpStatus(HttpResponse::RESP_200_OK);
 	resp->addHeader("Content-Type", "application/json");
+
+	auto params = req->parameters();
+	if (params["type"] == "raw"){
+	    replyRecievedDataRaw(req, resp);
+	    return;
+	}
+	
 	if (protocol == IRRC_UNKNOWN){
 	    resp->setBody("{\"Protocol\" : \"UNKNOWN\"}");
 	}else{
@@ -61,6 +94,11 @@ class IrHandler : public WebServerHandler {
 	if (req->uri() == "/irrc/recievedData" &&
 	    req->method() == HttpRequest::MethodGet){
 	    replyRecievedData(req, resp);
+	}else if (req->uri() == "/irrc/startReciever" &&
+	    req->method() == HttpRequest::MethodGet){
+	    startIRReciever();
+	    resp->setHttpStatus(HttpResponse::RESP_200_OK);
+	    resp->close();
 	}
     };
 };

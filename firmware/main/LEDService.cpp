@@ -182,18 +182,22 @@ void LEDTask::run(void *data){
 
     reflectNewMode(portMAX_DELAY);
 
+    uint16_t lastDuty[3];
     while (true){
 	auto unit = sequence[unitIndex];
 	switch (unit.kind){
 	case SU_FADE:
 	    for (int i = 0; i < 3; i++){
+		if (lastDuty[i] == unit.duty[i]){
+		    continue;
+		}
 		ledc_set_fade_with_time(
 		    ledConfigs[i].speed_mode, ledConfigs[i].channel,
 		    unit.duty[i], unit.duration);
 		ledc_fade_start(
 		    ledConfigs[i].speed_mode, ledConfigs[i].channel,
 		    i < 3 ? LEDC_FADE_NO_WAIT : LEDC_FADE_WAIT_DONE);
-		
+		lastDuty[i] = unit.duty[i];
 	    }
 	    vTaskDelay((unit.duration + 50)/ portTICK_PERIOD_MS);
 	    unitIndex++;

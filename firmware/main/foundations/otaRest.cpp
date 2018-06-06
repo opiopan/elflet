@@ -36,19 +36,19 @@ public:
     OTAWebHandler(const char* vkey, bool auth);
     virtual ~OTAWebHandler();
 
-    virtual bool needDigestAuthentication();
+    virtual bool needDigestAuthentication(HttpRequest& req) override;
 
-    virtual void recieveRequest(WebServerConnection& connection);
+    virtual void recieveRequest(WebServerConnection& connection) override;
 
-    virtual void beginMultipart(WebServerConnection& connection);
-    virtual void endMultipart(WebServerConnection& connection);
+    virtual void beginMultipart(WebServerConnection& connection) override;
+    virtual void endMultipart(WebServerConnection& connection) override;
 
     virtual void beginMultipartData(WebServerConnection& connection,
-				    const char* key);
+				    const char* key) override;
     virtual void updateMultipartData(WebServerConnection& connection,
 				     const char* key,
-				     const void* data, size_t length);
-    virtual void endMultipartData(WebServerConnection& connection);
+				     const void* data, size_t length) override;
+    virtual void endMultipartData(WebServerConnection& connection) override;
 };
 
 static void buildInvalidResp(HttpResponse* resp){
@@ -65,7 +65,7 @@ OTAWebHandler::OTAWebHandler(const char* vkey, bool auth) :
 OTAWebHandler::~OTAWebHandler(){
 }
     
-bool OTAWebHandler::needDigestAuthentication(){
+bool OTAWebHandler::needDigestAuthentication(HttpRequest& req){
     return needDigestAuth;
 }
 

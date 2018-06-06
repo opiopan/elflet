@@ -8,6 +8,7 @@
 #include "irserver.h"
 #include "LEDService.h"
 #include "ButtonService.h"
+#include "IRService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -50,12 +51,13 @@ void MainTask::run(void *data){
     }
 
     //--------------------------------------------------------------
-    // start user interface services
+    // start peripheral services
     //--------------------------------------------------------------
     startButtonService();
+    startIRService();
     
     //--------------------------------------------------------------
-    // start network related services
+    // start network services
     //--------------------------------------------------------------
     if (mode == Config::FactoryReset || mode == Config::Configuration){
 	ledSetDefaultMode(

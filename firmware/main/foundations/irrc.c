@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <esp_log.h>
 #include "freertos/FreeRTOS.h"
 #include "irrc.h"
@@ -15,8 +16,10 @@ static const char tag[] = "irrc";
 
 typedef bool (*MakeSendDataFunc)(IRRC* ctx, uint8_t* data, int32_t length);
 static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t length);
-//static bool makeSendDataSony(IRRC* ctx, uint8_t* data, int32_t length);
 
+//----------------------------------------------------------------------
+// Protocol definition
+//----------------------------------------------------------------------
 static struct ProtocolDef_t{
     const char*  name;
     int32_t      carrier;
@@ -124,6 +127,9 @@ static struct ProtocolDef_t{
     }
 };
     
+//----------------------------------------------------------------------
+// transmitter implementation
+//----------------------------------------------------------------------
 static void initTx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
 {
     ctx->rmt = (rmt_config_t){
@@ -189,14 +195,122 @@ static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t bits)
     return true;
 }
 
+//----------------------------------------------------------------------
+// reciever implementation
+//----------------------------------------------------------------------
+static void initRx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
+{
+    ctx->rmt = (rmt_config_t){
+	.rmt_mode = RMT_MODE_RX,
+	.channel = RMT_RX_CHANNEL,
+	.gpio_num = gpio,
+	.mem_block_num = 4,
+	.clk_div = RMT_CLK_DIV,
+	.rx_config = {
+	    .filter_en = false,
+	    .idle_threshold = 10000,
+	}
+    };
+    
+    rmt_config(&ctx->rmt);
+    rmt_driver_install(ctx->rmt.channel, 2048, 0);
+}
+
+typedef struct {
+    int32_t max;
+    int32_t min;
+} RANGE;
+#define RANGEVAL(v) {(v) * 1.2, (v) * 0.80}
+#define INRANGE(v, r) ((v) < (r).max && (v) > (r).min)
+static RANGE necUnitRange = RANGEVAL(NEC_UNIT);
+static RANGE necLongRange = RANGEVAL(NEC_UNIT * 3);
+static RANGE necLeader0Range = RANGEVAL(NEC_UNIT * 16);
+static RANGE necLeader1Range = RANGEVAL(NEC_UNIT * 8);
+static RANGE sonyUnitRange = RANGEVAL(SONY_UNIT);
+static RANGE sonyLongRange = RANGEVAL(SONY_UNIT * 2);
+static RANGE sonyLeader0Range = RANGEVAL(SONY_UNIT * 4);
+static RANGE sonyLeader1Range = RANGEVAL(SONY_UNIT);
+
+static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
+    rmt_item32_t* items = ctx->buff;
+
+    if (ctx->usedLen == 0){
+	return IRRC_UNKNOWN;
+    }
+    
+    if (INRANGE(items[0].duration0, necLeader0Range) &&
+	INRANGE(items[0].duration1, necLeader1Range)){
+	// it seems NEC format
+	printf("nec format?\n");
+	for (int i = 1; i < ctx->usedLen - 1; i++){
+	    if (INRANGE(items[i].duration0, necUnitRange) &&
+		(INRANGE(items[i].duration1, necUnitRange) ||
+		 INRANGE(items[i].duration1, necLongRange))){
+		continue;
+	    }else{
+		return IRRC_UNKNOWN;
+	    }
+	}
+	return IRRC_NEC;
+    }
+    if (INRANGE(items[0].duration0, sonyLeader0Range) &&
+	INRANGE(items[0].duration1, sonyLeader1Range)){
+	// it seems SONY format
+	printf("sony format?\n");
+	for (int i = 1; i < ctx->usedLen - 1; i++){
+	    if (INRANGE(items[i].duration1, sonyUnitRange) &&
+		(INRANGE(items[i].duration0, sonyUnitRange) ||
+		 INRANGE(items[i].duration0, sonyLongRange))){
+		continue;
+	    }else{
+		return IRRC_UNKNOWN;
+	    }
+	}
+	return IRRC_SONY;
+    }else{
+	// in this case, it might AHEA format
+	printf("AHEA format?\n");
+	int sum = 0;
+	for (int i = 1; i < ctx->usedLen - 1; i++){
+	    sum += items[i].duration0;
+	}
+	int unit = sum / (ctx->usedLen - 2);
+	printf("unit length: %d\n", unit);
+	RANGE unitRange = RANGEVAL(unit);
+	RANGE longRange = RANGEVAL(unit * 3);
+	RANGE leader0Range = RANGEVAL(unit * 8);
+	RANGE leader1Range = RANGEVAL(unit * 4);
+	if (INRANGE(items[0].duration0, leader0Range) &&
+	    INRANGE(items[0].duration1, leader1Range)){
+	    printf("leader is OK\n");
+	    for (int i = 1; i < ctx->usedLen - 1; i++){
+		if (INRANGE(items[i].duration0, unitRange) &&
+		    (INRANGE(items[i].duration1, unitRange) ||
+		     INRANGE(items[i].duration1, longRange))){
+		    continue;
+		}else{
+		    printf("data NG: pos(%d) : %d, %d\n",
+			   i, items[i].duration0, items[i].duration1);
+		    return IRRC_UNKNOWN;
+		}
+	    }
+	    return IRRC_AEHA;
+	}
+    }
+    
+    return IRRC_UNKNOWN;
+}
+
+//----------------------------------------------------------------------
+// interface for outer code
+//----------------------------------------------------------------------
 bool IRRCInit(IRRC* ctx, IRRC_MODE mode, IRRC_PROTOCOL protocol, int32_t gpio)
 {
-    configASSERT(mode == IRRC_TX);
     configASSERT(protocol == IRRC_NEC || protocol == IRRC_AEHA ||
 		 protocol == IRRC_SONY);
 
     *ctx = (IRRC){
-	.protocol = protocol,
+	.protocol = mode == IRRC_TX ? protocol : IRRC_UNKNOWN,
 	.mode = mode,
 	.gpio = gpio,
 	.buff = malloc(CMDBUFFLEN),
@@ -205,7 +319,11 @@ bool IRRCInit(IRRC* ctx, IRRC_MODE mode, IRRC_PROTOCOL protocol, int32_t gpio)
     };
 
     if (ctx->buff){
-	initTx(ctx, protocol, gpio);
+	if (ctx->mode == IRRC_TX){
+	    initTx(ctx, protocol, gpio);
+	}else{
+	    initRx(ctx, protocol, gpio);
+	}
 	return true;
     }else{
 	return false;
@@ -241,4 +359,75 @@ void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bits)
 	rmt_write_items(ctx->rmt.channel, ctx->buff, ctx->usedLen, 1);
 	rmt_wait_tx_done(ctx->rmt.channel, portMAX_DELAY);
     }
+}
+
+bool IRRCRecieve(IRRC* ctx, int32_t timeout)
+{
+    ESP_LOGI(tag,"start IR recieving");
+    ctx->usedLen = 0;
+
+    RingbufHandle_t rb = NULL;
+    rmt_get_ringbuf_handle(ctx->rmt.channel, &rb);
+
+    rmt_rx_start(ctx->rmt.channel, 1);
+    uint32_t rx_size;
+    rmt_item32_t *items =
+	(rmt_item32_t*)xRingbufferReceive(rb, &rx_size,
+					  timeout / portTICK_PERIOD_MS);
+    rmt_rx_stop(ctx->rmt.channel);
+
+    if (items){
+	ctx->usedLen = rx_size / sizeof(*items);
+	memcpy(ctx->buff, items, rx_size);
+	ESP_LOGI(tag,"%d unit data recieved", ctx->usedLen);
+	ctx->protocol = presumeProtocol(ctx);
+	ESP_LOGI(tag, "it seems %s format",
+		 ctx->protocol == IRRC_NEC ? "NEC" : 
+		 ctx->protocol == IRRC_AEHA ? "AEHA" : 
+		 ctx->protocol == IRRC_SONY ? "SONY" :
+		 "unknown");
+	vRingbufferReturnItem(rb, (void*) items);
+	return true;
+    }else{
+	ESP_LOGI(tag,"timeout, no data recieved");
+	return false;
+    }
+}
+
+bool IRRCDecodeRecievedData(IRRC* ctx,
+			    IRRC_PROTOCOL* protocol,
+			    uint8_t* data, int32_t* bits)
+{
+    if (ctx->usedLen == 0){
+	return false;
+    }
+
+    *protocol = ctx->protocol;
+    if (ctx->protocol == IRRC_UNKNOWN){
+	*bits = 0;
+	return true;
+    }
+
+    memset(data, 0, (*bits + 7) / 8);
+    int32_t dataBits = ctx->protocol == IRRC_SONY ?
+	ctx->usedLen - 1 : ctx->usedLen -2;
+    for (int i = 0; i < dataBits; i++){
+	bool on = false;
+	if (ctx->protocol == IRRC_SONY){
+	    if (ctx->buff[i + 1].duration0 > SONY_UNIT * 1.5){
+		on = true;
+	    }
+	}else{
+	    if (ctx->buff[i + 1].duration1 > ctx->buff[i + 1].duration0 * 2){
+		on = true;
+	    }
+	}
+	if (i < *bits && on){
+	    data[i / 8] |= 1 << (i % 8);
+	}
+    }
+
+    *bits = dataBits;
+    
+    return true;
 }

@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 typedef enum {
+    IRRC_UNKNOWN = -1,
     IRRC_NEC = 0,
     IRRC_AEHA,
     IRRC_SONY
@@ -32,7 +33,15 @@ extern bool IRRCInit(IRRC* ctx, IRRC_MODE mode,
 		     IRRC_PROTOCOL protocol, int32_t gpio);
 extern void IRRCDeinit(IRRC* ctx);
 extern void IRRCChangeProtocol(IRRC* ctx, IRRC_PROTOCOL protocol);
-extern void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bitlength);
+extern void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bits);
+extern bool IRRCRecieve(IRRC* ctx, int32_t timeout);
+extern bool IRRCDecodeRecievedData(IRRC* ctx,
+				   IRRC_PROTOCOL* protocol,
+				   uint8_t* data, int32_t* bits);
+
+#define IRRC_PROTOCOL(ctx) ((ctx)->protocol)
+#define IRRC_ITEM_LENGTH(ctx) ((ctx)->usedLen);
+#define IRRC_ITEMS(ctx) ((const rmt_item32_t)(ctx)->buff);
 
 #ifdef __cplusplus
 }

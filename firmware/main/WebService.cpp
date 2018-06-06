@@ -27,6 +27,7 @@ bool startWebService(){
 	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true),
 	"/manage/otaupdate");
     registerConfigRESTHandler(webserver);
+    registerIrRESTHandler(webserver);
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?
 	"80" : "192.168.55.01:80");

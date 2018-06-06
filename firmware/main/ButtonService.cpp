@@ -6,6 +6,7 @@
 #include <freertos/event_groups.h>
 #include "Mutex.h"
 #include "Config.h"
+#include "IRService.h"
 #include "BUttonService.h"
 
 #include "boardconfig.h"
@@ -13,7 +14,7 @@
 
 static const char tag[] = "ButtonService";
 
-#define FILTER_DELAY (70 / portTICK_PERIOD_MS)
+#define FILTER_DELAY (30 / portTICK_PERIOD_MS)
 
 class ButtonFilterTask;
 class ButtonEventTask;
@@ -68,7 +69,7 @@ void ButtonEventTask::run(void *data){
 	printf("button down\n");
 
 	while (level){
-	    if (!waitForEvent(6 * 1000 / portTICK_PERIOD_MS)){
+	    if (!waitForEvent(5 * 1000 / portTICK_PERIOD_MS)){
 		auto mode = elfletConfig->getBootMode();
 		ESP_LOGI(tag,
 			 "long button press detected, boot mode is changing");
@@ -84,7 +85,10 @@ void ButtonEventTask::run(void *data){
 	    }else{
 		printf("button up\n");
 		auto mode = elfletConfig->getBootMode();
-		if (mode == Config::Configuration){
+		if (mode == Config::Normal){
+		    ESP_LOGI(tag, "start IR reciever");
+		    startIRReciever();
+		}else if (mode == Config::Configuration){
 		    ESP_LOGI(tag, "go back to normal mode");
 		    esp_restart();
 		}

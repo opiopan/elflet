@@ -21,6 +21,10 @@ static struct DictEnt{
 };
 
 const char* findMimeType(const WebString& path){
+    if (path == "/"){
+	return "text/html";
+    }
+    
     int pos;
     for (pos = path.length() - 1; pos >= 0; pos--){
 	if (path.data()[pos] == '.'){

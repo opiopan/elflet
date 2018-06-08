@@ -14,8 +14,9 @@ static const char tag[] = "irrc";
 
 #define RMT_CLK_DIV 80 /* APB clock is 80Mhz and RMT tick set to 1Mhz */
 
-typedef bool (*MakeSendDataFunc)(IRRC* ctx, uint8_t* data, int32_t length);
-static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t length);
+typedef bool (*MakeSendDataFunc)(IRRC* ctx,
+				 const uint8_t* data, int32_t length);
+static bool makeSendData(IRRC* ctx, const uint8_t* data, int32_t length);
 
 //----------------------------------------------------------------------
 // Protocol definition
@@ -163,7 +164,7 @@ static void changeProtocolTx(IRRC* ctx, IRRC_PROTOCOL protocol)
 	RMT_CARRIER_LEVEL_HIGH));
 }
 
-static bool makeSendData(IRRC* ctx, uint8_t* data, int32_t bits)
+static bool makeSendData(IRRC* ctx, const uint8_t* data, int32_t bits)
 {
     if (bits < 1){
 	ESP_LOGE(tag, "invalid data length");
@@ -350,7 +351,7 @@ void IRRCChangeProtocol(IRRC* ctx, IRRC_PROTOCOL protocol)
     }
 }
 
-void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bits)
+void IRRCSend(IRRC* ctx, const uint8_t* data, int32_t bits)
 {
     ESP_LOGI(tag, "IRRCSend: format[%s] bits[%d]",
 	     ProtocolDef[ctx->protocol].name, bits);

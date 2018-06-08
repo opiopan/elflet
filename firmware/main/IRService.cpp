@@ -21,6 +21,78 @@ static RecieverTask* rxTask;
 static TransmitterTask* txTask;
 
 //----------------------------------------------------------------------
+// transmitter task inmprementation
+//----------------------------------------------------------------------
+class TransmitterTask : public Task {
+protected:
+    enum Status{ST_IDLE, ST_RUNNING};
+    static const int EV_WAKE_SERVER = 1;
+
+    Status status;
+    Mutex mutex;
+    EventGroupHandle_t events;
+    IRRC irContext;
+    IRRC_PROTOCOL protocol;
+    const uint8_t* data;
+    int32_t bits;
+
+public:
+    TransmitterTask();
+    virtual ~TransmitterTask();
+
+    bool sendData(IRRC_PROTOCOL protocol, int32_t bits, const uint8_t* data);
+
+protected:
+    void run(void *data) override;
+};
+
+TransmitterTask::TransmitterTask(): status(ST_IDLE){
+    events = xEventGroupCreate();
+    IRRCInit(&irContext, IRRC_TX, IRRC_NEC, GPIO_IRLED);
+}
+
+TransmitterTask::~TransmitterTask(){
+    IRRCDeinit(&irContext);
+}
+
+bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
+			       int32_t bits, const uint8_t* data){
+    
+    LockHolder holder(mutex);
+    if (status != ST_IDLE){
+	return false;
+    }
+    status = ST_RUNNING;
+    this->protocol = protocol;
+    this->bits = bits;
+    this->data = data;
+    xEventGroupSetBits(events, EV_WAKE_SERVER);
+    return true;
+}
+
+void TransmitterTask::run(void *){
+    while (true){
+	mutex.lock();
+	while (status == ST_IDLE){
+	    mutex.unlock();
+	    xEventGroupWaitBits(events, EV_WAKE_SERVER,
+				pdTRUE, pdFALSE,
+				portMAX_DELAY);
+	    mutex.lock();
+	}
+	mutex.unlock();
+
+	IRRCChangeProtocol(&irContext, protocol);
+	IRRCSend(&irContext, data, bits);
+
+	mutex.lock();
+	status = ST_IDLE;
+	mutex.unlock();
+    }
+}
+
+
+//----------------------------------------------------------------------
 // reciever task inmprementation
 //----------------------------------------------------------------------
 class RecieverTask : public Task {
@@ -74,6 +146,13 @@ bool RecieverTask::getRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits,
     return IRRCDecodeRecievedData(&irContext, protocol, data, bits);
 }
 
+bool RecieverTask::getRecievedDataRaw(
+    const rmt_item32_t** data, int32_t* length){
+    *data = IRRC_ITEMS(&irContext);
+    *length = IRRC_ITEM_LENGTH(&irContext);
+    return true;
+}
+
 void RecieverTask::run(void *data){
     while (true){
 	mutex.lock();
@@ -96,14 +175,6 @@ void RecieverTask::run(void *data){
     }
 }
 
-bool RecieverTask::getRecievedDataRaw(
-    const rmt_item32_t** data, int32_t* length){
-    *data = IRRC_ITEMS(&irContext);
-    *length = IRRC_ITEM_LENGTH(&irContext);
-    return true;
-}
-
-
 //----------------------------------------------------------------------
 // interfaces for outer module
 //----------------------------------------------------------------------
@@ -114,11 +185,14 @@ bool startIRService(){
 
     rxTask = new RecieverTask;
     rxTask->start();
+    txTask = new TransmitterTask;
+    txTask->start();
     
     return true;;
 }
 
 bool sendIRData(IRRC_PROTOCOL protocol, int32_t bits, const uint8_t* data){
+    txTask->sendData(protocol, bits, data);
     return false;
 }
 

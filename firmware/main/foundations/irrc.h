@@ -33,7 +33,7 @@ extern bool IRRCInit(IRRC* ctx, IRRC_MODE mode,
 		     IRRC_PROTOCOL protocol, int32_t gpio);
 extern void IRRCDeinit(IRRC* ctx);
 extern void IRRCChangeProtocol(IRRC* ctx, IRRC_PROTOCOL protocol);
-extern void IRRCSend(IRRC* ctx, uint8_t* data, int32_t bits);
+extern void IRRCSend(IRRC* ctx, const uint8_t* data, int32_t bits);
 extern bool IRRCRecieve(IRRC* ctx, int32_t timeout);
 extern bool IRRCDecodeRecievedData(IRRC* ctx,
 				   IRRC_PROTOCOL* protocol,

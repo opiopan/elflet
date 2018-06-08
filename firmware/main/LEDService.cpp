@@ -280,4 +280,3 @@ void ledSetDefaultMode(enum LED_DefaultMode mode){
 void ledSetBlinkMode(enum LED_BlinkMode mode){
     ledTask->setBlinkMode(mode);
 }
-

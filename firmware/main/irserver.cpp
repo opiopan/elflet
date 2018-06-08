@@ -5,8 +5,8 @@
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
 #include "Mutex.h"
-#include "irrc.h"
 #include "irserver.h"
+#include "IRService.h"
 #include "irserverProtocol.h"
 #include "boardconfig.h"
 
@@ -15,8 +15,6 @@
 static const char tag[] = "irserver";
 static const int MULTIPLICITY = 4;
 static const int COMM_TIMEOUT = 5;
-
-static IRRC irrc;
 
 //--------------------------------------------------------------------
 // Class definitions
@@ -249,9 +247,8 @@ bool CommunicationTask::cmdTxFormat(const IRSHeader* hdr,
 	    goto END;
 	}
 
-	IRRCChangeProtocol(&irrc, protocol);
 	unsigned char* cbuf = (unsigned char*)(dhdr + 1);
-	IRRCSend(&irrc, cbuf, bits);
+	sendIRData(protocol, bits, cbuf);
     }
 
 END:
@@ -399,8 +396,6 @@ void IRServerTask::run(void *data)
 void startIRServer()
 {
     if (server == NULL){
-	IRRCInit(&irrc, IRRC_TX, IRRC_NEC, GPIO_IRLED);
-	
 	server = new IRServerTask();
 	server->init(IRSERVER_PORT);
 	server->setStackSize(8000);

@@ -53,6 +53,8 @@ public:
 
 class BME280 {
 protected:
+    bool working;
+    
     struct {
 	uint16_t dig_T1;
 	int16_t  dig_T2;
@@ -94,6 +96,8 @@ public:
     void init(BME280Config* config = NULL);
     void start(bool asForcedMode = false);
     void stop();
+
+    bool isWorking(){return working;};
 
     void measure();
 

@@ -81,24 +81,30 @@ void SensorTask::run(void *data){
 			pdTRUE, pdFALSE,
 			portMAX_DELAY);
 
-    while (true){
-	bme280->start(true);
-	vTaskDelay(100 / portTICK_PERIOD_MS);
-	bme280->measure();
-	Time now;
-
-	{
-	    LockHolder holder(mutex);
-	    enableFlag =
+    int workingSensors = 0;
+    if (bme280->isWorking()){
+	workingSensors = 
 		SensorValue::TEMPERATURE |
 		SensorValue::HUMIDITY |
 		SensorValue::PRESSURE;
+    }
+    
+    while (true){
+	if (bme280->isWorking()){
+	    bme280->start(true);
+	    vTaskDelay(100 / portTICK_PERIOD_MS);
+	    bme280->measure();
+	    Time now;
+	}
+
+	{
+	    LockHolder holder(mutex);
+	    enableFlag = workingSensors;
 	    temperature = bme280->getTemperature();
 	    humidity = bme280->getHumidity();
 	    pressure = bme280->getPressure();
 	}
 	
-
 	/*
 	printf("%s Temp[%.1f dig] Hum[%.1f %%] Press[%.1f hPa]\n",
 	       now.format(Time::SIMPLE_DATETIME),

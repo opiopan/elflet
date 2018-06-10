@@ -35,14 +35,20 @@ void BME280::init(BME280Config* newConfig) {
     if (newConfig){
 	config = *newConfig;
     }
+
+    auto id = readRegister(REG_ID);
+    if (id != 0x60){
+	ESP_LOGE(tag, "BME280 might not be installed on I2C bus");
+	return;
+    }
+    working = true;
+    
     stop();
     writeRegister(
 	REG_CONFIG,
 	(config.t_sb << 5) | (config.filter << 2) | config.enable3WireSPI);
     writeRegister(REG_CTRL_HUM, config.osrsHumidity);
 
-    printf("BME280: ctrl_meas = 0x%.2x\n", readRegister(REG_CTRL_MEAS));
-    
     // retrieve compensation parameters
     cdata.dig_T1 = readUint16(0x88, 0x89);
     cdata.dig_T2 = readInt16(0x8a, 0x8b);

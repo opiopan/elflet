@@ -16,11 +16,18 @@ public:
     Time();
     Time(time_t time);
 
+    Time& operator = (time_t time){this->time = time; return *this;};
+    Time& operator = (const Time& src){time = src.time; return *this;};
+
     enum FORMAT{
 	SIMPLE_DATE,
 	SIMPLE_TIME,
-	SIMPLE_DATETIME
+	SIMPLE_DATETIME,
+	RFC1123
     };
     
     const char* format(FORMAT type);
+    
+protected:
+    const char* formatRFC1123();
 };

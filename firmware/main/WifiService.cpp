@@ -11,6 +11,7 @@
 #include "mdnsService.h"
 #include "WifiService.h"
 #include "LEDService.h"
+#include "TimeService.h"
 #include "reboot.h"
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -69,6 +70,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
+	notifySMTPserverAccesivility();
         break;
     case SYSTEM_EVENT_AP_STA_GOT_IP6:
         break;

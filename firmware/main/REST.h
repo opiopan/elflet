@@ -3,3 +3,4 @@
 
 void registerConfigRESTHandler(WebServer* server);
 void registerIrRESTHandler(WebServer* server);
+void registerSensorRESTHandler(WebServer* server);

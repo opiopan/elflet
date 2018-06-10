@@ -9,6 +9,8 @@
 #include "LEDService.h"
 #include "ButtonService.h"
 #include "IRService.h"
+#include "SensorService.h"
+#include "TimeService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -53,8 +55,10 @@ void MainTask::run(void *data){
     //--------------------------------------------------------------
     // start peripheral services
     //--------------------------------------------------------------
+    startTimeService();
     startButtonService();
     startIRService();
+    startSensorService();
     
     //--------------------------------------------------------------
     // start network services

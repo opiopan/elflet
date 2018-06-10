@@ -26,12 +26,23 @@ static const std::string JSON_ADMINPASSWORD = "AdminPassword";
 static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 static const std::string JSON_COMMIT = "commit";
+static const std::string JSON_TIMEZONE = "Timezone";
+static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
 
 static bool ApplyValue(const json11::Json& json, const std::string& key,
 		       bool (*apply)(const std::string&)){
     auto obj = json[key];
     if (obj.is_string()){
 	return apply(obj.string_value());
+    }
+    return true;
+}
+
+static bool ApplyValue(const json11::Json& json, const std::string& key,
+		       bool (*apply)(int32_t)){
+    auto obj = json[key];
+    if (obj.is_number()){
+	return apply(obj.int_value());
     }
     return true;
 }
@@ -49,7 +60,9 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_BOARDVERSION, conf->getBoardVersion()},
 	    {JSON_FWVERSION, ver.str()},
 	    {JSON_NODENAME, conf->getNodeName()},
-	    {JSON_SSID, conf->getSSIDtoConnect()}
+	    {JSON_SSID, conf->getSSIDtoConnect()},
+	    {JSON_TIMEZONE, conf->getTimezone()},
+	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
 	});
     if (conf->getNodeName() != conf->getAPSSID()){
 	obj[JSON_APSSID] = conf->getAPSSID();
@@ -99,6 +112,13 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setWifiPassword(v);}) ||
 	(*msg = "password to connect WiFi must be less than 64 bytes");
+    ApplyValue(input, JSON_TIMEZONE,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setTimezone(v);});
+    ApplyValue(input, JSON_SENSORFREQUENCY,
+	       [](int32_t v) -> bool{
+		   return elfletConfig->setSensorFrequency(v);}) ||
+	(*msg = "frequency of sensor update  must be grater than 0");
 
     bool commit =
 	input[JSON_COMMIT].is_bool() && input[JSON_COMMIT].bool_value();

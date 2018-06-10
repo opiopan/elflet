@@ -28,6 +28,7 @@ bool startWebService(){
 	"/manage/otaupdate");
     registerConfigRESTHandler(webserver);
     registerIrRESTHandler(webserver);
+    registerSensorRESTHandler(webserver);
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?
 	"80" : "192.168.55.01:80");

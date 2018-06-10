@@ -5,6 +5,7 @@
 #include <nvs.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <iostream>
 #include <fstream>
 #include <GeneralUtils.h>
 #include <CPPNVS.h>
@@ -34,11 +35,15 @@ static const std::string JSON_ADMINPASSWORD = "AdminPassword";
 static const std::string JSON_BOARDVERSION = "BoardVersion";
 static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
+static const std::string JSON_TIMEZONE = "Timezone";
+static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
 
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
 
 Config* elfletConfig = NULL;
+
+const char* Config::defaultTimezone = "JST-9";
 
 //----------------------------------------------------------------------
 // initialize global configuration
@@ -85,7 +90,8 @@ bool initConfig(){
 //----------------------------------------------------------------------
 // Config object initialize / deinitialize
 //----------------------------------------------------------------------
-Config::Config() : fromStorage(false), isDirtyBootMode(false), isDirty(false){
+Config::Config() : fromStorage(false), isDirtyBootMode(false), isDirty(false),
+		   sensorFrequency(0){
 }
 
 Config::~Config(){
@@ -162,6 +168,8 @@ bool Config::load(){
     applyValue(config, JSON_ADMINPASSWORD, adminPassword);
     applyValue(config, JSON_SSID, ssidToConnect);
     applyValue(config, JSON_WIFIPASSWORD, wifiPassword);
+    applyValue(config, JSON_TIMEZONE, timezone);
+    applyValue(config, JSON_SENSORFREQUENCY, sensorFrequency);
 
     isDirty = false;
     isDirtyBootMode = false;
@@ -195,7 +203,9 @@ bool Config::commit(){
 		{JSON_APSSID, apssid},
 		{JSON_ADMINPASSWORD, adminPassword},
 		{JSON_SSID, ssidToConnect},
-		{JSON_WIFIPASSWORD, wifiPassword}
+		{JSON_WIFIPASSWORD, wifiPassword},
+		{JSON_TIMEZONE, timezone},
+		{JSON_SENSORFREQUENCY, sensorFrequency},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -269,6 +279,20 @@ bool Config::setWifiPassword(const std::string& pass){
     }
     wifiPassword = pass;
     isDirty = true;
+    return true;
+}
+
+bool Config::setTimezone(const std::string& tz){
+    timezone = tz;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setSensorFrequency(int32_t frequency){
+    if (frequency < 0){
+	return false;
+    }
+    sensorFrequency = frequency;
     return true;
 }
 

@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo openocd-esp32 -f cfg/esp32.cfg 

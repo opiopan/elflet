@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "$1" = "download" ];then
+    mode=0
+else
+    mode=1
+fi
+
+gpio -g mode 18 out
+gpio -g mode 21 out
+
+gpio -g write 21 $mode 
+gpio -g write 18 0
+
+sleep 0.1
+
+gpio -g write 18 1
+
+sleep 0.2
+
+gpio -g write 21 1

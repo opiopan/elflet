@@ -1,0 +1,2 @@
+#!/bin/sh
+screen /dev/ttyAMA0 115200

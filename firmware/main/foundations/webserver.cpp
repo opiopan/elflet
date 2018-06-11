@@ -1,6 +1,7 @@
 #include <esp_log.h>
 #include <iostream>
 #include <sstream>
+#include "TimeObj.h"
 #include "webserver.h"
 
 #include "sdkconfig.h"
@@ -162,11 +163,15 @@ static const char* httpStatusStr[] = {
     "505 HTTP Version Not Supported"
 };
 
-void HttpResponse::reset(){
+void HttpResponse::reset(const WebString& serverName){
     status = ST_OPEN;
     httpStatus = RESP_200_OK;
     headerData.clear();
     bodyData = "";
+
+    if (serverName.length() > 0){
+	headerData["Server"] = serverName;
+    }
 }
 
 void HttpResponse::close(Status status){
@@ -178,16 +183,31 @@ void HttpResponse::flush(mg_connection* con){
 	ESP_LOGE(tag, "HTTP response object is not closed");
     }
     if (status != ST_FLUSHED){
+	Time now;
+	headerData["Date"] = now.format(Time::RFC1123);
+	
+	bool contentLength = false;
 	std::stringstream resp;
-	resp << "HTTP/1.0 " << httpStatusStr[httpStatus] << std::endl;
+	resp << "HTTP/1.1 " << httpStatusStr[httpStatus] << std::endl;
 	for (auto i = headerData.begin(); i != headerData.end(); i++){
 	    const WebString key = i->first;
 	    resp << key << ": " << i->second << "\r\n";
+	    if (key == "Content-Length"){
+		contentLength = true;
+	    }
+	}
+	if (!contentLength){
+	    resp << "Content-Length: " << bodyData.length() << "\r\n";
 	}
 	resp << "\r\n";
 	mg_send(con, resp.str().data(), resp.str().length());	
 	if (bodyData.length() > 0){
-	    mg_send(con, bodyData.data(), bodyData.length());
+	    const int flagment = 512;
+	    for (int p = 0; p < bodyData.length(); p += flagment){
+		int sendSize = bodyData.length() - p;
+		sendSize = sendSize > flagment ? flagment : sendSize;
+		mg_send(con, bodyData.data() + p , sendSize);
+	    }
 	}
     }
     status = ST_FLUSHED;
@@ -201,7 +221,7 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
     case MG_EV_HTTP_REQUEST: {
 	auto hm = (http_message*)p;
 	requestData.reset(hm, false);
-	responseData.reset();
+	responseData.reset(server->getServerName());
 	handler = server->findHandler(requestData.uri());
 	status = CON_COMPLETE;
 	authenticate(hm);
@@ -211,7 +231,7 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	status = CON_MPART_INIT;
 	auto hm = (http_message*)p;
 	requestData.reset(hm, true);
-	responseData.reset();
+	responseData.reset(server->getServerName());
 	handler = server->findHandler(requestData.uri());
 	if (!authenticate(hm)){
 	    status = CON_COMPLETE;
@@ -301,7 +321,7 @@ void WebServerConnection::makeFileResponse(){
 	    responseData.setHttpStatus(HttpResponse::RESP_200_OK);
 	    responseData.setBody(content);
 	    auto type = findMimeType(requestData.uri());
-	    responseData.addHeader(WebString("Contet-Type"), type);
+	    responseData.addHeader(WebString("Content-Type"), type);
 	    responseData.close();
 	}
     }

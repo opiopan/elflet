@@ -7,3 +7,6 @@ CXXFLAGS	+= -DMG_ENABLE_HTTP_STREAMING_MULTIPART
 
 COMPONENT_SRCDIRS                = . foundations
 COMPONENT_ADD_INCLUDEDIRS        = . foundations
+
+COMPONENT_EMBED_TXTFILES	:= html/index.html html/jquery-3.3.1.min.js \
+				   html/elflet.css

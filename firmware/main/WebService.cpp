@@ -1,13 +1,16 @@
 #include <esp_log.h>
 #include <esp_system.h>
 #include <string.h>
+#include <iostream>
+#include <sstream>
 #include <GeneralUtils.h>
-#include <webserver.h>
-#include <htdigestfs.h>
+#include "webserver.h"
+#include "htdigestfs.h"
 #include "ota.h"
 #include "Config.h"
 #include "WebService.h"
 #include "REST.h"
+#include "WebContents.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -29,6 +32,11 @@ bool startWebService(){
     registerConfigRESTHandler(webserver);
     registerIrRESTHandler(webserver);
     registerSensorRESTHandler(webserver);
+    webserver->setContentProvider(createContentProvider());
+    std::stringstream name;
+    name << "elflet " << FW_VERSION_MAJOR << "."
+	 << FW_VERSION_MINOR << "." << FW_VERSION_BUILD;
+    webserver->setServerName(stringPtr(new std::string(name.str())));
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?
 	"80" : "192.168.55.01:80");

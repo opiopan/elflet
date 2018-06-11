@@ -326,7 +326,7 @@ public:
     HttpResponse() : status(ST_OPEN){};
     virtual ~HttpResponse(){};
 
-    void reset();
+    void reset(const WebString& serverName);
     void close(Status status = ST_CLOSE);
     void flush(mg_connection* con);
     Status getStatus(){
@@ -403,6 +403,7 @@ protected:
 	FILE* fp;
 	const char* domain;
     } htdigest;
+    WebString serverName;
     
 public:
     WebServer();
@@ -424,6 +425,13 @@ public:
     };
     const HTDIGEST* getHtdigest() const{
 	return &htdigest;
+    };
+
+    void setServerName(const WebString& name){
+	serverName = name;
+    };
+    const WebString& getServerName() const{
+	return serverName;
     };
     
     bool startServer(const char* address);

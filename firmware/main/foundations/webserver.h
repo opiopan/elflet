@@ -321,9 +321,10 @@ protected:
     HttpStatus httpStatus;
     std::map<WebString, WebString> headerData;
     WebString bodyData;
-
+    int flushedBodySize;
+    
 public:
-    HttpResponse() : status(ST_OPEN){};
+    HttpResponse() : status(ST_OPEN), flushedBodySize(0){};
     virtual ~HttpResponse(){};
 
     void reset(const WebString& serverName);

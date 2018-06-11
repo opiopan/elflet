@@ -25,7 +25,7 @@ typedef std::map<WebString, BinContent> ContentMap;
 #define BINDEF(n) \
     extern const char n ## _start[] asm(" _binary_" #n  "_start");\
     extern const char n ## _end[] asm("_binary_" #n "_end");
-#define EMBEDDED(n) {n##_start, (size_t)(n##_end - n##_start)}
+#define EMBEDDED(n) {n##_start, (size_t)(n##_end - n##_start - 1)}
 
 BINDEF(index_html);
 BINDEF(jquery_3_3_1_min_js);

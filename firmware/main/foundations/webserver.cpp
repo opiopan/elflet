@@ -168,6 +168,7 @@ void HttpResponse::reset(const WebString& serverName){
     httpStatus = RESP_200_OK;
     headerData.clear();
     bodyData = "";
+    flushedBodySize = 0;
 
     if (serverName.length() > 0){
 	headerData["Server"] = serverName;
@@ -183,6 +184,8 @@ void HttpResponse::flush(mg_connection* con){
 	ESP_LOGE(tag, "HTTP response object is not closed");
     }
     if (status != ST_FLUSHED){
+	status = ST_FLUSHED;
+
 	Time now;
 	headerData["Date"] = now.format(Time::RFC1123);
 	
@@ -201,16 +204,22 @@ void HttpResponse::flush(mg_connection* con){
 	}
 	resp << "\r\n";
 	mg_send(con, resp.str().data(), resp.str().length());	
-	if (bodyData.length() > 0){
-	    const int flagment = 512;
-	    for (int p = 0; p < bodyData.length(); p += flagment){
-		int sendSize = bodyData.length() - p;
-		sendSize = sendSize > flagment ? flagment : sendSize;
-		mg_send(con, bodyData.data() + p , sendSize);
-	    }
+    }
+    if (status == ST_FLUSHED){
+	int sendSize = bodyData.length() - flushedBodySize;
+	if (sendSize > 0){
+	    int bufSize = con->send_mbuf.size < 4096 ?
+						4096 : con->send_mbuf.size;
+	    int bufRemain = bufSize - con->send_mbuf.len;
+	    sendSize = sendSize > bufRemain ? bufRemain : sendSize;
+	    mg_send(con, bodyData.data() + flushedBodySize , sendSize);
+	    flushedBodySize += sendSize;
+	}
+
+	if (flushedBodySize >= bodyData.length()){
+	    con->flags |= MG_F_SEND_AND_CLOSE;
 	}
     }
-    status = ST_FLUSHED;
 }
 
 //----------------------------------------------------------------------
@@ -292,6 +301,11 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	}
 	break;
     }
+    case MG_EV_SEND:{
+	if (responseData.getStatus() == HttpResponse::ST_FLUSHED){
+	    responseData.flush(connection);
+	}
+    }
     }
 
     if (status == CON_COMPLETE &&
@@ -309,7 +323,6 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	    responseData.close();
 	}
 	responseData.flush(connection);
-	connection->flags |= MG_F_SEND_AND_CLOSE;
     }
 }
 
@@ -432,7 +445,8 @@ void WebServer::handler(struct mg_connection* con, int ev, void* p){
     case MG_EV_HTTP_MULTIPART_REQUEST_END:
     case MG_EV_HTTP_PART_BEGIN:
     case MG_EV_HTTP_PART_DATA:
-    case MG_EV_HTTP_PART_END:{
+    case MG_EV_HTTP_PART_END:
+    case MG_EV_SEND: {
 	auto wcon = (WebServerConnection*)con->user_data;
 	wcon->dispatchEvent(ev, p);
 	break;

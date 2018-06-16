@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>elflet - Setup Wizard</title>
+    <meta name="author" content="opiopan <opiopan@gmail.com>">
+        <meta name="viewport" content="width=device-width, 
+				          initial-scale=1.0,
+					     minimum-scale=1.0,
+					        maximum-scale=1.0,
+						user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="stylesheet" type="text/css" href="wizard.css">
+  </head>
+
+  <body class="gContainer">
+
+    <!-- page selector -->
+    <input type="radio" class="pgsel" name="pgsel" id="pgsel1" checked>
+    <input type="radio" class="pgsel" name="pgsel" id="pgsel2">
+    <input type="radio" class="pgsel" name="pgsel" id="pgsel3">
+    <input type="radio" class="pgsel" name="pgsel" id="pgsel4">
+
+    <!-- main contents -->
+    <header class="gHeader">
+      elflet - Setup Wizard
+    </header>
+
+    <ol class="gNav wizNavigation">
+      <li for="page1"><div>WiFi Settings</div></li>
+      <li for="page2"><div>Device Name</div></li>
+      <li for="page3"><div>Administrator Password</div></li>
+      <li for="page4"><div>Finish</div></li>
+    </ol>
+
+    <div class="gTitle">
+      <section class="title" for="page1">WiFi Settings</section>
+      <section class="title" for="page2">Device Name</section>
+      <section class="title" for="page3">Administrator Password</section>
+      <section class="title" for="page4">Finish</section>
+    </div>
+
+    <article class="gContents cContainer">
+      <div class="cFrame">
+	<section class="cpage">
+	  Page 1<br><br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	</section>
+	<section class="cpage">
+	  Page 2<br>
+	</section>
+	<section class="cpage">
+	  Page 3<br><br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	  abcdefg hijklmn opqrstu vwxyz<br>
+	</section>
+	<section class="cpage">
+	  Page 4<br>
+	</section>
+      </div>
+    </article>
+
+    <footer class="gFooter">
+      <a class="navButton" href="#" id="next">Next</a>
+      <a class="navButton" href="#" id="prev" disabled>Prev</a>
+    </footer>
+
+    <!-- script section -->
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="wizard.js"></script>
+
+  </body>
+</html>

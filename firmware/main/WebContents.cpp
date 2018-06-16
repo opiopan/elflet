@@ -30,12 +30,18 @@ typedef std::map<WebString, BinContent> ContentMap;
 BINDEF(index_html);
 BINDEF(jquery_3_3_1_min_js);
 BINDEF(elflet_css);
+BINDEF(wizard_html);
+BINDEF(wizard_css);
+BINDEF(wizard_js);
 
 static const ContentMap dict = {
     {"/", EMBEDDED(index_html)},
     {"/index.html", EMBEDDED(index_html)},
     {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_js)},
     {"/elflet.css", EMBEDDED(elflet_css)},
+    {"/wizard.html", EMBEDDED(wizard_html)},
+    {"/wizard.css", EMBEDDED(wizard_css)},
+    {"/wizard.js", EMBEDDED(wizard_js)},
 };
 
 class WebContents : public ContentProvider {

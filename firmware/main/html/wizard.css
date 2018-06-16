@@ -1,0 +1,301 @@
+html {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 200;
+}
+
+body{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  -webkit-text-size-adjust: 100%;
+}
+
+/*------------------------------------------------------------
+ global layout
+------------------------------------------------------------*/
+.pgsel{ 
+  display: none;
+}
+
+.gContainer {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
+  grid-template-areas: 
+    "header header"
+    "nav contents"
+    "nav footer"
+    "nav space";
+  min-height: 100vh;
+}
+
+.gHeader {
+  grid-area: header;
+}
+
+.gNav {
+  grid-area: nav;
+}
+
+.gTitle{ 
+  display: none;
+  grid-area: title;
+}
+
+.gContents {
+  grid-area: contents;
+  padding: 20px;
+}
+
+.gFooter {
+  grid-area: footer;
+}
+
+@media screen and (max-width: 767px) {
+  .gContainer {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto 1fr;
+    grid-template-areas: 
+      "header"
+      "nav"
+      "title"
+      "contents"
+      "footer";
+  }
+
+  .gTitle{ 
+    display: block;
+  }
+}
+
+/*------------------------------------------------------------
+ Header
+------------------------------------------------------------*/
+.gHeader {
+  font-size: 150%;
+  text-align: center;
+  padding: 15px;
+  border-bottom: solid #b0b0b0 1px;
+}
+
+@media screen and (max-width: 767px) {
+  .gHeader {
+    font-size: 130%;
+    border: none;
+    padding: 10px;
+  }
+}
+	    
+/*------------------------------------------------------------
+ Navigation
+------------------------------------------------------------*/
+.wizNavigation {
+  display: flex
+  flex-direction: column;
+  margin: 0;
+  padding: 20px;
+  background: #f0f0f0;
+  border-right: solid #b0b0b0 1px;
+}
+
+.wizNavigation li{ 
+  flex: 1;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 7px;
+  border-right: 2px;
+  font-weight: 400;
+  text-align: left;
+  list-style-position: inside;
+  color: #3c83ee;
+  transition: all 0.5s;
+}
+
+#pgsel1:checked ~ .wizNavigation li[for="page1"],
+#pgsel2:checked ~ .wizNavigation li[for="page2"],
+#pgsel3:checked ~ .wizNavigation li[for="page3"],
+#pgsel4:checked ~ .wizNavigation li[for="page4"]{
+  color: #ffffff;
+  background: #3c83ee;
+}
+
+#pgsel1:checked ~ .wizNavigation li[for="page1"] ~ li,
+#pgsel2:checked ~ .wizNavigation li[for="page2"] ~ li,
+#pgsel3:checked ~ .wizNavigation li[for="page3"] ~ li,
+#pgsel4:checked ~ .wizNavigation li[for="page4"] ~ li{
+  color: #a0a0a0;
+}
+
+@media screen and (max-width: 767px) {
+  .wizNavigation {
+    display: flex;
+    flex-direction:;
+    padding: 0;
+    text-indent: 0;
+    counter-reset: steps 0;
+    border: none;
+  }
+
+  .wizNavigation li{
+    flex: 1;
+    color: #ffffff;
+    background: #77a6ee;
+    margin: 0;
+    margin-left: 2px;
+    border-radius: 0;
+    border-bottom: solid #ffffff 2px;
+    padding: 5px;
+    text-align: center;
+    list-style: none;
+    font-size: 120%;
+  }
+
+  .wizNavigation li:first-child {
+    margin: 0;
+  }
+
+
+  .wizNavigation li:before {
+    counter-increment: steps 1;
+    content: counter(steps);
+    height: 100%;
+    width: 100%;
+  }
+
+  .wizNavigation li div{
+    display: none;
+  }
+
+  #pgsel1:checked ~ .wizNavigation li[for="page1"],
+  #pgsel2:checked ~ .wizNavigation li[for="page2"],
+  #pgsel3:checked ~ .wizNavigation li[for="page3"],
+  #pgsel4:checked ~ .wizNavigation li[for="page4"]{
+    border-bottom: solid #3c83ee;
+  }
+
+  #pgsel1:checked ~ .wizNavigation li[for="page1"] ~ li,
+  #pgsel2:checked ~ .wizNavigation li[for="page2"] ~ li,
+  #pgsel3:checked ~ .wizNavigation li[for="page3"] ~ li,
+  #pgsel4:checked ~ .wizNavigation li[for="page4"] ~ li{
+    background: #c0c0c0;
+    color: #ffffff;
+  }
+}
+	    
+/*------------------------------------------------------------
+ Title
+------------------------------------------------------------*/
+.title {
+  display: none;
+  padding: 10px;
+  padding-left: 20px;
+  color: rgba(255,255,255,0);
+  font-weight: 400;
+  background: #3c83ee;
+  transition: all 0.5s;
+}
+
+#pgsel1:checked ~ .gTitle .title[for="page1"],
+#pgsel2:checked ~ .gTitle .title[for="page2"],
+#pgsel3:checked ~ .gTitle .title[for="page3"],
+#pgsel4:checked ~ .gTitle .title[for="page4"]{
+  display: block;
+  color: rgba(255,255,255,255);
+}
+
+@media screen and (max-width: 767px) {
+  .title {
+    font-size: 120%;
+  }
+}
+
+/*------------------------------------------------------------
+ Contents scrolling
+------------------------------------------------------------*/
+.cContainer {
+  overflow: hidden;
+}
+
+.cFrame {
+  display: flex;
+  width: 500%;
+  transition: transform 0.5s;
+}
+
+.cpage {
+  width: 25%;
+}
+
+#pgsel1:checked ~ .cContainer .cFrame {
+  transform: translateX(0);)
+}
+
+#pgsel2:checked ~ .cContainer .cFrame {
+  transform: translateX(-25%);)
+}
+
+#pgsel3:checked ~ .cContainer .cFrame {
+  transform: translateX(-50%);)
+}
+
+#pgsel4:checked ~ .cContainer .cFrame {
+  transform: translateX(-75%);)
+}
+
+/*------------------------------------------------------------
+ Navigation Button
+------------------------------------------------------------*/
+.gFooter {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-template-rows: auto;
+  grid-template-areas: "na prev next";
+  grid-column-gap: 20px;
+  padding: 0 20px 0 20px;
+}
+
+#next {
+  grid-area: next;
+}
+
+#prev {
+  grid-area: prev;
+}
+
+.navButton {
+  display:block;
+  font-size: 100%;
+  font-weight: 400;
+  padding: 10px 25px 10px 25px;
+  color: #FFF;
+  text-decoration: none;
+  text-align: center;
+  background-color: #f39800;
+  border-radius: 5px;
+  transition: all 0.5s;  
+}
+
+.navButton:hover{ 
+  background-color: #f9c500;
+}
+
+.navButton[disabled], .navButton:hover[disabled]{
+  background-color: #d0d0d0;
+  pointer-events : none;
+}
+
+@media screen and (max-width: 767px) {
+  .gFooter {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "prev next";
+    grid-column-gap: 20px;
+    padding: 20px 20px 0 20px;
+  }
+
+  .navButton, .navButton:hover{
+    font-size: 110%;
+    background-color: #f39800;
+  }
+}

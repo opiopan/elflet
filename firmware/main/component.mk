@@ -9,4 +9,5 @@ COMPONENT_SRCDIRS                = . foundations
 COMPONENT_ADD_INCLUDEDIRS        = . foundations
 
 COMPONENT_EMBED_TXTFILES	:= html/index.html html/jquery-3.3.1.min.js \
-				   html/elflet.css
+				   html/elflet.css html/wizard.html \
+				   html/wizard.css html/wizard.js

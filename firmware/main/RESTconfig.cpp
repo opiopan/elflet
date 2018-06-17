@@ -67,6 +67,10 @@ static void serializeConfig(HttpResponse* resp){
     if (conf->getNodeName() != conf->getAPSSID()){
 	obj[JSON_APSSID] = conf->getAPSSID();
     }
+    if (conf->getBootMode() == Config::FactoryReset ||
+	conf->getBootMode() == Config::Configuration){
+	obj[JSON_WIFIPASSWORD] = conf->getWifiPassword();
+    }
     stringPtr ptr(new std::string(json11::Json(obj).dump()));
     resp->setBody(ptr);
 }

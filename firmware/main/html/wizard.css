@@ -46,7 +46,6 @@ body{
 
 .gContents {
   grid-area: contents;
-  padding: 20px;
 }
 
 .gFooter {
@@ -110,7 +109,7 @@ body{
   text-align: left;
   list-style-position: inside;
   color: #3c83ee;
-  transition: all 0.5s;
+  transition: all 0.3s;
 }
 
 #pgsel1:checked ~ .wizNavigation li[for="page1"],
@@ -194,7 +193,7 @@ body{
   color: rgba(255,255,255,0);
   font-weight: 400;
   background: #3c83ee;
-  transition: all 0.5s;
+  transition: all 0.3s;
 }
 
 #pgsel1:checked ~ .gTitle .title[for="page1"],
@@ -220,8 +219,9 @@ body{
 
 .cFrame {
   display: flex;
-  width: 500%;
-  transition: transform 0.5s;
+  width: 400%;
+
+  transition: transform 0.3s;
 }
 
 .cpage {
@@ -253,7 +253,7 @@ body{
   grid-template-rows: auto;
   grid-template-areas: "na prev next";
   grid-column-gap: 20px;
-  padding: 0 20px 0 20px;
+  padding: 20px 20px 0 20px;
 }
 
 #next {
@@ -274,7 +274,7 @@ body{
   text-align: center;
   background-color: #f39800;
   border-radius: 5px;
-  transition: all 0.5s;  
+  transition: all 0.3s;
 }
 
 .navButton:hover{ 
@@ -291,7 +291,7 @@ body{
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "prev next";
     grid-column-gap: 20px;
-    padding: 20px 20px 0 20px;
+    padding: 40px 20px 0 20px;
   }
 
   .navButton, .navButton:hover{
@@ -299,3 +299,90 @@ body{
     background-color: #f39800;
   }
 }
+
+/*------------------------------------------------------------
+ Page formatting
+------------------------------------------------------------*/
+.cpage { 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "note form" "note na";
+  grid-column-gap: 20px;
+  padding: 0 20px 0 20px;
+}
+
+.note {
+  grid-area: note;
+}
+
+.form {
+  grid-area: form;
+}
+
+@media screen and (max-width: 767px) {
+  .cpage { 
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    grid-template-areas: "note" "form";
+    grid-column-gap: 0;
+    grid-row-gap: 20px;
+  }
+
+  .note {
+    font-size: 105%;
+  }
+}
+
+/*------------------------------------------------------------
+ input form
+------------------------------------------------------------*/
+.form {
+  display: grid;
+  grid-auto-rows: auto;
+  grid-template-columns: 40% 60%;
+  grid-row-gap: 10pxx;
+  grid-column-gap: 20px;
+  align-items: center;
+  padding 20px;
+}
+
+.lastform {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  padding 20px;
+}
+
+.label {
+  text-align: right;
+}
+
+.textInput {
+  font-size: 0.9em;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+}
+
+.commitButton{ 
+  background-color: #5ADC58;
+}
+
+.commitButton:hover{ 
+  background-color: #86D782;
+}
+
+@media screen and (max-width: 767px) {
+  .form {
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+    padding 20px;
+    font-size: 120%;
+  }
+
+  .commitButton, .commitButton:hover{ 
+    background-color: #5ADC58;
+  }
+
+}
+

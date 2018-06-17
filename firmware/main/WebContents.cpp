@@ -34,7 +34,7 @@ BINDEF(wizard_html);
 BINDEF(wizard_css);
 BINDEF(wizard_js);
 
-static const ContentMap dict = {
+static const ContentMap normalDict = {
     {"/", EMBEDDED(index_html)},
     {"/index.html", EMBEDDED(index_html)},
     {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_js)},
@@ -46,6 +46,7 @@ static const ContentMap dict = {
 
 class WebContents : public ContentProvider {
 protected:
+    const ContentMap* dict;
 public:
     WebContents();
     virtual ~WebContents();
@@ -54,14 +55,26 @@ public:
 };
 
 WebContents::WebContents(){
+    if (elfletConfig->getBootMode() == Config::FactoryReset ||
+	elfletConfig->getBootMode() == Config::Configuration){
+	dict = &normalDict;
+    }else{
+	dict = new ContentMap({
+	    {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_js)},
+	    {"/", EMBEDDED(wizard_html)},
+	    {"/wizard.html", EMBEDDED(wizard_html)},
+	    {"/wizard.css", EMBEDDED(wizard_css)},
+	    {"/wizard.js", EMBEDDED(wizard_js)},
+	});
+    }
 }
 
 WebContents::~WebContents(){
 }
 
 WebString WebContents::getContent(const WebString& path) const {
-    auto c = dict.find(path);
-    if (c != dict.end()){
+    auto c = dict->find(path);
+    if (c != dict->end()){
 	return {c->second.data, c->second.length};
     }else{
 	return {};

@@ -4,6 +4,7 @@ html {
 }
 
 body{
+  position: relative;
   width: 100%;
   height: 100%;
   margin: 0;
@@ -74,15 +75,18 @@ body{
 ------------------------------------------------------------*/
 .gHeader {
   font-size: 150%;
+  font-weight: 300;
   text-align: center;
   padding: 15px;
-  border-bottom: solid #b0b0b0 1px;
+  background: black;
+  color: white;
 }
 
 @media screen and (max-width: 767px) {
   .gHeader {
     font-size: 130%;
     border: none;
+    border-bottom: solid white 2px;
     padding: 10px;
   }
 }
@@ -194,6 +198,7 @@ body{
   font-weight: 400;
   background: #3c83ee;
   transition: all 0.3s;
+  opacity: 0;
 }
 
 #pgsel1:checked ~ .gTitle .title[for="page1"],
@@ -202,6 +207,7 @@ body{
 #pgsel4:checked ~ .gTitle .title[for="page4"]{
   display: block;
   color: rgba(255,255,255,255);
+  opacity: 1;
 }
 
 @media screen and (max-width: 767px) {
@@ -249,9 +255,9 @@ body{
 ------------------------------------------------------------*/
 .gFooter {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto 1fr;
   grid-template-rows: auto;
-  grid-template-areas: "na prev next";
+  grid-template-areas: "na prev next na2";
   grid-column-gap: 20px;
   padding: 20px 20px 0 20px;
 }
@@ -268,7 +274,8 @@ body{
   display:block;
   font-size: 100%;
   font-weight: 400;
-  padding: 10px 25px 10px 25px;
+  padding: 10px 0 10px 0;
+  width: 100px;
   color: #FFF;
   text-decoration: none;
   text-align: center;
@@ -295,6 +302,7 @@ body{
   }
 
   .navButton, .navButton:hover{
+    width: auto;
     font-size: 110%;
     background-color: #f39800;
   }
@@ -305,7 +313,7 @@ body{
 ------------------------------------------------------------*/
 .cpage { 
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 5fr;
   grid-template-rows: auto 1fr;
   grid-template-areas: "note form" "note na";
   grid-column-gap: 20px;
@@ -340,32 +348,36 @@ body{
 .form {
   display: grid;
   grid-auto-rows: auto;
-  grid-template-columns: 40% 60%;
-  grid-row-gap: 10pxx;
+  grid-template-columns: 45% 55%;
+  grid-row-gap: 10px;
   grid-column-gap: 20px;
   align-items: center;
-  padding 20px;
+  padding: 20px;
 }
 
 .lastform {
   display: grid;
   justify-items: center;
   align-items: center;
-  padding 20px;
+  padding: 40px 0 0 0;
 }
 
 .label {
   text-align: right;
+  font-weight: 300;
 }
 
 .textInput {
   font-size: 0.9em;
   font-family: 'Helvetica Neue', sans-serif;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .commitButton{ 
+  padding: 10px 25px 10px 25px;
+  width: auto;
   background-color: #5ADC58;
+  
 }
 
 .commitButton:hover{ 
@@ -376,13 +388,60 @@ body{
   .form {
     grid-row-gap: 10px;
     grid-column-gap: 10px;
-    padding 20px;
+    padding: 0;
     font-size: 120%;
+  }
+
+  .lastform {
+    padding: 0;
   }
 
   .commitButton, .commitButton:hover{ 
     background-color: #5ADC58;
   }
 
+}
+
+/*------------------------------------------------------------
+ full screen cover
+------------------------------------------------------------*/
+.cover {
+  display: flex;
+  flex-direction: column;
+  #grid-auto-rows: fit-content;
+  #grid-template-columns: auto;
+  #grid-column-gap: 10px;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: white;
+  transition: all 1s;
+}
+
+.cover[mostfront] {
+  z-index: 20;
+}
+
+.cover[deactive] {
+  opacity: 0;
+  z-index: -1;
+}
+
+.cover .text {
+  font-size: 200%;
+  color: #606060;
+  padding-bottom: 0.5em;
+}
+
+.cover .titleText {
+  font-size: 400%;
+  color: #606060;
+  #color: #3c83ee;
+  padding-bottom: 0.8em;
 }
 

@@ -17,6 +17,9 @@ $(window).on('load', function() {
     $('.textInput').on('input', function(){
 	updateNavigationStatus();
     });
+    $('#startWizard').on(clickEvent, function(){
+	$('#startWizardCover').attr('deactive', "");
+    });
 
     $.get('manage/config', '', function(result){
 	var config = null;
@@ -35,6 +38,7 @@ $(window).on('load', function() {
 	    $('input[name="deviceName"]').val(config.NodeName);
 	}
 	updateNavigationStatus();
+	$('#prepare').attr('deactive', "");
     });
 });
 
@@ -143,7 +147,7 @@ function commitConfig(){
 	dataType: 'text',
 	contentType: 'application/json',
 	success: function(response){
-	    console.log(response);
+	    $('#endWizardCover').attr('deactive', null);
 	},
 	error: function(req, err){
 	    window.alert("Changing configuration failed.");

@@ -57,8 +57,6 @@ public:
 WebContents::WebContents(){
     if (elfletConfig->getBootMode() == Config::FactoryReset ||
 	elfletConfig->getBootMode() == Config::Configuration){
-	dict = &normalDict;
-    }else{
 	dict = new ContentMap({
 	    {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_js)},
 	    {"/", EMBEDDED(wizard_html)},
@@ -66,6 +64,8 @@ WebContents::WebContents(){
 	    {"/wizard.css", EMBEDDED(wizard_css)},
 	    {"/wizard.js", EMBEDDED(wizard_js)},
 	});
+    }else{
+	dict = &normalDict;
     }
 }
 

@@ -125,7 +125,8 @@ bool Config::load(){
 	fileGeneration = 0;
     }else{
 	bootMode = (BootMode)mode;
-	if (nvs.get(CONFIGGEN_KEY, fileGeneration) != ESP_OK){
+	if (nvs.get(CONFIGGEN_KEY, fileGeneration) != ESP_OK ||
+	    bootMode == FactoryReset){
 	    bootMode = FactoryReset;
 	    fileGeneration = 0;
 	}

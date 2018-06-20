@@ -31,8 +31,9 @@ typedef std::map<WebString, BinContent> ContentMap;
 #define EMBEDDED(n, c) {n##_start, (size_t)(n##_end - n##_start - 1), c}
 
 BINDEF(index_htmlz);
+BINDEF(index_jsz);
 BINDEF(jquery_3_3_1_min_jsz);
-BINDEF(elflet_cssz);
+BINDEF(style_cssz);
 BINDEF(wizard_htmlz);
 BINDEF(wizard_cssz);
 BINDEF(wizard_jsz);
@@ -40,8 +41,9 @@ BINDEF(wizard_jsz);
 static const ContentMap normalDict = {
     {"/", EMBEDDED(index_htmlz, true)},
     {"/index.html", EMBEDDED(index_htmlz, true)},
+    {"/index.js", EMBEDDED(index_jsz, true)},
     {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_jsz, true)},
-    {"/elflet.css", EMBEDDED(elflet_cssz, true)},
+    {"/style.css", EMBEDDED(style_cssz, true)},
     {"/wizard.html", EMBEDDED(wizard_htmlz, true)},
     {"/wizard.css", EMBEDDED(wizard_cssz, true)},
     {"/wizard.js", EMBEDDED(wizard_jsz, true)},

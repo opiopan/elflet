@@ -8,9 +8,9 @@ CXXFLAGS	+= -DMG_ENABLE_HTTP_STREAMING_MULTIPART
 COMPONENT_SRCDIRS                = . foundations
 COMPONENT_ADD_INCLUDEDIRS        = . foundations
 
-COMPONENT_EMBED_TXTFILES	:= html/index.htmlz \
+COMPONENT_EMBED_TXTFILES	:= html/index.htmlz html/index.jsz\
 				   html/jquery-3.3.1.min.jsz \
-				   html/elflet.cssz html/wizard.htmlz \
+				   html/style.cssz html/wizard.htmlz \
 				   html/wizard.cssz html/wizard.jsz
 
 COMPONENT_EXTRA_CLEAN		:= $(COMPONENT_EMBED_TXTFILES)

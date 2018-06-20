@@ -2,7 +2,7 @@ menu "elflet Configuration"
 
 config HW_VERSION
      string "elflet board version"
-	default "1.0"
+	default "1.1"
 	help
 		elflet board version which defualt spiffs image indicates.
 		You can also make persinalized spiffs image for each board.

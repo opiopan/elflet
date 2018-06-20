@@ -22,3 +22,6 @@ firmware/components/cpp_utils
 firmware/components/posix
 *.o
 hosttool/irtx
+*.htmlz
+*.jsz
+*.cssz

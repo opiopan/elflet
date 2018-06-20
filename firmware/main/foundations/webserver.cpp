@@ -330,9 +330,12 @@ void WebServerConnection::makeFileResponse(){
     auto provider = server->getContentProvider();
     if (requestData.method() == HttpRequest::MethodGet && provider){
 	auto content = provider->getContent(requestData.uri());
-	if (content.length() > 0){
+	if (content.data.length() > 0){
 	    responseData.setHttpStatus(HttpResponse::RESP_200_OK);
-	    responseData.setBody(content);
+	    responseData.setBody(content.data);
+	    if (content.isCompressed){
+		responseData.addHeader("Content-Encoding", "gzip");
+	    }
 	    auto type = findMimeType(requestData.uri());
 	    responseData.addHeader(WebString("Content-Type"), type);
 	    responseData.close();

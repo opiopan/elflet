@@ -62,3 +62,4 @@ complete-clean: clean
 	rm -rf build
 	rm -rf $(OUTERCOMPONENTS)
 	rm -rf sdkconfig sdkconfig.old
+	make -C main -f component.mk extra-clean

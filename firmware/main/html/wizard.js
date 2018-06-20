@@ -83,6 +83,8 @@ function checkTransitionability(){
 	    (alen < 8 || alen > 64 || blen < 8 || blen > 64)){
 	    msg = "Administrator password must be grater than 8 bytes "
 	          "and must be less than 64 bytes.";
+	}else if (config.password !== config.passwordAgain){
+	    msg = " Two passwords you specified are not same."
 	}
     }
 	

@@ -464,7 +464,12 @@ public:
 
 class ContentProvider {
 public:
-    virtual WebString getContent(const WebString& path) const = 0;
+    struct Content{
+	WebString data;
+	bool isCompressed;
+    };
+    
+    virtual Content getContent(const WebString& path) const = 0;
 };
 
 const char* findMimeType(const WebString& path);

@@ -313,9 +313,9 @@ body{
 ------------------------------------------------------------*/
 .cpage { 
   display: grid;
-  grid-template-columns: 4fr 5fr;
+  grid-template-columns: 5fr 4fr;
   grid-template-rows: auto 1fr;
-  grid-template-areas: "note form" "note na";
+  grid-template-areas: "form note" "na note";
   grid-column-gap: 20px;
   padding: 0 20px 0 20px;
 }

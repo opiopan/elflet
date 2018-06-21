@@ -1,6 +1,6 @@
 html {
   font-family: 'Helvetica Neue', sans-serif;
-  font-weight: 200;
+  font-weight: 300;
 }
 
 body{
@@ -9,7 +9,8 @@ body{
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #ffffff;
+  background: #303030;
+  color: #d0d0d0;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -86,7 +87,7 @@ body{
   .gHeader {
     font-size: 130%;
     border: none;
-    border-bottom: solid white 2px;
+    border-bottom: solid black 2px;
     padding: 10px;
   }
 }
@@ -99,8 +100,8 @@ body{
   flex-direction: column;
   margin: 0;
   padding: 20px;
-  background: #f0f0f0;
-  border-right: solid #b0b0b0 1px;
+  #background: #f0f0f0;
+  border-right: solid #000000 1px;
 }
 
 .wizNavigation li{ 
@@ -148,7 +149,7 @@ body{
     margin: 0;
     margin-left: 2px;
     border-radius: 0;
-    border-bottom: solid #ffffff 2px;
+    border-bottom: solid #000000 2px;
     padding: 5px;
     text-align: center;
     list-style: none;
@@ -289,7 +290,8 @@ body{
 }
 
 .navButton[disabled], .navButton:hover[disabled]{
-  background-color: #d0d0d0;
+  background-color: #505050;
+  color: #a0a0a0;
   pointer-events : none;
 }
 
@@ -376,7 +378,7 @@ body{
 .commitButton{ 
   padding: 10px 25px 10px 25px;
   width: auto;
-  background-color: #5ADC58;
+  background-color: #51c54f;
   
 }
 
@@ -397,7 +399,7 @@ body{
   }
 
   .commitButton, .commitButton:hover{ 
-    background-color: #5ADC58;
+    background-color: #51c54f;
   }
 
 }
@@ -419,7 +421,8 @@ body{
   top: 0;
   left: 0;
   z-index: 10;
-  background: white;
+  color: #c0c0c0;
+  background: #303030;
   transition: all 1s;
 }
 
@@ -434,14 +437,13 @@ body{
 
 .cover .text {
   font-size: 200%;
-  color: #606060;
+  #color: #a0a0a0;
   padding-bottom: 0.5em;
 }
 
 .cover .titleText {
   font-size: 400%;
-  color: #606060;
-  #color: #3c83ee;
+  #color: #d0d0d0;
   padding-bottom: 0.8em;
 }
 

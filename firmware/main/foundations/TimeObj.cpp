@@ -22,7 +22,7 @@ bool Time::shouldAdjust(){
 	return true;
     }
 
-    if (now - lastAdjustTime > 24 * 60){
+    if (now - lastAdjustTime > 24 * 60 * 60){
 	return true;
     }
 

@@ -85,7 +85,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 }
     
 //----------------------------------------------------------------------
-// start WiFi function as Soft AP
+// start WiFi function as Soft STA
 //----------------------------------------------------------------------
 #define ESPERR_RET(x, msg) {\
     int err = (x);\

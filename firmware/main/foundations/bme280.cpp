@@ -169,7 +169,16 @@ BME280_I2C::BME280_I2C(uint8_t address,
 		       uint32_t clkSpeed,
 		       i2c_port_t portNum,
 		       bool builtinPullup){
-    i2c.init(address, sdaPin, sclPin, clkSpeed, portNum, builtinPullup);
+    i2c.init(address, sdaPin, sclPin, clkSpeed, portNum);
+    if (!builtinPullup){
+	int rc = i2c_set_pin(portNum, sdaPin, sclPin,
+			     GPIO_PULLUP_DISABLE, GPIO_PULLUP_DISABLE,
+			     I2C_MODE_SLAVE);
+	if (rc != ESP_OK){
+	    ESP_LOGE(tag, "I2C bus setting failed: "
+		     "cannot disable builtin pullup register");
+	}
+    }
     i2c.scan();
 }
 

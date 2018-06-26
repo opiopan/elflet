@@ -37,6 +37,13 @@ static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 static const std::string JSON_TIMEZONE = "Timezone";
 static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
+static const std::string JSON_ISPUBLISHINGSENSOR = "PublishingSensor";
+static const std::string JSON_PUBLISHSERVERADDR = "PublishServerAddr";
+static const std::string JSON_PUBLISHSESSIONTYPE = "PublishSessionType";
+static const std::string JSON_PUBLISHSERVERCERT = "PublishServerCert";
+static const std::string JSON_PUBLISHUSER = "PublishUser";
+static const std::string JSON_PUBLISHPASSWORD = "PublishPassword";
+static const std::string JSON_PUBLISHTOPIC = "PublishTopic";
 
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
@@ -91,7 +98,8 @@ bool initConfig(){
 // Config object initialize / deinitialize
 //----------------------------------------------------------------------
 Config::Config() : fromStorage(false), isDirtyBootMode(false), isDirty(false),
-		   sensorFrequency(0){
+		   sensorFrequency(0), isPublishingSensor(false),
+		   publishSessionType(SessionTCP){
 }
 
 Config::~Config(){
@@ -109,6 +117,17 @@ Config& Config::operator = (const Config& src){
     adminPassword = src.adminPassword;
     ssidToConnect = src.ssidToConnect;
     wifiPassword = src.wifiPassword;
+    timezone = src.timezone;
+    sensorFrequency = src.sensorFrequency;
+    isPublishingSensor = src.isPublishingSensor;
+    publishServerAddr = src.publishServerAddr;
+    publishSessionType = src.publishSessionType;
+    publishServerCert = src.publishServerCert;
+    publishUser = src.publishUser;
+    publishPassword = src.publishPassword;
+    publishTopic = src.publishTopic;
+
+    updateDefaultPublishTopic();
 
     return *this;
 }
@@ -171,11 +190,28 @@ bool Config::load(){
     applyValue(config, JSON_WIFIPASSWORD, wifiPassword);
     applyValue(config, JSON_TIMEZONE, timezone);
     applyValue(config, JSON_SENSORFREQUENCY, sensorFrequency);
+    applyValue(config, JSON_ISPUBLISHINGSENSOR, isPublishingSensor);
+    applyValue(config, JSON_PUBLISHSERVERADDR, publishServerAddr);
+    applyValue(config, JSON_PUBLISHSESSIONTYPE, publishSessionType);
+    applyValue(config, JSON_PUBLISHSERVERCERT, publishServerCert);
+    applyValue(config, JSON_PUBLISHUSER, publishUser);
+    applyValue(config, JSON_PUBLISHPASSWORD, publishPassword);
+    applyValue(config, JSON_PUBLISHTOPIC, publishTopic);
+
+    updateDefaultPublishTopic();
 
     isDirty = false;
     isDirtyBootMode = false;
     
     return true;
+}
+
+void Config::applyValue(const json11::Json& json, const std::string& key,
+		bool& value){
+    auto obj = json[key];
+    if (obj.is_bool()){
+	value = obj.bool_value();
+    }
 }
 
 void Config::applyValue(const json11::Json& json, const std::string& key,
@@ -207,6 +243,13 @@ bool Config::commit(){
 		{JSON_WIFIPASSWORD, wifiPassword},
 		{JSON_TIMEZONE, timezone},
 		{JSON_SENSORFREQUENCY, sensorFrequency},
+		{JSON_ISPUBLISHINGSENSOR, isPublishingSensor},
+		{JSON_PUBLISHSERVERADDR, publishServerAddr},
+		{JSON_PUBLISHSESSIONTYPE, (int32_t)publishSessionType},
+		{JSON_PUBLISHSERVERCERT, publishServerCert},
+		{JSON_PUBLISHUSER, publishUser},
+		{JSON_PUBLISHPASSWORD, publishPassword},
+		{JSON_PUBLISHTOPIC, publishTopic},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -244,6 +287,7 @@ bool Config::setNodeName(const std::string& name){
     }
     nodeName = name;
     isDirty = true;
+    updateDefaultPublishTopic();
     return true;
 }
 
@@ -297,6 +341,15 @@ bool Config::setSensorFrequency(int32_t frequency){
     return true;
 }
 
+void Config::updateDefaultPublishTopic(){
+    defaultPublishTopic = nodeName;
+    defaultPublishTopic += "/sensor";
+}
+
+//----------------------------------------------------------------------
+// static value handling
+//----------------------------------------------------------------------
 const char* Config::getVerificationKeyPath(){
     return VERIFICATION_KEY_PATH;
 }
+

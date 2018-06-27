@@ -1,6 +1,7 @@
 #include <esp_log.h>
 #include <esp_system.h>
 #include <string.h>
+#include <iostream>
 #include <GeneralUtils.h>
 #include <Task.h>
 #include <freertos/event_groups.h>
@@ -9,11 +10,22 @@
 #include "Config.h"
 #include "SensorService.h"
 #include "bme280.h"
+#include "PublishService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
 static const char tag[] = "SensorService";
+
+static const char JSON_DATE[] = "date";
+static const char JSON_TEMP_UNIT[] = "temperatureUnit";
+static const char JSON_HUM_UNIT[] = "humidityUnit";
+static const char JSON_PRESS_UNIT[] = "pressureUnit";
+static const char JSON_LUMINO_UNIT[] = "luminosityeUnit";
+static const char JSON_TEMP[] = "temperature";
+static const char JSON_HUM[] = "humidity";
+static const char JSON_PRESS[] = "pressure";
+static const char JSON_LUMINO[] = "luminositye";
 
 class SensorTask;
 static SensorTask* sensorTask;
@@ -36,7 +48,6 @@ protected:
     int32_t humidity;
     int32_t pressure;
     uint32_t luminosity;
-    
 
 public:
     SensorTask();
@@ -104,6 +115,8 @@ void SensorTask::run(void *data){
 	    humidity = bme280->getHumidity();
 	    pressure = bme280->getPressure();
 	}
+
+	publishSensorData();
 	
 	/*
 	printf("%s Temp[%.1f dig] Hum[%.1f %%] Press[%.1f hPa]\n",
@@ -139,4 +152,44 @@ void enableSensorCapturing(){
 
 void getSensorValue(SensorValue* value){
     sensorTask->getValue(value);
+}
+
+void getSensorValueAsJson(std::ostream& out){
+    SensorValue value;
+    getSensorValue(&value);
+
+    bool first = true;
+    auto sep = [&]() -> void {
+	if (first){
+	    first = false;
+	}else{
+	    out << ",";
+	}
+    };
+
+    out << "{";
+    if (value.enableFlag != 0){
+	sep();
+	out << "\"" << JSON_DATE << "\":\""
+	    << value.captureTime.format(Time::RFC1123) << "\"";
+    }
+    if (value.enableFlag & SensorValue::TEMPERATURE){
+	sep();
+	out << "\"" << JSON_TEMP_UNIT << "\":\"celsius\",\""
+	    << JSON_TEMP << "\":"
+	    << value.temperatureFloat();
+    }
+    if (value.enableFlag & SensorValue::HUMIDITY){
+	sep();
+	out << "\"" << JSON_HUM_UNIT << "\":\"percentage\",\""
+	    << JSON_HUM << "\":"
+	    << value.humidityFloat();
+    }
+    if (value.enableFlag & SensorValue::PRESSURE){
+	sep();
+	out << "\"" << JSON_PRESS_UNIT << "\":\"hPa\",\""
+	    << JSON_PRESS << "\":"
+	    << value.pressureFloat();
+    }
+    out << "}";
 }

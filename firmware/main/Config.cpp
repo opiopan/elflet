@@ -338,6 +338,54 @@ bool Config::setSensorFrequency(int32_t frequency){
 	return false;
     }
     sensorFrequency = frequency;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setIsPublishingSensor(bool publishing){
+    if (publishing && publishServerAddr.length() == 0){
+	return false;
+    }
+    isPublishingSensor = publishing;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishServerAddr(const std::string& addr){
+    publishServerAddr = addr;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishSessionType(SessionType type){
+    publishSessionType = type;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishServerCert(const std::string& cert){
+    publishServerCert = cert;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishUser(const std::string& user){
+    publishUser = user;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishPassword(const std::string& pass){
+    publishPassword = pass;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setPublishTopic(const std::string& topic){
+    if (topic.length() == 0){
+	return false;
+    }
+    publishTopic = topic;
     return true;
 }
 

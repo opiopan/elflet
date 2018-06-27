@@ -24,3 +24,4 @@ struct SensorValue{
 bool startSensorService();
 void enableSensorCapturing();
 void getSensorValue(SensorValue* value);
+void getSensorValueAsJson(std::ostream& out);

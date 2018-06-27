@@ -13,6 +13,7 @@
 #include "LEDService.h"
 #include "TimeService.h"
 #include "reboot.h"
+#include "PublishService.h"
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
@@ -44,6 +45,7 @@ protected:
 	    events, 1, pdTRUE, pdFALSE, 60000 / portTICK_PERIOD_MS);
 	if (ev){
 	    ledSetDefaultMode(LEDDM_STANDBY);
+	    enablePublishing();
 	    return;
 	}else{
 	    // fall back to configuration mode

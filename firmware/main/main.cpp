@@ -11,6 +11,7 @@
 #include "IRService.h"
 #include "SensorService.h"
 #include "TimeService.h"
+#include "PublishService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -73,6 +74,9 @@ void MainTask::run(void *data){
 	startWebService();
     }else{
 	ledSetDefaultMode(LEDDM_SCAN_WIFI);
+	if (elfletConfig->getIsPublishingSensor()){
+	    startPublishService();
+	}
 	if (!startWifiService()){
 	    systemFault();
 	}

@@ -27,7 +27,19 @@ static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 static const std::string JSON_COMMIT = "commit";
 static const std::string JSON_TIMEZONE = "Timezone";
+static const std::string JSON_SENSOR = "Sensor";
 static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
+static const std::string JSON_ISPUBLISHINGSENSOR = "PublishingSensor";
+static const std::string JSON_PUBLISHSERVERADDR = "PublishServerAddr";
+static const std::string JSON_PUBLISHSESSIONTYPE = "PublishSessionType";
+static const std::string JSON_PUBLISHSERVERCERT = "PublishServerCert";
+static const std::string JSON_PUBLISHUSER = "PublishUser";
+static const std::string JSON_PUBLISHPASSWORD = "PublishPassword";
+static const std::string JSON_PUBLISHTOPIC = "PublishTopic";
+
+static const char* sessionTypeStr[]{
+    "TCP", "TSL", "WebSocket", "WebSocketSecure", NULL
+};
 
 static bool ApplyValue(const json11::Json& json, const std::string& key,
 		       bool (*apply)(const std::string&)){
@@ -47,6 +59,15 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
     return true;
 }
 
+static bool ApplyValue(const json11::Json& json, const std::string& key,
+		       bool (*apply)(bool)){
+    auto obj = json[key];
+    if (obj.is_bool()){
+	return apply(obj.bool_value());
+    }
+    return true;
+}
+
 enum ApplyResult {AR_ERROR, AR_OK, AR_NEEDCOMMIT};
 
 static void serializeConfig(HttpResponse* resp){
@@ -62,18 +83,86 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_NODENAME, conf->getNodeName()},
 	    {JSON_SSID, conf->getSSIDtoConnect()},
 	    {JSON_TIMEZONE, conf->getTimezone()},
-	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
 	});
+    auto sensor = json11::Json::object({
+	        {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
+		{JSON_ISPUBLISHINGSENSOR, conf->getIsPublishingSensor()},
+		{JSON_PUBLISHSERVERADDR, conf->getPublishServerAddr()},
+		{JSON_PUBLISHSESSIONTYPE,
+			sessionTypeStr[conf->getPublishSessionType()]},
+		{JSON_PUBLISHSERVERCERT, conf->getPublishServerCert()},
+		{JSON_PUBLISHUSER, conf->getPublishUser()},
+		{JSON_PUBLISHTOPIC, conf->getPublishTopic()},
+    });
+    
     if (conf->getNodeName() != conf->getAPSSID()){
 	obj[JSON_APSSID] = conf->getAPSSID();
     }
     if (conf->getBootMode() == Config::FactoryReset ||
 	conf->getBootMode() == Config::Configuration){
 	obj[JSON_WIFIPASSWORD] = conf->getWifiPassword();
+	sensor[JSON_PUBLISHPASSWORD] = conf->getPublishPassword();
     }
+
+    obj[JSON_SENSOR] = sensor;
+    
     stringPtr ptr(new std::string(json11::Json(obj).dump()));
     resp->setBody(ptr);
 }
+
+static bool applySensor(const json11::Json& input, const char** rmsg){
+    const char* msg = NULL;
+    
+    ApplyValue(input, JSON_SENSORFREQUENCY,
+	       [](int32_t v) -> bool{
+		   return elfletConfig->setSensorFrequency(v);}) ||
+	(msg = "frequency of sensor update  must be grater than 0");
+    ApplyValue(input, JSON_PUBLISHSERVERADDR,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setPublishServerAddr(v);});
+    ApplyValue(input, JSON_ISPUBLISHINGSENSOR,
+	       [](bool v) -> bool{
+		   return elfletConfig->setIsPublishingSensor(v);}) ||
+	(msg = "server address to publish must be specified "
+	       "if publishing function will be enabled");
+    ApplyValue(input, JSON_PUBLISHSESSIONTYPE,
+	       [](const std::string& v) -> bool{
+		   int i;
+		   for (i = 0; sessionTypeStr[i]; i++){
+		       if (v == sessionTypeStr[i]){
+			   break;
+		       }
+		   }
+		   if (sessionTypeStr[i]){
+		       return elfletConfig->setPublishSessionType(
+			   (Config::SessionType)i);
+		   }else{
+		       return false;
+		   }
+	       }) ||
+	(msg = "session type for publishing is invalid");
+    ApplyValue(input, JSON_PUBLISHSERVERCERT,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setPublishServerCert(v);});
+    ApplyValue(input, JSON_PUBLISHUSER,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setPublishUser(v);});
+    ApplyValue(input, JSON_PUBLISHPASSWORD,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setPublishPassword(v);});
+    ApplyValue(input, JSON_PUBLISHTOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setPublishTopic(v);}) ||
+	(msg = "topic name to publish must be a string longer than 0 byte");
+
+    if (msg){
+	*rmsg = msg;
+	return false;
+    }else{
+	return true;
+    }
+}
+
 
 static ApplyResult applyConfig(const WebString& json, const char** msg){
     std::string err;
@@ -89,8 +178,9 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
     if (elfletConfig->getBootMode() == Config::Normal &&
 	(input[JSON_ADMINPASSWORD].is_string() ||
 	 input[JSON_SSID].is_string() ||
-	 input[JSON_WIFIPASSWORD].is_string())){
-	*msg = "Admin password and WiFi connection information"
+	 input[JSON_WIFIPASSWORD].is_string()||
+	 input[JSON_PUBLISHPASSWORD].is_string())){
+	*msg = "Password and WiFi connection information"
 	       "must be changed in configuration mode.";
 	return AR_ERROR;
     }
@@ -119,10 +209,13 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
     ApplyValue(input, JSON_TIMEZONE,
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setTimezone(v);});
-    ApplyValue(input, JSON_SENSORFREQUENCY,
-	       [](int32_t v) -> bool{
-		   return elfletConfig->setSensorFrequency(v);}) ||
-	(*msg = "frequency of sensor update  must be grater than 0");
+
+    auto sensor = input[JSON_SENSOR];
+    if (sensor.is_object()){
+	applySensor(json11::Json(sensor.object_items()), msg);
+    }else{
+	applySensor(input, msg);
+    }
 
     bool commit =
 	input[JSON_COMMIT].is_bool() && input[JSON_COMMIT].bool_value();

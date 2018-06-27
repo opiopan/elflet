@@ -86,29 +86,26 @@ void PublishTask::run(void *data){
     }
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqttCfg);
 
+    bool first = true;
     while(true){
 	xEventGroupWaitBits(events, EV_PUBLISH,
 			    pdTRUE, pdFALSE,
 			    portMAX_DELAY);
-	ESP_LOGI(tag, "start mqtt publishing");
-	esp_mqtt_client_start(client);
+	if (first){
+	    first = false;
+	    esp_mqtt_client_start(client);
+	    xEventGroupWaitBits(events, EV_CONNECTED,
+				pdTRUE, pdFALSE,
+				portMAX_DELAY);
+	    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
+	}
 
-	xEventGroupWaitBits(events, EV_CONNECTED,
-			    pdTRUE, pdFALSE,
-			    portMAX_DELAY);
-	ESP_LOGI(tag, "connected to mqtt broker");
 	std::stringstream out;
 	getSensorValueAsJson(out);
 	const auto data = out.str();
 	esp_mqtt_client_publish(
 	    client, elfletConfig->getPublishTopic().c_str(),
 	    data.data(), data.length(), 0, 0);
-	
-	xEventGroupWaitBits(events, EV_PUBLISHED,
-			    pdTRUE, pdFALSE,
-			    portMAX_DELAY);
-	ESP_LOGI(tag, "published sensor data");
-	esp_mqtt_client_stop(client);
     }
 };
 

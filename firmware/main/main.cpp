@@ -74,7 +74,7 @@ void MainTask::run(void *data){
 	startWebService();
     }else{
 	ledSetDefaultMode(LEDDM_SCAN_WIFI);
-	if (elfletConfig->getIsPublishingSensor()){
+	if (elfletConfig->getPubSubServerAddr().length() > 0){
 	    startPublishService();
 	}
 	if (!startWifiService()){

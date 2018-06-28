@@ -37,13 +37,12 @@ static const std::string JSON_SSID = "SSID";
 static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
 static const std::string JSON_TIMEZONE = "Timezone";
 static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
-static const std::string JSON_ISPUBLISHINGSENSOR = "PublishingSensor";
-static const std::string JSON_PUBLISHSERVERADDR = "PublishServerAddr";
-static const std::string JSON_PUBLISHSESSIONTYPE = "PublishSessionType";
-static const std::string JSON_PUBLISHSERVERCERT = "PublishServerCert";
-static const std::string JSON_PUBLISHUSER = "PublishUser";
-static const std::string JSON_PUBLISHPASSWORD = "PublishPassword";
-static const std::string JSON_PUBLISHTOPIC = "PublishTopic";
+static const std::string JSON_PUBSUBSERVERADDR = "PubSubServerAddr";
+static const std::string JSON_PUBSUBSESSIONTYPE = "PubSubSessionType";
+static const std::string JSON_PUBSUBSERVERCERT = "PubSubServerCert";
+static const std::string JSON_PUBSUBUSER = "PubSubUser";
+static const std::string JSON_PUBSUBPASSWORD = "PubSubPassword";
+static const std::string JSON_SENSORTOPIC = "SensorTopic";
 
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
@@ -98,8 +97,8 @@ bool initConfig(){
 // Config object initialize / deinitialize
 //----------------------------------------------------------------------
 Config::Config() : fromStorage(false), isDirtyBootMode(false), isDirty(false),
-		   sensorFrequency(0), isPublishingSensor(false),
-		   publishSessionType(SessionTCP){
+		   sensorFrequency(0), 
+		   pubSubSessionType(SessionTCP){
 }
 
 Config::~Config(){
@@ -119,15 +118,14 @@ Config& Config::operator = (const Config& src){
     wifiPassword = src.wifiPassword;
     timezone = src.timezone;
     sensorFrequency = src.sensorFrequency;
-    isPublishingSensor = src.isPublishingSensor;
-    publishServerAddr = src.publishServerAddr;
-    publishSessionType = src.publishSessionType;
-    publishServerCert = src.publishServerCert;
-    publishUser = src.publishUser;
-    publishPassword = src.publishPassword;
-    publishTopic = src.publishTopic;
+    pubSubServerAddr = src.pubSubServerAddr;
+    pubSubSessionType = src.pubSubSessionType;
+    pubSubServerCert = src.pubSubServerCert;
+    pubSubUser = src.pubSubUser;
+    pubSubPassword = src.pubSubPassword;
+    sensorTopic = src.sensorTopic;
 
-    updateDefaultPublishTopic();
+    updateDefaultSensorTopic();
 
     return *this;
 }
@@ -190,15 +188,14 @@ bool Config::load(){
     applyValue(config, JSON_WIFIPASSWORD, wifiPassword);
     applyValue(config, JSON_TIMEZONE, timezone);
     applyValue(config, JSON_SENSORFREQUENCY, sensorFrequency);
-    applyValue(config, JSON_ISPUBLISHINGSENSOR, isPublishingSensor);
-    applyValue(config, JSON_PUBLISHSERVERADDR, publishServerAddr);
-    applyValue(config, JSON_PUBLISHSESSIONTYPE, publishSessionType);
-    applyValue(config, JSON_PUBLISHSERVERCERT, publishServerCert);
-    applyValue(config, JSON_PUBLISHUSER, publishUser);
-    applyValue(config, JSON_PUBLISHPASSWORD, publishPassword);
-    applyValue(config, JSON_PUBLISHTOPIC, publishTopic);
+    applyValue(config, JSON_PUBSUBSERVERADDR, pubSubServerAddr);
+    applyValue(config, JSON_PUBSUBSESSIONTYPE, pubSubSessionType);
+    applyValue(config, JSON_PUBSUBSERVERCERT, pubSubServerCert);
+    applyValue(config, JSON_PUBSUBUSER, pubSubUser);
+    applyValue(config, JSON_PUBSUBPASSWORD, pubSubPassword);
+    applyValue(config, JSON_SENSORTOPIC, sensorTopic);
 
-    updateDefaultPublishTopic();
+    updateDefaultSensorTopic();
 
     isDirty = false;
     isDirtyBootMode = false;
@@ -243,13 +240,12 @@ bool Config::commit(){
 		{JSON_WIFIPASSWORD, wifiPassword},
 		{JSON_TIMEZONE, timezone},
 		{JSON_SENSORFREQUENCY, sensorFrequency},
-		{JSON_ISPUBLISHINGSENSOR, isPublishingSensor},
-		{JSON_PUBLISHSERVERADDR, publishServerAddr},
-		{JSON_PUBLISHSESSIONTYPE, (int32_t)publishSessionType},
-		{JSON_PUBLISHSERVERCERT, publishServerCert},
-		{JSON_PUBLISHUSER, publishUser},
-		{JSON_PUBLISHPASSWORD, publishPassword},
-		{JSON_PUBLISHTOPIC, publishTopic},
+		{JSON_PUBSUBSERVERADDR, pubSubServerAddr},
+		{JSON_PUBSUBSESSIONTYPE, (int32_t)pubSubSessionType},
+		{JSON_PUBSUBSERVERCERT, pubSubServerCert},
+		{JSON_PUBSUBUSER, pubSubUser},
+		{JSON_PUBSUBPASSWORD, pubSubPassword},
+		{JSON_SENSORTOPIC, sensorTopic},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -287,7 +283,7 @@ bool Config::setNodeName(const std::string& name){
     }
     nodeName = name;
     isDirty = true;
-    updateDefaultPublishTopic();
+    updateDefaultSensorTopic();
     return true;
 }
 
@@ -342,56 +338,47 @@ bool Config::setSensorFrequency(int32_t frequency){
     return true;
 }
 
-bool Config::setIsPublishingSensor(bool publishing){
-    if (publishing && publishServerAddr.length() == 0){
-	return false;
-    }
-    isPublishingSensor = publishing;
+bool Config::setPubSubServerAddr(const std::string& addr){
+    pubSubServerAddr = addr;
     isDirty = true;
     return true;
 }
 
-bool Config::setPublishServerAddr(const std::string& addr){
-    publishServerAddr = addr;
+bool Config::setPubSubSessionType(SessionType type){
+    pubSubSessionType = type;
     isDirty = true;
     return true;
 }
 
-bool Config::setPublishSessionType(SessionType type){
-    publishSessionType = type;
+bool Config::setPubSubServerCert(const std::string& cert){
+    pubSubServerCert = cert;
     isDirty = true;
     return true;
 }
 
-bool Config::setPublishServerCert(const std::string& cert){
-    publishServerCert = cert;
+bool Config::setPubSubUser(const std::string& user){
+    pubSubUser = user;
     isDirty = true;
     return true;
 }
 
-bool Config::setPublishUser(const std::string& user){
-    publishUser = user;
+bool Config::setPubSubPassword(const std::string& pass){
+    pubSubPassword = pass;
     isDirty = true;
     return true;
 }
 
-bool Config::setPublishPassword(const std::string& pass){
-    publishPassword = pass;
-    isDirty = true;
-    return true;
-}
-
-bool Config::setPublishTopic(const std::string& topic){
+bool Config::setSensorTopic(const std::string& topic){
     if (topic.length() == 0){
 	return false;
     }
-    publishTopic = topic;
+    sensorTopic = topic;
     return true;
 }
 
-void Config::updateDefaultPublishTopic(){
-    defaultPublishTopic = nodeName;
-    defaultPublishTopic += "/sensor";
+void Config::updateDefaultSensorTopic(){
+    defaultSensorTopic = nodeName;
+    defaultSensorTopic += "/sensor";
 }
 
 //----------------------------------------------------------------------

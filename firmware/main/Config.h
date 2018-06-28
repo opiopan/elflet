@@ -33,15 +33,14 @@ protected:
     std::string timezone;
 
     int32_t sensorFrequency;
-    bool isPublishingSensor;
-    std::string publishServerAddr;
-    int32_t publishSessionType;
-    std::string publishServerCert;
-    std::string publishUser;
-    std::string publishPassword;
-    std::string publishTopic;
+    std::string pubSubServerAddr;
+    int32_t pubSubSessionType;
+    std::string pubSubServerCert;
+    std::string pubSubUser;
+    std::string pubSubPassword;
+    std::string sensorTopic;
 
-    std::string defaultPublishTopic;
+    std::string defaultSensorTopic;
     
 public:
     Config();
@@ -68,16 +67,15 @@ public:
     int32_t getSensorFrequency() const{
 	return sensorFrequency == 0? 60 : sensorFrequency;
     };
-    bool getIsPublishingSensor() const{return isPublishingSensor;};
-    const std::string& getPublishServerAddr() const{return publishServerAddr;};
-    SessionType getPublishSessionType() const{
-	return (SessionType)publishSessionType;
+    const std::string& getPubSubServerAddr() const{return pubSubServerAddr;};
+    SessionType getPubSubSessionType() const{
+	return (SessionType)pubSubSessionType;
     };
-    const std::string& getPublishServerCert() const{return publishServerCert;};
-    const std::string& getPublishUser() const{return publishUser;};
-    const std::string& getPublishPassword() const{return publishPassword;};
-    const std::string& getPublishTopic() const{
-	return publishTopic.length() == 0 ? defaultPublishTopic : publishTopic;
+    const std::string& getPubSubServerCert() const{return pubSubServerCert;};
+    const std::string& getPubSubUser() const{return pubSubUser;};
+    const std::string& getPubSubPassword() const{return pubSubPassword;};
+    const std::string& getSensorTopic() const{
+	return sensorTopic.length() == 0 ? defaultSensorTopic : sensorTopic;
     };
     
     const char* getVerificationKeyPath();
@@ -94,13 +92,12 @@ public:
     bool setTimezone(const std::string& tz);
 
     bool setSensorFrequency(int32_t frequency);
-    bool setIsPublishingSensor(bool publishing);
-    bool setPublishServerAddr(const std::string& addr);
-    bool setPublishSessionType(SessionType type);
-    bool setPublishServerCert(const std::string& cert);
-    bool setPublishUser(const std::string& user);
-    bool setPublishPassword(const std::string& pass);
-    bool setPublishTopic(const std::string& topic);
+    bool setPubSubServerAddr(const std::string& addr);
+    bool setPubSubSessionType(SessionType type);
+    bool setPubSubServerCert(const std::string& cert);
+    bool setPubSubUser(const std::string& user);
+    bool setPubSubPassword(const std::string& pass);
+    bool setSensorTopic(const std::string& topic);
     
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
@@ -110,7 +107,7 @@ protected:
     void applyValue(const json11::Json& json, const std::string& key,
 		    std::string& value);
 
-    void updateDefaultPublishTopic();
+    void updateDefaultSensorTopic();
 };
 
 extern Config* elfletConfig;

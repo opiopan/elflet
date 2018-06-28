@@ -65,16 +65,16 @@ void PublishTask::run(void *data){
 			portMAX_DELAY);
 
     static const char* schemes[] = {"mqtt://", "mqtts://", "ws://", "wss://"};
-    std::string uri = schemes[elfletConfig->getPublishSessionType()];
-    uri += elfletConfig->getPublishServerAddr();
+    std::string uri = schemes[elfletConfig->getPubSubSessionType()];
+    uri += elfletConfig->getPubSubServerAddr();
     esp_mqtt_client_config_t mqttCfg;
     memset(&mqttCfg, 0, sizeof(mqttCfg));
     mqttCfg.user_context = this;
     mqttCfg.uri = uri.c_str();
     mqttCfg.event_handle = mqttEventHandler;
-    const auto cert = elfletConfig->getPublishServerCert();
-    const auto user = elfletConfig->getPublishUser();
-    const auto pass = elfletConfig->getPublishPassword();
+    const auto cert = elfletConfig->getPubSubServerCert();
+    const auto user = elfletConfig->getPubSubUser();
+    const auto pass = elfletConfig->getPubSubPassword();
     if (cert.length() > 0){
 	mqttCfg.cert_pem = cert.c_str();
     }
@@ -104,7 +104,7 @@ void PublishTask::run(void *data){
 	getSensorValueAsJson(out);
 	const auto data = out.str();
 	esp_mqtt_client_publish(
-	    client, elfletConfig->getPublishTopic().c_str(),
+	    client, elfletConfig->getSensorTopic().c_str(),
 	    data.data(), data.length(), 0, 0);
     }
 };

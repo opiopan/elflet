@@ -10,56 +10,74 @@
 #include "Mutex.h"
 #include "Config.h"
 #include "SensorService.h"
-#include "PublishService.h"
+#include "PubSubService.h"
+#include "IRService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
-static const char tag[] = "PublishService";
+static const char tag[] = "PubSubService";
 
 //----------------------------------------------------------------------
 // Publishing task
 //----------------------------------------------------------------------
-class PublishTask : public Task {
+class PubSub : public Task {
 protected:
     static const int EV_WAKE_SERVER = 1;
     static const int EV_PUBLISH = 2;
     static const int EV_CONNECTED = 4;
-    static const int EV_PUBLISHED = 8;
     EventGroupHandle_t events;
     Mutex mutex;
+    static const int PUB_SENSOR = 1;
+    static const int PUB_IRRC = 2;
+    int publish;
     
-    int enableFlag;
-
+    esp_mqtt_client_handle_t client;
+    int msgidIrrcSend;
+    int msgidIrrcRecieve;
+    int msgidDownloadFirmware;
 
 public:
-    PublishTask();
-    virtual ~PublishTask();
+    PubSub();
+    virtual ~PubSub();
 
-    void enablePublishing();
-    void publish();
+    void enable();
+    void publishSensorData();
+    void publishIrrcData();
 
 protected:
     void run(void *data) override;
     static esp_err_t mqttEventHandler(esp_mqtt_event_handle_t event);
 };
 
-PublishTask::PublishTask() {
+PubSub::PubSub() : publish(0), client(NULL){
     events = xEventGroupCreate();
 }
 
-PublishTask::~PublishTask(){
+PubSub::~PubSub(){
+    if (client){
+	esp_mqtt_client_stop(client);
+	esp_mqtt_client_destroy(client);
+    }
 }
 
-void PublishTask::enablePublishing(){
+void PubSub::enable(){
     xEventGroupSetBits(events, EV_WAKE_SERVER);
 }
 
-void PublishTask::publish(){
+void PubSub::publishSensorData(){
+    auto holder = LockHolder(mutex);
+    publish |= PUB_SENSOR;
     xEventGroupSetBits(events, EV_PUBLISH);
 }
 
-void PublishTask::run(void *data){
+void PubSub::publishIrrcData(){
+    auto holder = LockHolder(mutex);
+    publish |= PUB_IRRC;
+    xEventGroupSetBits(events, EV_PUBLISH);
+}
+
+void PubSub::run(void *data){
     xEventGroupWaitBits(events, EV_WAKE_SERVER,
 			pdTRUE, pdFALSE,
 			portMAX_DELAY);
@@ -84,13 +102,20 @@ void PublishTask::run(void *data){
     if (pass.length() > 0){
 	mqttCfg.password = pass.c_str();
     }
-    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqttCfg);
+    client = esp_mqtt_client_init(&mqttCfg);
 
     bool first = true;
     while(true){
 	xEventGroupWaitBits(events, EV_PUBLISH,
 			    pdTRUE, pdFALSE,
 			    portMAX_DELAY);
+	int request = 0;
+	{
+	    auto holder = LockHolder(mutex);
+	    request = publish;
+	    publish = 0;
+	}
+	
 	if (first){
 	    first = false;
 	    esp_mqtt_client_start(client);
@@ -100,24 +125,44 @@ void PublishTask::run(void *data){
 	    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
 	}
 
-	std::stringstream out;
-	getSensorValueAsJson(out);
-	const auto data = out.str();
-	esp_mqtt_client_publish(
-	    client, elfletConfig->getSensorTopic().c_str(),
-	    data.data(), data.length(), 0, 0);
+	if (request & PUB_SENSOR){
+	    std::stringstream out;
+	    getSensorValueAsJson(out);
+	    const auto data = out.str();
+	    esp_mqtt_client_publish(
+		client, elfletConfig->getSensorTopic().c_str(),
+		data.data(), data.length(), 0, 0);
+	}
+	if (request & PUB_IRRC){
+	    uint8_t buf[32];
+	    int32_t bits = sizeof(buf) * 8;
+	    IRRC_PROTOCOL protocol;
+	    if (getIRRecievedData(&protocol, &bits, buf)){
+		std::stringstream out;
+		if (protocol == IRRC_UNKNOWN){
+		    getIRRecievedDataRawJson(out);
+		}else{
+		    getIRRecievedDataJson(out);		    
+		}
+		const auto data = out.str();
+		esp_mqtt_client_publish(
+		    client, elfletConfig->getIrrcRecievedDataTopic().c_str(),
+		    data.data(), data.length(), 0, 0);
+		
+	    }
+	}
     }
-};
+}
 
-esp_err_t PublishTask::mqttEventHandler(esp_mqtt_event_handle_t event){
-    auto self = (PublishTask*)event->user_context;
+esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
+    auto self = (PubSub*)event->user_context;
 
     switch (event->event_id) {
     case MQTT_EVENT_CONNECTED:
 	xEventGroupSetBits(self->events, EV_CONNECTED);
 	break;
     case MQTT_EVENT_PUBLISHED:
-	xEventGroupSetBits(self->events, EV_PUBLISHED);
+	//xEventGroupSetBits(self->events, EV_PUBLISHED);
 	break;
     default:
 	break;
@@ -129,24 +174,30 @@ esp_err_t PublishTask::mqttEventHandler(esp_mqtt_event_handle_t event){
 //----------------------------------------------------------------------
 // interfaces for outer module
 //----------------------------------------------------------------------
-static PublishTask* task = NULL;
+static PubSub* task = NULL;
 
-bool startPublishService(){
+bool startPubSubService(){
     if (!task){
-	task = new PublishTask();
+	task = new PubSub();
 	task->start();
     }
     return true;
 }
 
-void enablePublishing(){
+void enablePubSub(){
     if (task){
-	task->enablePublishing();
+	task->enable();
     }
 }
 
 void publishSensorData(){
     if (task){
-	task->publish();
+	task->publishSensorData();
+    }
+}
+
+void publishIrrcData(){
+    if (task){
+	task->publishIrrcData();
     }
 }

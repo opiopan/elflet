@@ -43,6 +43,10 @@ static const std::string JSON_PUBSUBSERVERCERT = "PubSubServerCert";
 static const std::string JSON_PUBSUBUSER = "PubSubUser";
 static const std::string JSON_PUBSUBPASSWORD = "PubSubPassword";
 static const std::string JSON_SENSORTOPIC = "SensorTopic";
+static const std::string JSON_IRRCRECIEVETOPIC = "IrrcRecieveTopic";
+static const std::string JSON_IRRCRECIEVEDDATATOPIC = "IrrcRecievedDataTopic";
+static const std::string JSON_IRRCSENDTOPIC = "IrrcSendTopic";
+static const std::string JSON_DOWNLOADFIRMWARETOPIC = "DownloadFirmwareTopic";
 
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
@@ -124,6 +128,10 @@ Config& Config::operator = (const Config& src){
     pubSubUser = src.pubSubUser;
     pubSubPassword = src.pubSubPassword;
     sensorTopic = src.sensorTopic;
+    irrcRecieveTopic = src.irrcRecieveTopic;
+    irrcRecievedDataTopic = src.irrcRecievedDataTopic;
+    irrcSendTopic = src.irrcSendTopic;
+    downloadFirmwareTopic = src.downloadFirmwareTopic;
 
     updateDefaultSensorTopic();
 
@@ -194,6 +202,10 @@ bool Config::load(){
     applyValue(config, JSON_PUBSUBUSER, pubSubUser);
     applyValue(config, JSON_PUBSUBPASSWORD, pubSubPassword);
     applyValue(config, JSON_SENSORTOPIC, sensorTopic);
+    applyValue(config, JSON_IRRCRECIEVETOPIC, irrcRecieveTopic);
+    applyValue(config, JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic);
+    applyValue(config, JSON_IRRCSENDTOPIC, irrcSendTopic);
+    applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
 
     updateDefaultSensorTopic();
 
@@ -246,6 +258,10 @@ bool Config::commit(){
 		{JSON_PUBSUBUSER, pubSubUser},
 		{JSON_PUBSUBPASSWORD, pubSubPassword},
 		{JSON_SENSORTOPIC, sensorTopic},
+		{JSON_IRRCRECIEVETOPIC, irrcRecieveTopic},
+		{JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic},
+		{JSON_IRRCSENDTOPIC, irrcSendTopic},
+		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -369,16 +385,39 @@ bool Config::setPubSubPassword(const std::string& pass){
 }
 
 bool Config::setSensorTopic(const std::string& topic){
-    if (topic.length() == 0){
-	return false;
-    }
     sensorTopic = topic;
+    return true;
+}
+
+bool Config::setIrrcRecieveTopic(const std::string& topic){
+    irrcRecieveTopic = topic;
+    return true;
+}
+
+bool Config::setIrrcRecievedDataTopic(const std::string& topic){
+    irrcRecievedDataTopic = topic;
+    return true;
+}
+
+bool Config::setIrrcSendTopic(const std::string& topic){
+    irrcSendTopic = topic;
+    return true;
+}
+
+bool Config::setDownloadFirmwareTopic(const std::string& topic){
+    downloadFirmwareTopic = topic;
     return true;
 }
 
 void Config::updateDefaultSensorTopic(){
     defaultSensorTopic = nodeName;
     defaultSensorTopic += "/sensor";
+    defaultIrrcRecieveTopic = nodeName;
+    defaultIrrcRecieveTopic += "/irrcRecieve";
+    defaultIrrcRecievedDataTopic = nodeName;
+    defaultIrrcRecievedDataTopic += "/irrcRecievedData";
+    defaultIrrcSendTopic = nodeName;
+    defaultIrrcSendTopic += "/irrcSend";
 }
 
 //----------------------------------------------------------------------

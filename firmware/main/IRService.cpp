@@ -8,6 +8,7 @@
 #include "Config.h"
 #include "IRService.h"
 #include "LEDService.h"
+#include "PubSubService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -19,6 +20,14 @@ class TransmitterTask;
 
 static RecieverTask* rxTask;
 static TransmitterTask* txTask;
+
+static const std::string JSON_FORMATED = "FormatedIRStream";
+static const std::string JSON_PROTOCOL = "Protocol";
+static const std::string JSON_BITCOUNT = "BitCount";
+static const std::string JSON_DATA = "Data";
+static const std::string JSON_RAW = "RawIRStream";
+static const std::string JSON_LEVEL = "Level";
+static const std::string JSON_DURATION = "Duration";
 
 //----------------------------------------------------------------------
 // transmitter task inmprementation
@@ -166,7 +175,9 @@ void RecieverTask::run(void *data){
 	mutex.unlock();
 
 	ledSetBlinkMode(LEDBM_IRRX);
-	IRRCRecieve(&irContext, 30 * 1000);
+	if (IRRCRecieve(&irContext, 30 * 1000)){
+	    publishIrrcData();
+	}
 	ledSetBlinkMode(LEDBM_DEFAULT);
 
 	mutex.lock();
@@ -207,3 +218,55 @@ bool getIRRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits, uint8_t* data){
 bool getIRRecievedDataRaw(const rmt_item32_t** data, int32_t* length){
     return rxTask->getRecievedDataRaw(data, length);
 }
+
+bool getIRRecievedDataJson(std::ostream& out){
+    uint8_t buf[32];
+    int32_t bits = sizeof(buf) * 8;
+    IRRC_PROTOCOL protocol;
+
+    if (getIRRecievedData(&protocol, &bits, buf)){
+	if (protocol == IRRC_UNKNOWN){
+	    out << "{\"Protocol\" : \"UNKNOWN\"}";
+	}else{
+	    char hexstr[65];
+	    for (int i = 0; i < ((bits + 7) / 8) * 2; i++){
+		int data = (buf[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
+		static const unsigned char dic[] = "0123456789abcdef";
+		hexstr[i] = dic[data];
+	    }
+	    hexstr[((bits + 7) / 8) * 2] = 0;
+		    
+	    out << "{\"" << JSON_FORMATED << "\":{\""
+		<< JSON_PROTOCOL << "\":\""
+		<< (protocol == IRRC_NEC ? "NEC" :
+		    protocol == IRRC_AEHA ? "AEHA" : "SONY")
+		<< "\",\"" << JSON_BITCOUNT << "\":" << bits << ",\""
+		<< JSON_DATA << "\":\"" << hexstr << "\"}}";
+	}
+	return true;
+    }else{
+	return false;
+    }
+}
+
+bool getIRRecievedDataRawJson(std::ostream& out){
+    const rmt_item32_t* items;
+    int32_t itemNum;
+    if (getIRRecievedDataRaw(&items, &itemNum)){
+	out << "{\"" << JSON_RAW << "\":[";
+	for (int i = 0; i < itemNum; i++){
+	    if (i > 0){
+		out << ",";
+	    }
+	    out << "{\"" << JSON_LEVEL << "\":1,\""
+		<< JSON_DURATION << "\":" << items[i].duration0 << "},{\""
+		<< JSON_LEVEL << "\":0,\""
+		<< JSON_DURATION << "\":" << items[i].duration1 << "}";
+	}
+	out << "]}";
+	return true;
+    }else{
+	return false;
+    }
+}
+

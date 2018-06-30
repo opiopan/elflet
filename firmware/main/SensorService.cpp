@@ -10,7 +10,7 @@
 #include "Config.h"
 #include "SensorService.h"
 #include "bme280.h"
-#include "PublishService.h"
+#include "PubSubService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"

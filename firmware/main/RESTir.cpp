@@ -23,64 +23,21 @@ static const std::string JSON_RAW = "RawIRStream";
 static const std::string JSON_LEVEL = "Level";
 static const std::string JSON_DURATION = "Duration";
 
-static void replyRecievedDataRaw(HttpRequest* req, HttpResponse* resp){
-    const rmt_item32_t* items;
-    int32_t itemNum;
-    getIRRecievedDataRaw(&items, &itemNum);
-
-    std::stringstream body;
-    body << "{\"" << JSON_RAW << "\":[";
-    for (int i = 0; i < itemNum; i++){
-	if (i > 0){
-	    body << ",";
-	}
-	body << "{\"" << JSON_LEVEL << "\":1,\""
-	     << JSON_DURATION << "\":" << items[i].duration0 << "},{\""
-	     << JSON_LEVEL << "\":0,\""
-	     << JSON_DURATION << "\":" << items[i].duration1 << "}";
-    }
-    body << "]}";
-
-    stringPtr bodyStr(new std::string(body.str()));
-    resp->setBody(bodyStr);
-    resp->close();
-}
-
 static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
-    uint8_t buf[32];
-    int32_t bits = sizeof(buf) * 8;
-    IRRC_PROTOCOL protocol;
-    if (getIRRecievedData(&protocol, &bits, buf)){
+    std::stringstream body;
+    bool rc = false;
+    auto params = req->parameters();
+    if (params["type"] == "raw"){
+	rc = getIRRecievedDataRawJson(body);
+    }else{
+	rc = getIRRecievedDataJson(body);
+    }
+    
+    if (rc){
 	resp->setHttpStatus(HttpResponse::RESP_200_OK);
 	resp->addHeader("Content-Type", "application/json");
-
-	auto params = req->parameters();
-	if (params["type"] == "raw"){
-	    replyRecievedDataRaw(req, resp);
-	    return;
-	}
-	
-	if (protocol == IRRC_UNKNOWN){
-	    resp->setBody("{\"Protocol\" : \"UNKNOWN\"}");
-	}else{
-	    char hexstr[65];
-	    for (int i = 0; i < ((bits + 7) / 8) * 2; i++){
-		int data = (buf[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
-		static const unsigned char dic[] = "0123456789abcdef";
-		hexstr[i] = dic[data];
-	    }
-	    hexstr[((bits + 7) / 8) * 2] = 0;
-		    
-	    std::stringstream body;
-	    body << "{\"" << JSON_FORMATED << "\":{\""
-		 << JSON_PROTOCOL << "\":\""
-		 << (protocol == IRRC_NEC ? "NEC" :
-		     protocol == IRRC_AEHA ? "AEHA" : "SONY")
-		 << "\",\"" << JSON_BITCOUNT << "\":" << bits << ",\""
-		 << JSON_DATA << "\":\"" << hexstr << "\"}}";
-	    stringPtr bodyStr(new std::string(body.str()));
-	    resp->setBody(bodyStr);
-	}
+	stringPtr bodyStr(new std::string(body.str()));
+	resp->setBody(bodyStr);
     }else{
 	resp->setHttpStatus(HttpResponse::RESP_204_NoContent);
     }

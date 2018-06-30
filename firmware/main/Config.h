@@ -33,14 +33,23 @@ protected:
     std::string timezone;
 
     int32_t sensorFrequency;
+
     std::string pubSubServerAddr;
     int32_t pubSubSessionType;
     std::string pubSubServerCert;
     std::string pubSubUser;
     std::string pubSubPassword;
+
     std::string sensorTopic;
+    std::string irrcRecieveTopic;
+    std::string irrcRecievedDataTopic;
+    std::string irrcSendTopic;
+    std::string downloadFirmwareTopic;
 
     std::string defaultSensorTopic;
+    std::string defaultIrrcRecieveTopic;
+    std::string defaultIrrcRecievedDataTopic;
+    std::string defaultIrrcSendTopic;
     
 public:
     Config();
@@ -77,6 +86,21 @@ public:
     const std::string& getSensorTopic() const{
 	return sensorTopic.length() == 0 ? defaultSensorTopic : sensorTopic;
     };
+    const std::string& getIrrcRecieveTopic() const{
+	return irrcRecieveTopic.length() == 0 ?
+	    defaultIrrcRecieveTopic : irrcRecieveTopic;
+    };
+    const std::string& getIrrcRecievedDataTopic() const{
+	return irrcRecievedDataTopic.length() == 0 ?
+	    defaultIrrcRecievedDataTopic : irrcRecievedDataTopic;
+    };
+    const std::string& getIrrcSendTopic() const{
+	return irrcSendTopic.length() == 0 ?
+	    defaultIrrcSendTopic : irrcSendTopic;
+    };
+    const std::string& getDownloadFirmwareTopic() const{
+	return downloadFirmwareTopic;
+    }
     
     const char* getVerificationKeyPath();
     
@@ -98,7 +122,11 @@ public:
     bool setPubSubUser(const std::string& user);
     bool setPubSubPassword(const std::string& pass);
     bool setSensorTopic(const std::string& topic);
-    
+    bool setIrrcRecieveTopic(const std::string& topic);
+    bool setIrrcRecievedDataTopic(const std::string& topic);
+    bool setIrrcSendTopic(const std::string& topic);
+    bool setDownloadFirmwareTopic(const std::string& topic);
+
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
 		    bool& value);

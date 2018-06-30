@@ -35,6 +35,10 @@ static const std::string JSON_PUBSUBSERVERCERT = "PubSubServerCert";
 static const std::string JSON_PUBSUBUSER = "PubSubUser";
 static const std::string JSON_PUBSUBPASSWORD = "PubSubPassword";
 static const std::string JSON_SENSORTOPIC = "SensorTopic";
+static const std::string JSON_IRRCRECIEVETOPIC = "IrrcRecieveTopic";
+static const std::string JSON_IRRCRECIEVEDDATATOPIC = "IrrcRecievedDataTopic";
+static const std::string JSON_IRRCSENDTOPIC = "IrrcSendTopic";
+static const std::string JSON_DOWNLOADFIRMWARETOPIC = "DownloadFirmwareTopic";
 
 static const char* sessionTypeStr[]{
     "TCP", "TSL", "WebSocket", "WebSocketSecure", NULL
@@ -93,6 +97,10 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_PUBSUBSERVERCERT, conf->getPubSubServerCert()},
 	    {JSON_PUBSUBUSER, conf->getPubSubUser()},
 	    {JSON_SENSORTOPIC, conf->getSensorTopic()},
+	    {JSON_IRRCRECIEVETOPIC, conf->getIrrcRecieveTopic()},
+	    {JSON_IRRCRECIEVEDDATATOPIC, conf->getIrrcRecievedDataTopic()},
+	    {JSON_IRRCSENDTOPIC, conf->getIrrcSendTopic()},
+	    {JSON_DOWNLOADFIRMWARETOPIC, conf->getDownloadFirmwareTopic()},
     });
     
     if (conf->getNodeName() != conf->getAPSSID()){
@@ -143,9 +151,19 @@ static bool applyPubSub(const json11::Json& input, const char** rmsg){
 		   return elfletConfig->setPubSubPassword(v);});
     ApplyValue(input, JSON_SENSORTOPIC,
 	       [](const std::string& v) -> bool{
-		   return elfletConfig->setSensorTopic(v);}) ||
-	(msg = "topic name to publish sensor "
-	       "must be a string longer than 0 byte");
+		   return elfletConfig->setSensorTopic(v);});
+    ApplyValue(input, JSON_IRRCRECIEVETOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setIrrcRecieveTopic(v);});
+    ApplyValue(input, JSON_IRRCRECIEVEDDATATOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setIrrcRecievedDataTopic(v);});
+    ApplyValue(input, JSON_IRRCSENDTOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setIrrcSendTopic(v);});
+    ApplyValue(input, JSON_DOWNLOADFIRMWARETOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setDownloadFirmwareTopic(v);});
 
     if (msg){
 	*rmsg = msg;

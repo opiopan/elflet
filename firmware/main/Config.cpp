@@ -29,6 +29,7 @@ static const char* CONFIGPATH[] = {
     "/spiffs/config02.json"
 };
 
+static const std::string JSON_FUNCTIONMODE = "FunctionMode";
 static const std::string JSON_NODENAME = "NodeName";
 static const std::string JSON_APSSID = "AP_SSID";
 static const std::string JSON_ADMINPASSWORD = "AdminPassword";
@@ -59,6 +60,9 @@ const char* Config::defaultTimezone = "JST-9";
 // initialize global configuration
 //----------------------------------------------------------------------
 bool initConfig(){
+    // retrieve wakeup cause
+    auto wakeupCause = initDeepSleep();
+    
     // Initialize NVS
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES) {
@@ -93,16 +97,18 @@ bool initConfig(){
     }
     
     // load configuration
-    elfletConfig = new Config();
+    elfletConfig = new Config(wakeupCause);
     return elfletConfig->load();
 }
 
 //----------------------------------------------------------------------
 // Config object initialize / deinitialize
 //----------------------------------------------------------------------
-Config::Config() : fromStorage(false), isDirtyBootMode(false), isDirty(false),
-		   sensorFrequency(0), 
-		   pubSubSessionType(SessionTCP){
+Config::Config(WakeupCause cause) :
+    fromStorage(false), isDirtyBootMode(false), isDirty(false),
+    wakeupCause(cause),
+    functionMode(FullSpec), sensorFrequency(0), 
+    pubSubSessionType(SessionTCP){
 }
 
 Config::~Config(){
@@ -113,7 +119,9 @@ Config& Config::operator = (const Config& src){
     isDirtyBootMode = true;
 
     bootMode = src.bootMode;
+    wakeupCause = src.wakeupCause;
     fileGeneration = src.fileGeneration;
+    functionMode = src.functionMode;
     boardVersion = src.boardVersion;
     nodeName = src.nodeName;
     apssid = src.apssid;
@@ -188,6 +196,7 @@ bool Config::load(){
     }
     
     // reflect configuration file to object attribute
+    applyValue(config, JSON_FUNCTIONMODE, functionMode);
     applyValue(config, JSON_BOARDVERSION, boardVersion);
     applyValue(config, JSON_NODENAME, nodeName);
     applyValue(config, JSON_APSSID, apssid);
@@ -244,6 +253,7 @@ bool Config::commit(){
 
     if (isDirty && bootMode != FactoryReset){
 	auto obj = json11::Json::object({
+		{JSON_FUNCTIONMODE, functionMode},
 		{JSON_BOARDVERSION, boardVersion},
 		{JSON_NODENAME, nodeName},
 		{JSON_APSSID, apssid},
@@ -292,7 +302,16 @@ bool Config::setBootMode(BootMode mode){
     isDirtyBootMode = true;
     return true;
 }
-    
+
+bool Config::setFunctionMode(FunctionMode mode){
+    if (mode == SensorOnly && pubSubServerAddr.length() == 0){
+	return false;
+    }
+    functionMode = (int32_t)mode;
+    isDirty = true;
+    return true;
+}
+
 bool Config::setNodeName(const std::string& name){
     if (name.length() > MAX_NODENAME_LEN){
 	return false;
@@ -426,4 +445,3 @@ void Config::updateDefaultSensorTopic(){
 const char* Config::getVerificationKeyPath(){
     return VERIFICATION_KEY_PATH;
 }
-

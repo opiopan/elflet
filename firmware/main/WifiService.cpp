@@ -44,7 +44,9 @@ protected:
 	auto ev = xEventGroupWaitBits(
 	    events, 1, pdTRUE, pdFALSE, 60000 / portTICK_PERIOD_MS);
 	if (ev){
-	    ledSetDefaultMode(LEDDM_STANDBY);
+	    if (elfletConfig->getWakeupCause() != WC_TIMER){
+		ledSetDefaultMode(LEDDM_STANDBY);
+	    }
 	    enablePubSub();
 	    return;
 	}else{

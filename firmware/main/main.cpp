@@ -43,6 +43,11 @@ void MainTask::run(void *data){
 	systemFault();;
     }
 
+    auto wakeupCause = elfletConfig->getWakeupCause();
+    if (wakeupCause != WC_NOTSLEEP){
+	ESP_LOGI(tag, "wakeup from deep sleep by %s",
+		 wakeupCause == WC_TIMER ? "time out" : "pushing a button");
+    }
     auto mode = elfletConfig->getBootMode();
     ESP_LOGI(tag, "elflet goes to mode: %s",
 	     mode == Config::FactoryReset ? "FACTORY RESET" :
@@ -58,8 +63,13 @@ void MainTask::run(void *data){
     //--------------------------------------------------------------
     startTimeService();
     startButtonService();
-    startIRService();
-    startSensorService();
+    if (wakeupCause != WC_BUTTON){
+	startIRService();
+	startSensorService();
+	if (wakeupCause == WC_TIMER){
+	    enableSensorCapturing();
+	}
+    }
     
     //--------------------------------------------------------------
     // start network services
@@ -73,15 +83,22 @@ void MainTask::run(void *data){
 	}
 	startWebService();
     }else{
-	ledSetDefaultMode(LEDDM_SCAN_WIFI);
-	if (elfletConfig->getPubSubServerAddr().length() > 0){
+	if (wakeupCause == WC_NOTSLEEP){
+	    ledSetDefaultMode(LEDDM_SCAN_WIFI);
+	}else if (wakeupCause == WC_BUTTON){
+	    ledSetBlinkMode(LEDBM_RESTRICT_DEEP_SLEEP);
+	}
+	if (elfletConfig->getPubSubServerAddr().length() > 0 &&
+	    wakeupCause != WC_BUTTON){
 	    startPubSubService();
 	}
 	if (!startWifiService()){
 	    systemFault();
 	}
 	startWebService();
-	startIRServer();
+	if (wakeupCause != WC_BUTTON){
+	    startIRServer();
+	}
     }
 }
 

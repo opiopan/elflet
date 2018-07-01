@@ -86,8 +86,14 @@ void ButtonEventTask::run(void *data){
 		printf("button up\n");
 		auto mode = elfletConfig->getBootMode();
 		if (mode == Config::Normal){
-		    ESP_LOGI(tag, "start IR reciever");
-		    startIRReciever();
+		    if (elfletConfig->getWakeupCause() != WC_BUTTON &&
+			elfletConfig->getFunctionMode() == Config::SensorOnly){
+			enterDeepSleep(500);
+		    }else if (elfletConfig->getFunctionMode() ==
+			      Config::FullSpec){
+			ESP_LOGI(tag, "start IR reciever");
+			startIRReciever();
+		    }
 		}else if (mode == Config::Configuration){
 		    ESP_LOGI(tag, "go back to normal mode");
 		    esp_restart();

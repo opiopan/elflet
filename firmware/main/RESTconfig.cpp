@@ -4,6 +4,7 @@
 #include <json11.hpp>
 #include <iostream>
 #include <sstream>
+#include <functional>
 #include "webserver.h"
 #include "reboot.h"
 #include "Config.h"
@@ -14,6 +15,7 @@
 
 static const char tag[] = "RESTconfig";
 
+static const std::string JSON_FUNCTIONMODE = "FunctionMode";
 static const std::string JSON_BOARDTYPE = "BoardType";
 static const std::string JSON_BOARDVERSION = "BoardVersion";
 static const std::string JSON_FWVERSION = "FirmwareVersion";
@@ -40,12 +42,16 @@ static const std::string JSON_IRRCRECIEVEDDATATOPIC = "IrrcRecievedDataTopic";
 static const std::string JSON_IRRCSENDTOPIC = "IrrcSendTopic";
 static const std::string JSON_DOWNLOADFIRMWARETOPIC = "DownloadFirmwareTopic";
 
+static const char* functionModeStr[]{
+    "FullSpec", "SensorOnly", NULL
+};
+
 static const char* sessionTypeStr[]{
     "TCP", "TSL", "WebSocket", "WebSocketSecure", NULL
 };
 
 static bool ApplyValue(const json11::Json& json, const std::string& key,
-		       bool (*apply)(const std::string&)){
+		       std::function<bool(const std::string&)> apply){
     auto obj = json[key];
     if (obj.is_string()){
 	return apply(obj.string_value());
@@ -54,7 +60,7 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
 }
 
 static bool ApplyValue(const json11::Json& json, const std::string& key,
-		       bool (*apply)(int32_t)){
+		       std::function<bool(int32_t)> apply){
     auto obj = json[key];
     if (obj.is_number()){
 	return apply(obj.int_value());
@@ -64,7 +70,7 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
 
 /*
 static bool ApplyValue(const json11::Json& json, const std::string& key,
-		       bool (*apply)(bool)){
+		       std::function<bool(bool)> apply){
     auto obj = json[key];
     if (obj.is_bool()){
 	return apply(obj.bool_value());
@@ -85,6 +91,7 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_BOARDTYPE, "elflet"},
 	    {JSON_BOARDVERSION, conf->getBoardVersion()},
 	    {JSON_FWVERSION, ver.str()},
+	    {JSON_FUNCTIONMODE, functionModeStr[conf->getFunctionMode()]},
 	    {JSON_NODENAME, conf->getNodeName()},
 	    {JSON_SSID, conf->getSSIDtoConnect()},
 	    {JSON_TIMEZONE, conf->getTimezone()},
@@ -173,7 +180,6 @@ static bool applyPubSub(const json11::Json& input, const char** rmsg){
     }
 }
 
-
 static ApplyResult applyConfig(const WebString& json, const char** msg){
     std::string err;
     auto input = json11::Json::parse(std::string(json.data(), json.length()),
@@ -231,6 +237,27 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 	applyPubSub(input, msg);
     }
 
+    ApplyValue(input, JSON_FUNCTIONMODE, [&](const std::string& v) -> bool{
+	    int i;
+	    for (i = 0; functionModeStr[i]; i++){
+		if (v == functionModeStr[i]){
+		    break;
+		}
+	    }
+	    if (functionModeStr[i]){
+		bool rc =
+		    elfletConfig->setFunctionMode((Config::FunctionMode)i);
+		if (!rc){
+		    *msg = "PubSub server address needs to set "
+		    	"if sensor only mode is enabled";
+		}
+		return rc;
+	    }else{
+		*msg = "invalid function mode is specified";
+		return false;
+	    }
+	});
+    
     bool commit =
 	input[JSON_COMMIT].is_bool() && input[JSON_COMMIT].bool_value();
     

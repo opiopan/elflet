@@ -15,14 +15,6 @@
 
 static const char tag[] = "RESTir";
 
-static const std::string JSON_FORMATED = "FormatedIRStream";
-static const std::string JSON_PROTOCOL = "Protocol";
-static const std::string JSON_BITCOUNT = "BitCount";
-static const std::string JSON_DATA = "Data";
-static const std::string JSON_RAW = "RawIRStream";
-static const std::string JSON_LEVEL = "Level";
-static const std::string JSON_DURATION = "Duration";
-
 static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
     std::stringstream body;
     bool rc = false;
@@ -44,69 +36,6 @@ static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
     resp->close();
 }
 
-static bool sendFormatedData(const json11::Json& obj){
-    auto protocol = obj[JSON_PROTOCOL];
-    auto protocolValue = IRRC_UNKNOWN;
-    if (protocol.is_string()){
-	auto value = protocol.string_value();
-	if (value == "NEC"){
-	    protocolValue = IRRC_NEC;
-	}else if (value == "AEHA"){
-	    protocolValue = IRRC_AEHA;
-	}else if (value == "SONY"){
-	    protocolValue = IRRC_SONY;
-	}
-    }
-
-    auto data = obj[JSON_DATA];
-    char dataStream[IRS_REQMAXSIZE];
-    auto dataLength = -1;
-    if (data.is_string()){
-	auto value = data.string_value();
-	if (value.length() & 1 || value.length() > sizeof(dataStream) * 2){
-	    return false;
-	}
-	dataLength = value.length() / 2;
-
-	auto hex = [](int c) -> int {
-	    if (c >= '0' && c <= '9'){
-		return c - '0';
-	    }else if (c >= 'a' && c <= 'f'){
-		return c - 'a' + 0xa;
-	    }else if (c >= 'A' && c <= 'F'){
-		return c - 'A' + 0xa;
-	    }
-	    return -1;
-	};
-
-	for (auto i = 0; i < value.length(); i += 2){
-	    auto lh = hex(value[i]);
-	    auto sh = hex(value[i + 1]);
-	    if (lh < 0 || sh < 0){
-		return false;
-	    }
-	    dataStream[i / 2] = (lh << 4) | sh;
-	}
-    }
-
-    if (protocolValue == IRRC_UNKNOWN || dataLength <= 0){
-	return false;
-    }
-
-    auto bitCount = obj[JSON_BITCOUNT];
-    auto bitCountValue = 0;
-    if (bitCount.is_number()){
-	bitCountValue = bitCount.int_value();
-    }
-    if (bitCountValue <= 0){
-	bitCountValue = dataLength * 8;
-    }
-
-    sendIRData(protocolValue, bitCountValue, (uint8_t*)dataStream);
-    
-    return true;
-}
-
 static void sendData(HttpRequest* req, HttpResponse* resp){
     if (!(req->header("Content-Type") == "application/json")){
 	resp->setHttpStatus(HttpResponse::RESP_400_BadRequest);
@@ -114,27 +43,11 @@ static void sendData(HttpRequest* req, HttpResponse* resp){
 	return;
     }
 
-    std::string err;
-    auto body = json11::Json::parse(
-	std::string(req->body().data(), req->body().length()),
-	err);
-
-    if (body.is_object()){
-	auto formatedData = body[JSON_FORMATED];
-	bool rc = false;
-	if (formatedData.is_object()){
-	    rc = sendFormatedData(json11::Json(formatedData.object_items()));
-	}else{
-	    rc = sendFormatedData(body);
-	}
-	if (rc){
-	    resp->setHttpStatus(HttpResponse::RESP_200_OK);
-	    resp->close();
-	    return;
-	}
+    if (sendIRDataJson(req->body())){
+	resp->setHttpStatus(HttpResponse::RESP_200_OK);
+    }else{
+	resp->setHttpStatus(HttpResponse::RESP_400_BadRequest);
     }
-
-    resp->setHttpStatus(HttpResponse::RESP_400_BadRequest);
     resp->close();
 }
 

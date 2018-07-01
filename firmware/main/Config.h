@@ -3,10 +3,12 @@
 #include <stdint.h>
 #include <string>
 #include <json11.hpp>
+#include "DeepSleep.h"
 
 class Config {
 public:
     enum BootMode{FactoryReset = 0, Configuration = 1, Normal = 2};
+    enum FunctionMode{FullSpec, SensorOnly};
     enum SessionType{SessionTCP, SessionTLS,
 		     SessionWebSocket, SessionWebSocketSecure};
     
@@ -20,6 +22,10 @@ protected:
     BootMode bootMode;
     BootMode bootModeCurrent;
     uint32_t fileGeneration;
+
+    WakeupCause wakeupCause;
+
+    int32_t functionMode;
 
     std::string boardVersion;
     
@@ -52,7 +58,7 @@ protected:
     std::string defaultIrrcSendTopic;
     
 public:
-    Config();
+    Config(WakeupCause cause);
     virtual ~Config();
 
     Config& operator = (const Config& src);
@@ -61,6 +67,8 @@ public:
     bool commit();
 
     BootMode getBootMode() const{return bootModeCurrent;};
+    WakeupCause getWakeupCause() const{return wakeupCause;};
+    FunctionMode getFunctionMode() const{return (FunctionMode)functionMode;};
     const std::string& getBoardVersion() const{return boardVersion;};
     const std::string& getNodeName() const{return nodeName;};
     const std::string& getAPSSID() const{
@@ -105,6 +113,8 @@ public:
     const char* getVerificationKeyPath();
     
     bool setBootMode(BootMode mode);
+
+    bool setFunctionMode(FunctionMode mode);
     
     bool setNodeName(const std::string& name);
     bool setAPSSID(const std::string& ssid);

@@ -4,8 +4,10 @@
 #include <GeneralUtils.h>
 #include <Task.h>
 #include <freertos/event_groups.h>
+#include <json11.hpp>
 #include "Mutex.h"
 #include "Config.h"
+#include "irserverProtocol.h"
 #include "IRService.h"
 #include "LEDService.h"
 #include "PubSubService.h"
@@ -42,7 +44,7 @@ protected:
     EventGroupHandle_t events;
     IRRC irContext;
     IRRC_PROTOCOL protocol;
-    const uint8_t* data;
+    uint8_t data[IRS_REQMAXSIZE];
     int32_t bits;
 
 public:
@@ -71,10 +73,13 @@ bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
     if (status != ST_IDLE){
 	return false;
     }
+    if (bits / 8 > sizeof(data)){
+	return false;
+    }
     status = ST_RUNNING;
     this->protocol = protocol;
     this->bits = bits;
-    this->data = data;
+    memcpy(this->data, data, bits / 8);
     xEventGroupSetBits(events, EV_WAKE_SERVER);
     return true;
 }
@@ -100,6 +105,68 @@ void TransmitterTask::run(void *){
     }
 }
 
+static bool sendFormatedData(const json11::Json& obj){
+    auto protocol = obj[JSON_PROTOCOL];
+    auto protocolValue = IRRC_UNKNOWN;
+    if (protocol.is_string()){
+	auto value = protocol.string_value();
+	if (value == "NEC"){
+	    protocolValue = IRRC_NEC;
+	}else if (value == "AEHA"){
+	    protocolValue = IRRC_AEHA;
+	}else if (value == "SONY"){
+	    protocolValue = IRRC_SONY;
+	}
+    }
+
+    auto data = obj[JSON_DATA];
+    char dataStream[IRS_REQMAXSIZE];
+    auto dataLength = -1;
+    if (data.is_string()){
+	auto value = data.string_value();
+	if (value.length() & 1 || value.length() > sizeof(dataStream) * 2){
+	    return false;
+	}
+	dataLength = value.length() / 2;
+
+	auto hex = [](int c) -> int {
+	    if (c >= '0' && c <= '9'){
+		return c - '0';
+	    }else if (c >= 'a' && c <= 'f'){
+		return c - 'a' + 0xa;
+	    }else if (c >= 'A' && c <= 'F'){
+		return c - 'A' + 0xa;
+	    }
+	    return -1;
+	};
+
+	for (auto i = 0; i < value.length(); i += 2){
+	    auto lh = hex(value[i]);
+	    auto sh = hex(value[i + 1]);
+	    if (lh < 0 || sh < 0){
+		return false;
+	    }
+	    dataStream[i / 2] = (lh << 4) | sh;
+	}
+    }
+
+    if (protocolValue == IRRC_UNKNOWN || dataLength <= 0){
+	return false;
+    }
+
+    auto bitCount = obj[JSON_BITCOUNT];
+    auto bitCountValue = 0;
+    if (bitCount.is_number()){
+	bitCountValue = bitCount.int_value();
+    }
+    if (bitCountValue <= 0){
+	bitCountValue = dataLength * 8;
+    }
+
+    sendIRData(protocolValue, bitCountValue, (uint8_t*)dataStream);
+    
+    return true;
+}
 
 //----------------------------------------------------------------------
 // reciever task inmprementation
@@ -207,6 +274,25 @@ bool sendIRData(IRRC_PROTOCOL protocol, int32_t bits, const uint8_t* data){
     return false;
 }
 
+bool sendIRDataJson(const WebString& data){
+    std::string err;
+    auto body =
+	json11::Json::parse(std::string(data.data(), data.length()), err);
+
+    if (body.is_object()){
+	auto formatedData = body[JSON_FORMATED];
+	bool rc = false;
+	if (formatedData.is_object()){
+	    rc = sendFormatedData(json11::Json(formatedData.object_items()));
+	}else{
+	    rc = sendFormatedData(body);
+	}
+	return rc;
+    }
+
+    return false;
+}
+
 bool startIRReciever(){
     return rxTask->startReciever();
 }
@@ -269,4 +355,3 @@ bool getIRRecievedDataRawJson(std::ostream& out){
 	return false;
     }
 }
-

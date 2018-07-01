@@ -147,14 +147,22 @@ bool startSensorService(){
 }
 
 void enableSensorCapturing(){
-    sensorTask->enableCapture();
+    if (sensorTask){
+	sensorTask->enableCapture();
+    }
 }
 
 void getSensorValue(SensorValue* value){
-    sensorTask->getValue(value);
+    if (sensorTask){
+	sensorTask->getValue(value);
+    }
 }
 
 void getSensorValueAsJson(std::ostream& out){
+    if (!sensorTask){
+	return;
+    }
+    
     SensorValue value;
     getSensorValue(&value);
 

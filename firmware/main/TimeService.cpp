@@ -56,6 +56,7 @@ void TimeTask::run(void *data){
 			pdTRUE, pdFALSE,
 			portMAX_DELAY);
     
+    bool first = true;
     while (true){
 	if (Time::shouldAdjust()){
 	    ESP_LOGI(tag, "start SNTP & wait for finish adjustment");
@@ -66,6 +67,10 @@ void TimeTask::run(void *data){
 	    Time now;
 	    ESP_LOGI(tag, "adjusted time: %s",
 		     now.format(Time::SIMPLE_DATETIME));
+	}
+
+	if (first){
+	    first = false;
 	    enableSensorCapturing();
 	}
 

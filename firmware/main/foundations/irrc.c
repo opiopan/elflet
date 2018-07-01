@@ -242,7 +242,6 @@ static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
     if (INRANGE(items[0].duration0, necLeader0Range) &&
 	INRANGE(items[0].duration1, necLeader1Range)){
 	// it seems NEC format
-	printf("nec format?\n");
 	for (int i = 1; i < ctx->usedLen - 1; i++){
 	    if (INRANGE(items[i].duration0, necUnitRange) &&
 		(INRANGE(items[i].duration1, necUnitRange) ||
@@ -257,7 +256,6 @@ static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
     if (INRANGE(items[0].duration0, sonyLeader0Range) &&
 	INRANGE(items[0].duration1, sonyLeader1Range)){
 	// it seems SONY format
-	printf("sony format?\n");
 	for (int i = 1; i < ctx->usedLen - 1; i++){
 	    if (INRANGE(items[i].duration1, sonyUnitRange) &&
 		(INRANGE(items[i].duration0, sonyUnitRange) ||
@@ -270,28 +268,23 @@ static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
 	return IRRC_SONY;
     }else{
 	// in this case, it might AHEA format
-	printf("AHEA format?\n");
 	int sum = 0;
 	for (int i = 1; i < ctx->usedLen - 1; i++){
 	    sum += items[i].duration0;
 	}
 	int unit = sum / (ctx->usedLen - 2);
-	printf("unit length: %d\n", unit);
 	RANGE unitRange = RANGEVAL(unit);
 	RANGE longRange = RANGEVAL(unit * 3);
 	RANGE leader0Range = RANGEVAL(unit * 8);
 	RANGE leader1Range = RANGEVAL(unit * 4);
 	if (INRANGE(items[0].duration0, leader0Range) &&
 	    INRANGE(items[0].duration1, leader1Range)){
-	    printf("leader is OK\n");
 	    for (int i = 1; i < ctx->usedLen - 1; i++){
 		if (INRANGE(items[i].duration0, unitRange) &&
 		    (INRANGE(items[i].duration1, unitRange) ||
 		     INRANGE(items[i].duration1, longRange))){
 		    continue;
 		}else{
-		    printf("data NG: pos(%d) : %d, %d\n",
-			   i, items[i].duration0, items[i].duration1);
 		    return IRRC_UNKNOWN;
 		}
 	    }

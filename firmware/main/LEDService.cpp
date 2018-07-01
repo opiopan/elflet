@@ -77,12 +77,20 @@ BlinkSeqUnit SEQ_IRRX[] = {
 };
 
 
+BlinkSeqUnit SEQ_RESTRICT_DEEP_SLEEP[] = {
+    SEQ_FADE(500, 0, 600, 0),
+    SEQ_FADE(500, 0, 0, 0),
+    SEQ_WAIT(2000),
+    SEQ_LOOP
+};
+
+
 BlinkSeqUnit* defaultSequences[] = {
     SEQ_STANDBY, SEQ_SCAN_WIFI, SEQ_CONFIGURATION, SEQ_FACTORY_RESET
 };
 
 BlinkSeqUnit* otherSequences[] = {
-    SEQ_SYSTEM_FAULT, SEQ_IRRX
+    SEQ_SYSTEM_FAULT, SEQ_IRRX, SEQ_RESTRICT_DEEP_SLEEP
 };
 
 //----------------------------------------------------------------------

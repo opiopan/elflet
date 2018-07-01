@@ -8,6 +8,7 @@
 #include <freertos/event_groups.h>
 #include <mqtt_client.h>
 #include "Mutex.h"
+#include "webserver.h"
 #include "Config.h"
 #include "SensorService.h"
 #include "PubSubService.h"
@@ -26,11 +27,13 @@ protected:
     static const int EV_WAKE_SERVER = 1;
     static const int EV_PUBLISH = 2;
     static const int EV_CONNECTED = 4;
+    static const int EV_PUBLISHED = 8;
     EventGroupHandle_t events;
     Mutex mutex;
     static const int PUB_SENSOR = 1;
     static const int PUB_IRRC = 2;
     int publish;
+    bool publishing;
     
     esp_mqtt_client_handle_t client;
     int msgidIrrcSend;
@@ -50,7 +53,7 @@ protected:
     static esp_err_t mqttEventHandler(esp_mqtt_event_handle_t event);
 };
 
-PubSub::PubSub() : publish(0), client(NULL){
+PubSub::PubSub() : publish(0), publishing(false), client(NULL){
     events = xEventGroupCreate();
 }
 
@@ -131,7 +134,19 @@ void PubSub::run(void *data){
 	    const auto data = out.str();
 	    esp_mqtt_client_publish(
 		client, elfletConfig->getSensorTopic().c_str(),
-		data.data(), data.length(), 0, 0);
+		data.data(), data.length(), 1, 0);
+	    publishing = true;
+	    xEventGroupWaitBits(events, EV_PUBLISHED,
+				pdTRUE, pdFALSE,
+				4000 / portTICK_PERIOD_MS);
+	    publishing = false;
+	    printf("sensor published\n");
+	    if (elfletConfig->getBootMode() == Config::Normal &&
+		elfletConfig->getWakeupCause() != WC_BUTTON &&
+		elfletConfig->getFunctionMode() == Config::SensorOnly){
+		esp_mqtt_client_stop(client);
+		enterDeepSleep(2000);
+	    }
 	}
 	if (request & PUB_IRRC){
 	    uint8_t buf[32];
@@ -158,12 +173,61 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     auto self = (PubSub*)event->user_context;
 
     switch (event->event_id) {
-    case MQTT_EVENT_CONNECTED:
+    case MQTT_EVENT_CONNECTED: {
 	xEventGroupSetBits(self->events, EV_CONNECTED);
+	auto irrcSend = elfletConfig->getIrrcSendTopic();
+	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
+	auto downloadFirmware = elfletConfig->getIrrcSendTopic();
+	if (irrcSend.length() > 0){
+	    self->msgidIrrcSend =
+		esp_mqtt_client_subscribe(
+		    self->client, irrcSend.c_str(), 1);
+	}
+	if (irrcRecieve.length() > 0){
+	    self->msgidIrrcRecieve =
+		esp_mqtt_client_subscribe(
+		    self->client, irrcRecieve.c_str(), 1);
+	}
+	if (downloadFirmware.length() > 0){
+	    self->msgidDownloadFirmware =
+		esp_mqtt_client_subscribe(
+		    self->client, downloadFirmware.c_str(), 1);
+	}
 	break;
-    case MQTT_EVENT_PUBLISHED:
-	//xEventGroupSetBits(self->events, EV_PUBLISHED);
+    }
+    case MQTT_EVENT_PUBLISHED: {
+	printf("MQTT_EVENT_PUBLISED\n");
+	xEventGroupSetBits(self->events, EV_PUBLISHED);
+    }
+    case MQTT_EVENT_DATA:{
+	WebString topic(event->topic, event->topic_len);
+	auto irrcSend = elfletConfig->getIrrcSendTopic();
+	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
+	auto downloadFirmware = elfletConfig->getIrrcSendTopic();
+
+	if (event->total_data_len > event->data_len){
+	    ESP_LOGI(tag, "too large data recieved.");
+	    break;
+	}
+	
+	if (topic == irrcSend.c_str()){
+	    ESP_LOGI(tag, "recieve subscribed mqtt data: IrrcSend");
+	    WebString data(event->data, event->data_len);
+	    sendIRDataJson(data);
+	}else if (topic == irrcRecieve.c_str()){
+	    ESP_LOGI(tag, "recieve subscribed mqtt data: IrrcRecieve");
+	    startIRReciever();
+	}else if (topic == downloadFirmware.c_str()){
+	    ESP_LOGI(tag, "recieve subscribed mqtt data: DwonloadFirmware");
+	}
 	break;
+    }
+    case MQTT_EVENT_ERROR:{
+	printf("MQTT_EVENT_ERROR\n");
+	if (self->publishing){
+	    xEventGroupSetBits(self->events, EV_PUBLISHED);
+	}
+    }
     default:
 	break;
     }    

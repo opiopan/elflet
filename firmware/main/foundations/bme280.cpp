@@ -179,7 +179,10 @@ BME280_I2C::BME280_I2C(uint8_t address,
 		     "cannot disable builtin pullup register");
 	}
     }
-    i2c.scan();
+    i2c.slavePresent(0);
+    if (!i2c.slavePresent(address)){
+	i2c.scan();
+    }
 }
 
 BME280_I2C::~BME280_I2C() {

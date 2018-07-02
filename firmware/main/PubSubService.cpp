@@ -121,31 +121,37 @@ void PubSub::run(void *data){
 	
 	if (first){
 	    first = false;
+	    vTaskDelay(1000 / portTICK_PERIOD_MS);
 	    esp_mqtt_client_start(client);
 	    xEventGroupWaitBits(events, EV_CONNECTED,
 				pdTRUE, pdFALSE,
 				portMAX_DELAY);
 	    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
+	    vTaskDelay(500 / portTICK_PERIOD_MS);
 	}
 
 	if (request & PUB_SENSOR){
 	    std::stringstream out;
 	    getSensorValueAsJson(out);
 	    const auto data = out.str();
+	    int bits = 0;
 	    esp_mqtt_client_publish(
 		client, elfletConfig->getSensorTopic().c_str(),
 		data.data(), data.length(), 1, 0);
 	    publishing = true;
-	    xEventGroupWaitBits(events, EV_PUBLISHED,
-				pdTRUE, pdFALSE,
-				4000 / portTICK_PERIOD_MS);
+	    bits = xEventGroupWaitBits(events, EV_PUBLISHED,
+				       pdTRUE, pdFALSE,
+				       3000 / portTICK_PERIOD_MS);
 	    publishing = false;
-	    printf("sensor published\n");
+	    if (bits == 0){
+		ESP_LOGE(tag, "fail to publish sensor data");
+	    }
 	    if (elfletConfig->getBootMode() == Config::Normal &&
 		elfletConfig->getWakeupCause() != WC_BUTTON &&
 		elfletConfig->getFunctionMode() == Config::SensorOnly){
 		esp_mqtt_client_stop(client);
-		enterDeepSleep(2000);
+		esp_mqtt_client_destroy(client);
+		enterDeepSleep(1000);
 	    }
 	}
 	if (request & PUB_IRRC){
@@ -196,7 +202,6 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 	break;
     }
     case MQTT_EVENT_PUBLISHED: {
-	printf("MQTT_EVENT_PUBLISED\n");
 	xEventGroupSetBits(self->events, EV_PUBLISHED);
     }
     case MQTT_EVENT_DATA:{
@@ -223,10 +228,13 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 	break;
     }
     case MQTT_EVENT_ERROR:{
+	/*
 	printf("MQTT_EVENT_ERROR\n");
 	if (self->publishing){
 	    xEventGroupSetBits(self->events, EV_PUBLISHED);
 	}
+	*/
+	break;
     }
     default:
 	break;

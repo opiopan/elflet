@@ -47,7 +47,6 @@ protected:
 	    if (elfletConfig->getWakeupCause() != WC_TIMER){
 		ledSetDefaultMode(LEDDM_STANDBY);
 	    }
-	    enablePubSub();
 	    return;
 	}else{
 	    // fall back to configuration mode
@@ -75,6 +74,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
 	notifySMTPserverAccesivility();
+	enablePubSub();
         break;
     case SYSTEM_EVENT_AP_STA_GOT_IP6:
         break;

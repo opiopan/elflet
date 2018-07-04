@@ -9,6 +9,7 @@
 #include <mqtt_client.h>
 #include "Mutex.h"
 #include "webserver.h"
+#include "NameResolver.h"
 #include "Config.h"
 #include "SensorService.h"
 #include "PubSubService.h"
@@ -88,6 +89,7 @@ void PubSub::run(void *data){
     static const char* schemes[] = {"mqtt://", "mqtts://", "ws://", "wss://"};
     std::string uri = schemes[elfletConfig->getPubSubSessionType()];
     uri += elfletConfig->getPubSubServerAddr();
+    resolveHostname(uri);
     esp_mqtt_client_config_t mqttCfg;
     memset(&mqttCfg, 0, sizeof(mqttCfg));
     mqttCfg.user_context = this;
@@ -121,7 +123,7 @@ void PubSub::run(void *data){
 	
 	if (first){
 	    first = false;
-	    vTaskDelay(1000 / portTICK_PERIOD_MS);
+	    ESP_LOGI(tag, "connecting to mqtt broker: %s", uri.c_str());
 	    esp_mqtt_client_start(client);
 	    xEventGroupWaitBits(events, EV_CONNECTED,
 				pdTRUE, pdFALSE,

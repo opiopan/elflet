@@ -68,6 +68,7 @@ void MainTask::run(void *data){
 	startSensorService();
 	if (wakeupCause == WC_TIMER){
 	    enableSensorCapturing();
+	    //vTaskDelay(500 / portTICK_PERIOD_MS);
 	}
     }
     
@@ -95,8 +96,10 @@ void MainTask::run(void *data){
 	if (!startWifiService()){
 	    systemFault();
 	}
-	startWebService();
-	if (wakeupCause != WC_BUTTON){
+	if (wakeupCause != WC_TIMER){
+	    startWebService();
+	}
+	if (wakeupCause == WC_NOTSLEEP){
 	    startIRServer();
 	}
     }

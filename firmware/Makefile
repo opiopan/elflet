@@ -54,7 +54,6 @@ otaflash: $(SIGNEDIMAGE)
 	fi
 	tools/ota "$(OTAUSER)" "$(OTAPASS)" "$(OTAADDR)" $(SIGNEDIMAGE)
 
-
 #
 # Rules to clean completely
 #
@@ -63,3 +62,9 @@ complete-clean: clean
 	rm -rf $(OUTERCOMPONENTS)
 	rm -rf sdkconfig sdkconfig.old
 	make -C main -f component.mk extra-clean
+
+#
+# show version
+#
+version:
+	echo `tools/version`

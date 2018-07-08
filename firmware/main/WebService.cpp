@@ -34,8 +34,7 @@ bool startWebService(){
     registerSensorRESTHandler(webserver);
     webserver->setContentProvider(createContentProvider());
     std::stringstream name;
-    name << "elflet " << FW_VERSION_MAJOR << "."
-	 << FW_VERSION_MINOR << "." << FW_VERSION_BUILD;
+    name << "elflet " << getVersionString();
     webserver->setServerName(stringPtr(new std::string(name.str())));
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?

@@ -13,13 +13,19 @@ COMPONENT_EMBED_TXTFILES	:= html/index.htmlz html/index.jsz\
 				   html/style.cssz html/wizard.htmlz \
 				   html/wizard.cssz html/wizard.jsz
 
-COMPONENT_EXTRA_CLEAN		:= $(COMPONENT_EMBED_TXTFILES)
+COMPONENT_EXTRA_CLEAN		:= $(COMPONENT_EMBED_TXTFILES) version.string
 
-.SUFFIXES: .html .htmlz .js .jsz .css .cssz
+.SUFFIXES: .html .htmlz .js .jsz .css .cssz .string
 
 .html.htmlz .js.jsz .css.cssz:
 	echo ZIP $@
 	gzip -c $< > $@
+
+version.o: update_version
+
+update_version:
+	echo 'static const char verstr[] = "'`../../tools/version`'";' > \
+	    ../../main/version.string
 
 extra-clean:
 	rm -f $(COMPONENT_EXTRA_CLEAN)

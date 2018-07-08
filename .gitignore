@@ -20,6 +20,7 @@ firmware/sdkconfig
 firmware/sdkconfig.old
 firmware/components/cpp_utils
 firmware/components/posix
+firmware/main/version.string
 *.o
 hosttool/irtx
 *.htmlz

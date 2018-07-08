@@ -56,14 +56,10 @@ enum ApplyResult {AR_ERROR, AR_OK, AR_NEEDCOMMIT};
 
 static void serializeConfig(HttpResponse* resp){
     auto conf = elfletConfig;
-    std::stringstream ver;
-    ver << FW_VERSION_MAJOR << "." << FW_VERSION_MINOR << "."
-	<< FW_VERSION_BUILD;
-
     auto obj = json11::Json::object({
 	    {JSON_BOARDTYPE, "elflet"},
 	    {JSON_BOARDVERSION, conf->getBoardVersion()},
-	    {JSON_FWVERSION, ver.str()},
+	    {JSON_FWVERSION, getVersionString()},
 	    {JSON_FUNCTIONMODE, functionModeStr[conf->getFunctionMode()]},
 	    {JSON_NODENAME, conf->getNodeName()},
 	    {JSON_SSID, conf->getSSIDtoConnect()},

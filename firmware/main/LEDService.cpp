@@ -78,8 +78,8 @@ BlinkSeqUnit SEQ_IRRX[] = {
 
 
 BlinkSeqUnit SEQ_RESTRICT_DEEP_SLEEP[] = {
-    SEQ_FADE(500, 0, 600, 0),
-    SEQ_FADE(500, 0, 0, 0),
+    SEQ_FADE(1000, 0, 800, 0),
+    SEQ_FADE(1000, 0, 0, 0),
     SEQ_WAIT(2000),
     SEQ_LOOP
 };

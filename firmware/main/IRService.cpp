@@ -23,14 +23,6 @@ class TransmitterTask;
 static RecieverTask* rxTask;
 static TransmitterTask* txTask;
 
-static const std::string JSON_FORMATED = "FormatedIRStream";
-static const std::string JSON_PROTOCOL = "Protocol";
-static const std::string JSON_BITCOUNT = "BitCount";
-static const std::string JSON_DATA = "Data";
-static const std::string JSON_RAW = "RawIRStream";
-static const std::string JSON_LEVEL = "Level";
-static const std::string JSON_DURATION = "Duration";
-
 //----------------------------------------------------------------------
 // transmitter task inmprementation
 //----------------------------------------------------------------------

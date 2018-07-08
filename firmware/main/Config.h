@@ -151,3 +151,48 @@ protected:
 extern Config* elfletConfig;
 
 bool initConfig();
+
+extern const char JSON_FUNCTIONMODE[];
+extern const char JSON_BOARDTYPE[];
+extern const char JSON_BOARDVERSION[];
+extern const char JSON_FWVERSION[];
+extern const char JSON_FWVERSION_MAJOR[];
+extern const char JSON_FWVERSION_MINOR[];
+extern const char JSON_FWVERSION_BUILD[];
+extern const char JSON_NODENAME[];
+extern const char JSON_APSSID[];
+extern const char JSON_ADMINPASSWORD[];
+extern const char JSON_SSID[];
+extern const char JSON_WIFIPASSWORD[];
+extern const char JSON_COMMIT[];
+extern const char JSON_TIMEZONE[];
+extern const char JSON_PUBSUB[];
+extern const char JSON_SENSORFREQUENCY[];
+extern const char JSON_PUBSUBSERVERADDR[];
+extern const char JSON_PUBSUBSESSIONTYPE[];
+extern const char JSON_PUBSUBSERVERCERT[];
+extern const char JSON_PUBSUBUSER[];
+extern const char JSON_PUBSUBPASSWORD[];
+extern const char JSON_SENSORTOPIC[];
+extern const char JSON_IRRCRECIEVETOPIC[];
+extern const char JSON_IRRCRECIEVEDDATATOPIC[];
+extern const char JSON_IRRCSENDTOPIC[];
+extern const char JSON_DOWNLOADFIRMWARETOPIC[];
+
+extern const char JSON_DATE[];
+extern const char JSON_TEMP_UNIT[];
+extern const char JSON_HUM_UNIT[];
+extern const char JSON_PRESS_UNIT[];
+extern const char JSON_LUMINO_UNIT[];
+extern const char JSON_TEMP[];
+extern const char JSON_HUM[];
+extern const char JSON_PRESS[];
+extern const char JSON_LUMINO[];
+
+extern const char JSON_FORMATED[];
+extern const char JSON_PROTOCOL[];
+extern const char JSON_BITCOUNT[];
+extern const char JSON_DATA[];
+extern const char JSON_RAW[];
+extern const char JSON_LEVEL[];
+extern const char JSON_DURATION[];

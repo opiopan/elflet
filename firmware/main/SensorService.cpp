@@ -17,16 +17,6 @@
 
 static const char tag[] = "SensorService";
 
-static const char JSON_DATE[] = "date";
-static const char JSON_TEMP_UNIT[] = "temperatureUnit";
-static const char JSON_HUM_UNIT[] = "humidityUnit";
-static const char JSON_PRESS_UNIT[] = "pressureUnit";
-static const char JSON_LUMINO_UNIT[] = "luminosityeUnit";
-static const char JSON_TEMP[] = "temperature";
-static const char JSON_HUM[] = "humidity";
-static const char JSON_PRESS[] = "pressure";
-static const char JSON_LUMINO[] = "luminositye";
-
 class SensorTask;
 static SensorTask* sensorTask;
 
@@ -176,6 +166,9 @@ void getSensorValueAsJson(std::ostream& out){
     };
 
     out << "{";
+    sep();
+    out << "\"" << JSON_NODENAME << "\":\""
+	<< elfletConfig->getNodeName() << "\"";
     if (value.enableFlag != 0){
 	sep();
 	out << "\"" << JSON_DATE << "\":\""

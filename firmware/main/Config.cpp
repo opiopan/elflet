@@ -29,26 +29,6 @@ static const char* CONFIGPATH[] = {
     "/spiffs/config02.json"
 };
 
-static const std::string JSON_FUNCTIONMODE = "FunctionMode";
-static const std::string JSON_NODENAME = "NodeName";
-static const std::string JSON_APSSID = "AP_SSID";
-static const std::string JSON_ADMINPASSWORD = "AdminPassword";
-static const std::string JSON_BOARDVERSION = "BoardVersion";
-static const std::string JSON_SSID = "SSID";
-static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
-static const std::string JSON_TIMEZONE = "Timezone";
-static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
-static const std::string JSON_PUBSUBSERVERADDR = "PubSubServerAddr";
-static const std::string JSON_PUBSUBSESSIONTYPE = "PubSubSessionType";
-static const std::string JSON_PUBSUBSERVERCERT = "PubSubServerCert";
-static const std::string JSON_PUBSUBUSER = "PubSubUser";
-static const std::string JSON_PUBSUBPASSWORD = "PubSubPassword";
-static const std::string JSON_SENSORTOPIC = "SensorTopic";
-static const std::string JSON_IRRCRECIEVETOPIC = "IrrcRecieveTopic";
-static const std::string JSON_IRRCRECIEVEDDATATOPIC = "IrrcRecievedDataTopic";
-static const std::string JSON_IRRCSENDTOPIC = "IrrcSendTopic";
-static const std::string JSON_DOWNLOADFIRMWARETOPIC = "DownloadFirmwareTopic";
-
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
 

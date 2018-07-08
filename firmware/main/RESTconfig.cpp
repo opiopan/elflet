@@ -15,33 +15,6 @@
 
 static const char tag[] = "RESTconfig";
 
-static const std::string JSON_FUNCTIONMODE = "FunctionMode";
-static const std::string JSON_BOARDTYPE = "BoardType";
-static const std::string JSON_BOARDVERSION = "BoardVersion";
-static const std::string JSON_FWVERSION = "FirmwareVersion";
-static const std::string JSON_FWVERSION_MAJOR = "major";
-static const std::string JSON_FWVERSION_MINOR = "minor";
-static const std::string JSON_FWVERSION_BUILD = "build";
-static const std::string JSON_NODENAME = "NodeName";
-static const std::string JSON_APSSID = "AP_SSID";
-static const std::string JSON_ADMINPASSWORD = "AdminPassword";
-static const std::string JSON_SSID = "SSID";
-static const std::string JSON_WIFIPASSWORD = "WiFiPassword";
-static const std::string JSON_COMMIT = "commit";
-static const std::string JSON_TIMEZONE = "Timezone";
-static const std::string JSON_PUBSUB = "PubSub";
-static const std::string JSON_SENSORFREQUENCY = "SensorFrequency";
-static const std::string JSON_PUBSUBSERVERADDR = "PubSubServerAddr";
-static const std::string JSON_PUBSUBSESSIONTYPE = "PubSubSessionType";
-static const std::string JSON_PUBSUBSERVERCERT = "PubSubServerCert";
-static const std::string JSON_PUBSUBUSER = "PubSubUser";
-static const std::string JSON_PUBSUBPASSWORD = "PubSubPassword";
-static const std::string JSON_SENSORTOPIC = "SensorTopic";
-static const std::string JSON_IRRCRECIEVETOPIC = "IrrcRecieveTopic";
-static const std::string JSON_IRRCRECIEVEDDATATOPIC = "IrrcRecievedDataTopic";
-static const std::string JSON_IRRCSENDTOPIC = "IrrcSendTopic";
-static const std::string JSON_DOWNLOADFIRMWARETOPIC = "DownloadFirmwareTopic";
-
 static const char* functionModeStr[]{
     "FullSpec", "SensorOnly", NULL
 };

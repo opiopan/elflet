@@ -24,6 +24,8 @@ static const char tag[] = "WifiService";
 //----------------------------------------------------------------------
 class ObserverTask : public Task {
 protected:
+    static const int EV_CONNECTED = 1;
+    static const int EV_GOTADDRESS = 2;
     EventGroupHandle_t events;
 public:
     ObserverTask(){
@@ -35,14 +37,24 @@ public:
     }
 
     void connected(){
-	xEventGroupSetBits(events, 1);
+	xEventGroupSetBits(events, EV_CONNECTED);
+    }
+
+    void gotAddress(){
+	xEventGroupSetBits(events, EV_GOTADDRESS);
+    }
+
+    void waitForReady(){
+	xEventGroupWaitBits(
+	    events, EV_GOTADDRESS, pdFALSE, pdFALSE, portMAX_DELAY);
     }
     
 protected:
     void run(void *data) override{
 	vTaskDelay(5000 / portTICK_PERIOD_MS);
 	auto ev = xEventGroupWaitBits(
-	    events, 1, pdTRUE, pdFALSE, 60000 / portTICK_PERIOD_MS);
+	    events, EV_CONNECTED, pdFALSE, pdFALSE,
+	    60000 / portTICK_PERIOD_MS);
 	if (ev){
 	    if (elfletConfig->getWakeupCause() != WC_TIMER){
 		ledSetDefaultMode(LEDDM_STANDBY);
@@ -73,6 +85,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
+	observerTask->gotAddress();
 	notifySMTPserverAccesivility();
 	enablePubSub();
         break;
@@ -142,6 +155,7 @@ bool startWifiService(){
 
     observerTask = new ObserverTask;
     observerTask->start();
+    observerTask->waitForReady();
     
     return true;
 }

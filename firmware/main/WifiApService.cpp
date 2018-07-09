@@ -3,6 +3,8 @@
 #include <esp_wifi.h>
 #include <esp_event_loop.h>    
 #include <string.h>
+#include <Task.h>
+#include <freertos/event_groups.h>
 #include <GeneralUtils.h>
 #include "Config.h"
 #include "mdnsService.h"
@@ -13,6 +15,9 @@
 
 static const char tag[] = "WifiServiceAP";
 
+static const int EV_STARTED = 1;
+static EventGroupHandle_t events;
+
 //----------------------------------------------------------------------
 // WiFi event handler
 //----------------------------------------------------------------------
@@ -21,6 +26,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
     case SYSTEM_EVENT_AP_START:
 	// start mDNS service
 	//startmdnsService();
+	xEventGroupSetBits(events, EV_STARTED);
 	break;
     case SYSTEM_EVENT_AP_STACONNECTED:
 	break;
@@ -43,6 +49,8 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 }
 
 bool startWifiApService(){
+    events = xEventGroupCreate();
+    
     startmdnsService();
 
     tcpip_adapter_init();
@@ -95,6 +103,9 @@ bool startWifiApService(){
     ESPERR_RET(esp_wifi_start(), "esp_wifi_start");
 
     //esp_wifi_set_ps(WIFI_PS_MAX_MODEM);
+
+    xEventGroupWaitBits(
+	events, EV_STARTED, pdFALSE, pdFALSE, portMAX_DELAY);
     
     return true;
 }

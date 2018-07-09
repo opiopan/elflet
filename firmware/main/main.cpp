@@ -68,7 +68,6 @@ void MainTask::run(void *data){
 	startSensorService();
 	if (wakeupCause == WC_TIMER){
 	    enableSensorCapturing();
-	    //vTaskDelay(500 / portTICK_PERIOD_MS);
 	}
     }
     

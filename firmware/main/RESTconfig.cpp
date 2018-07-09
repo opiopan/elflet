@@ -63,6 +63,7 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_FUNCTIONMODE, functionModeStr[conf->getFunctionMode()]},
 	    {JSON_NODENAME, conf->getNodeName()},
 	    {JSON_SSID, conf->getSSIDtoConnect()},
+	    {JSON_NTPSERVER, conf->getNtpServer()},
 	    {JSON_TIMEZONE, conf->getTimezone()},
 	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
 	});
@@ -191,6 +192,9 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setWifiPassword(v);}) ||
 	(*msg = "password to connect WiFi must be less than 64 bytes");
+    ApplyValue(input, JSON_NTPSERVER,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setNtpServer(v);});
     ApplyValue(input, JSON_TIMEZONE,
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setTimezone(v);});

@@ -5,7 +5,9 @@
 #include <string.h>
 #include <sys/time.h>
 #include <apps/sntp/sntp.h>
+#include <string>
 #include "TimeObj.h"
+#include "NameResolver.h"
 
 #include "sdkconfig.h"
 
@@ -29,10 +31,16 @@ bool Time::shouldAdjust(){
     return false;
 }
 
-void Time::startSNTP(){
+void Time::startSNTP(const char* server){
     sntp_stop();
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, (char*)"ntp.nict.jp");
+    if (server){
+	std::string addr(server);
+	resolveHostname(addr);
+	sntp_setservername(0, (char*)addr.c_str());
+    }else{
+	sntp_setservername(0, (char*)"ntp.nict.jp");
+    }
     sntp_init();
     time_t now;
     ::time(&now);

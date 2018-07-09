@@ -108,6 +108,7 @@ Config& Config::operator = (const Config& src){
     adminPassword = src.adminPassword;
     ssidToConnect = src.ssidToConnect;
     wifiPassword = src.wifiPassword;
+    ntpServer = src.ntpServer;
     timezone = src.timezone;
     sensorFrequency = src.sensorFrequency;
     pubSubServerAddr = src.pubSubServerAddr;
@@ -183,6 +184,7 @@ bool Config::load(){
     applyValue(config, JSON_ADMINPASSWORD, adminPassword);
     applyValue(config, JSON_SSID, ssidToConnect);
     applyValue(config, JSON_WIFIPASSWORD, wifiPassword);
+    applyValue(config, JSON_NTPSERVER, ntpServer);
     applyValue(config, JSON_TIMEZONE, timezone);
     applyValue(config, JSON_SENSORFREQUENCY, sensorFrequency);
     applyValue(config, JSON_PUBSUBSERVERADDR, pubSubServerAddr);
@@ -240,6 +242,7 @@ bool Config::commit(){
 		{JSON_ADMINPASSWORD, adminPassword},
 		{JSON_SSID, ssidToConnect},
 		{JSON_WIFIPASSWORD, wifiPassword},
+		{JSON_NTPSERVER, ntpServer},
 		{JSON_TIMEZONE, timezone},
 		{JSON_SENSORFREQUENCY, sensorFrequency},
 		{JSON_PUBSUBSERVERADDR, pubSubServerAddr},
@@ -334,6 +337,12 @@ bool Config::setWifiPassword(const std::string& pass){
 	return false;
     }
     wifiPassword = pass;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setNtpServer(const std::string& server){
+    ntpServer = server;
     isDirty = true;
     return true;
 }

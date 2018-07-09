@@ -7,13 +7,16 @@ const char JSON_FWVERSION[] = "FirmwareVersion";
 const char JSON_FWVERSION_MAJOR[] = "major";
 const char JSON_FWVERSION_MINOR[] = "minor";
 const char JSON_FWVERSION_BUILD[] = "build";
+
 const char JSON_NODENAME[] = "NodeName";
 const char JSON_APSSID[] = "AP_SSID";
 const char JSON_ADMINPASSWORD[] = "AdminPassword";
 const char JSON_SSID[] = "SSID";
 const char JSON_WIFIPASSWORD[] = "WiFiPassword";
 const char JSON_COMMIT[] = "commit";
+const char JSON_NTPSERVER[] = "NTPServer";
 const char JSON_TIMEZONE[] = "Timezone";
+
 const char JSON_PUBSUB[] = "PubSub";
 const char JSON_SENSORFREQUENCY[] = "SensorFrequency";
 const char JSON_PUBSUBSERVERADDR[] = "PubSubServerAddr";

@@ -61,7 +61,7 @@ void TimeTask::run(void *data){
 	if (Time::shouldAdjust()){
 	    ESP_LOGI(tag, "start SNTP & wait for finish adjustment");
 	    Time::startSNTP();
-	    if (!Time::waitForFinishAdjustment(10)){
+	    if (!Time::waitForFinishAdjustment(3)){
 		ESP_LOGE(tag, "fail to adjust time by SNTP");
 	    }
 	    Time now;

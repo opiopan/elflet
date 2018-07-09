@@ -36,6 +36,7 @@ protected:
     std::string ssidToConnect;
     std::string wifiPassword;
 
+    std::string ntpServer;
     std::string timezone;
 
     int32_t sensorFrequency;
@@ -78,6 +79,9 @@ public:
     const std::string& getSSIDtoConnect() const{return ssidToConnect;};
     const std::string& getWifiPassword() const{return wifiPassword;};
 
+    const char* getNtpServer() const{
+	return ntpServer.length() == 0 ? "ntp.nict.jp" : ntpServer.c_str();
+    };
     const char* getTimezone() const{
 	return timezone.length() == 0 ? defaultTimezone : timezone.c_str();
     };
@@ -123,6 +127,7 @@ public:
     bool setSSIDtoConnect(const std::string& ssid);
     bool setWifiPassword(const std::string& pass);
 
+    bool setNtpServer(const std::string& server);
     bool setTimezone(const std::string& tz);
 
     bool setSensorFrequency(int32_t frequency);
@@ -159,13 +164,16 @@ extern const char JSON_FWVERSION[];
 extern const char JSON_FWVERSION_MAJOR[];
 extern const char JSON_FWVERSION_MINOR[];
 extern const char JSON_FWVERSION_BUILD[];
+
 extern const char JSON_NODENAME[];
 extern const char JSON_APSSID[];
 extern const char JSON_ADMINPASSWORD[];
 extern const char JSON_SSID[];
 extern const char JSON_WIFIPASSWORD[];
 extern const char JSON_COMMIT[];
+extern const char JSON_NTPSERVER[];
 extern const char JSON_TIMEZONE[];
+
 extern const char JSON_PUBSUB[];
 extern const char JSON_SENSORFREQUENCY[];
 extern const char JSON_PUBSUBSERVERADDR[];

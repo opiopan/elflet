@@ -8,7 +8,7 @@ class Time {
     
 public:
     static bool shouldAdjust();
-    static void startSNTP();
+    static void startSNTP(const char* server = NULL);
     static bool waitForFinishAdjustment(time_t timeout = 0);
 
     static void setTZ(const char* tz);

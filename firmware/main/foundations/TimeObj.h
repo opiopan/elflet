@@ -19,6 +19,8 @@ public:
     Time& operator = (time_t time){this->time = time; return *this;};
     Time& operator = (const Time& src){time = src.time; return *this;};
 
+    time_t getTime(){return time;};
+
     enum FORMAT{
 	SIMPLE_DATE,
 	SIMPLE_TIME,

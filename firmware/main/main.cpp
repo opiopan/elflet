@@ -57,6 +57,8 @@ void MainTask::run(void *data){
 	elfletConfig->setBootMode(Config::Normal);
 	elfletConfig->commit();
     }
+    auto isSensorOnly =
+	(elfletConfig->getFunctionMode() == Config::SensorOnly);
 
     //--------------------------------------------------------------
     // start peripheral services
@@ -95,10 +97,10 @@ void MainTask::run(void *data){
 	if (!startWifiService()){
 	    systemFault();
 	}
-	if (wakeupCause != WC_TIMER){
+	if (!isSensorOnly || wakeupCause == WC_BUTTON){
 	    startWebService();
 	}
-	if (wakeupCause == WC_NOTSLEEP){
+	if (!isSensorOnly){
 	    startIRServer();
 	}
     }

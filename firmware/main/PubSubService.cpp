@@ -3,10 +3,12 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <GeneralUtils.h>
 #include <Task.h>
 #include <freertos/event_groups.h>
 #include <mqtt_client.h>
+#include "TimeObj.h"
 #include "Mutex.h"
 #include "webserver.h"
 #include "NameResolver.h"
@@ -185,7 +187,7 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 	xEventGroupSetBits(self->events, EV_CONNECTED);
 	auto irrcSend = elfletConfig->getIrrcSendTopic();
 	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
-	auto downloadFirmware = elfletConfig->getIrrcSendTopic();
+	auto downloadFirmware = elfletConfig->getDownloadFirmwareTopic();
 	if (irrcSend.length() > 0){
 	    self->msgidIrrcSend =
 		esp_mqtt_client_subscribe(
@@ -205,18 +207,19 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     }
     case MQTT_EVENT_PUBLISHED: {
 	xEventGroupSetBits(self->events, EV_PUBLISHED);
+	break;
     }
     case MQTT_EVENT_DATA:{
 	WebString topic(event->topic, event->topic_len);
 	auto irrcSend = elfletConfig->getIrrcSendTopic();
 	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
-	auto downloadFirmware = elfletConfig->getIrrcSendTopic();
+	auto downloadFirmware = elfletConfig->getDownloadFirmwareTopic();
 
 	if (event->total_data_len > event->data_len){
 	    ESP_LOGI(tag, "too large data recieved.");
 	    break;
 	}
-	
+
 	if (topic == irrcSend.c_str()){
 	    ESP_LOGI(tag, "recieve subscribed mqtt data: IrrcSend");
 	    WebString data(event->data, event->data_len);

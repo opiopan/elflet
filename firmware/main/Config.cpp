@@ -394,26 +394,31 @@ bool Config::setPubSubPassword(const std::string& pass){
 
 bool Config::setSensorTopic(const std::string& topic){
     sensorTopic = topic;
+    isDirty = true;
     return true;
 }
 
 bool Config::setIrrcRecieveTopic(const std::string& topic){
     irrcRecieveTopic = topic;
+    isDirty = true;
     return true;
 }
 
 bool Config::setIrrcRecievedDataTopic(const std::string& topic){
     irrcRecievedDataTopic = topic;
+    isDirty = true;
     return true;
 }
 
 bool Config::setIrrcSendTopic(const std::string& topic){
     irrcSendTopic = topic;
+    isDirty = true;
     return true;
 }
 
 bool Config::setDownloadFirmwareTopic(const std::string& topic){
     downloadFirmwareTopic = topic;
+    isDirty = true;
     return true;
 }
 

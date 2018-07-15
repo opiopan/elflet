@@ -39,9 +39,7 @@ protected:
     bool publishing;
     
     esp_mqtt_client_handle_t client;
-    int msgidIrrcSend;
-    int msgidIrrcRecieve;
-    int msgidDownloadFirmware;
+    int subscribeStage;
 
 public:
     PubSub();
@@ -53,6 +51,8 @@ public:
 
 protected:
     void run(void *data) override;
+    void connect(const std::string& uri);
+    void subscribe();
     static esp_err_t mqttEventHandler(esp_mqtt_event_handle_t event);
 };
 
@@ -92,26 +92,13 @@ void PubSub::run(void *data){
     std::string uri = schemes[elfletConfig->getPubSubSessionType()];
     uri += elfletConfig->getPubSubServerAddr();
     resolveHostname(uri);
-    esp_mqtt_client_config_t mqttCfg;
-    memset(&mqttCfg, 0, sizeof(mqttCfg));
-    mqttCfg.user_context = this;
-    mqttCfg.uri = uri.c_str();
-    mqttCfg.event_handle = mqttEventHandler;
-    const auto cert = elfletConfig->getPubSubServerCert();
-    const auto user = elfletConfig->getPubSubUser();
-    const auto pass = elfletConfig->getPubSubPassword();
-    if (cert.length() > 0){
-	mqttCfg.cert_pem = cert.c_str();
-    }
-    if (user.length() > 0){
-	mqttCfg.username = user.c_str();
-    }
-    if (pass.length() > 0){
-	mqttCfg.password = pass.c_str();
-    }
-    client = esp_mqtt_client_init(&mqttCfg);
-
-    bool first = true;
+    connect(uri);
+    xEventGroupWaitBits(events, EV_CONNECTED,
+			pdTRUE, pdFALSE,
+			portMAX_DELAY);
+    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    
     while(true){
 	xEventGroupWaitBits(events, EV_PUBLISH,
 			    pdTRUE, pdFALSE,
@@ -123,17 +110,6 @@ void PubSub::run(void *data){
 	    publish = 0;
 	}
 	
-	if (first){
-	    first = false;
-	    ESP_LOGI(tag, "connecting to mqtt broker: %s", uri.c_str());
-	    esp_mqtt_client_start(client);
-	    xEventGroupWaitBits(events, EV_CONNECTED,
-				pdTRUE, pdFALSE,
-				portMAX_DELAY);
-	    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
-	    vTaskDelay(500 / portTICK_PERIOD_MS);
-	}
-
 	if (request & PUB_SENSOR){
 	    std::stringstream out;
 	    getSensorValueAsJson(out);
@@ -179,30 +155,61 @@ void PubSub::run(void *data){
     }
 }
 
+void PubSub::connect(const std::string& uri){
+    esp_mqtt_client_config_t mqttCfg;
+    memset(&mqttCfg, 0, sizeof(mqttCfg));
+    mqttCfg.user_context = this;
+    mqttCfg.uri = uri.c_str();
+    mqttCfg.event_handle = mqttEventHandler;
+    const auto cert = elfletConfig->getPubSubServerCert();
+    const auto user = elfletConfig->getPubSubUser();
+    const auto pass = elfletConfig->getPubSubPassword();
+    if (cert.length() > 0){
+	mqttCfg.cert_pem = cert.c_str();
+    }
+    if (user.length() > 0){
+	mqttCfg.username = user.c_str();
+    }
+    if (pass.length() > 0){
+	mqttCfg.password = pass.c_str();
+    }
+    client = esp_mqtt_client_init(&mqttCfg);
+
+    ESP_LOGI(tag, "connecting to mqtt broker: %s", uri.c_str());
+    esp_mqtt_client_start(client);
+}
+
+void PubSub::subscribe(){
+    const std::string* topics[] = {
+	&elfletConfig->getDownloadFirmwareTopic(),
+	&elfletConfig->getIrrcSendTopic(),
+	&elfletConfig->getIrrcRecieveTopic(),
+    };
+
+    for (;subscribeStage < sizeof(topics) / sizeof(topics[0]);
+	 subscribeStage++){
+	if (topics[subscribeStage]->length() > 0){
+	    auto topic = topics[subscribeStage]->c_str();
+	    ESP_LOGI(tag, "subscribing: %s", topic);
+	    esp_mqtt_client_subscribe(client, topic, 1);
+	    subscribeStage++;
+	    return;
+	}
+    }
+}
+
 esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     auto self = (PubSub*)event->user_context;
 
     switch (event->event_id) {
     case MQTT_EVENT_CONNECTED: {
+	self->subscribeStage = 0;
 	xEventGroupSetBits(self->events, EV_CONNECTED);
-	auto irrcSend = elfletConfig->getIrrcSendTopic();
-	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
-	auto downloadFirmware = elfletConfig->getDownloadFirmwareTopic();
-	if (irrcSend.length() > 0){
-	    self->msgidIrrcSend =
-		esp_mqtt_client_subscribe(
-		    self->client, irrcSend.c_str(), 1);
-	}
-	if (irrcRecieve.length() > 0){
-	    self->msgidIrrcRecieve =
-		esp_mqtt_client_subscribe(
-		    self->client, irrcRecieve.c_str(), 1);
-	}
-	if (downloadFirmware.length() > 0){
-	    self->msgidDownloadFirmware =
-		esp_mqtt_client_subscribe(
-		    self->client, downloadFirmware.c_str(), 1);
-	}
+	self->subscribe();
+	break;
+    }
+    case MQTT_EVENT_SUBSCRIBED: {
+	self->subscribe();
 	break;
     }
     case MQTT_EVENT_PUBLISHED: {

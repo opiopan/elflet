@@ -30,6 +30,8 @@ class MainTask : public Task {
 };
 
 void MainTask::run(void *data){
+    ESP_LOGI(tag, "elflet firmware version %s", getVersionString());
+
     //--------------------------------------------------------------
     // initialize UI LED
     //--------------------------------------------------------------

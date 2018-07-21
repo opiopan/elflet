@@ -164,6 +164,7 @@ extern const char JSON_FWVERSION[];
 extern const char JSON_FWVERSION_MAJOR[];
 extern const char JSON_FWVERSION_MINOR[];
 extern const char JSON_FWVERSION_BUILD[];
+extern const char JSON_FWURI[];
 
 extern const char JSON_NODENAME[];
 extern const char JSON_APSSID[];

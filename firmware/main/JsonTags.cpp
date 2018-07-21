@@ -7,6 +7,7 @@ const char JSON_FWVERSION[] = "FirmwareVersion";
 const char JSON_FWVERSION_MAJOR[] = "major";
 const char JSON_FWVERSION_MINOR[] = "minor";
 const char JSON_FWVERSION_BUILD[] = "build";
+const char JSON_FWURI[] = "FirmwareUri";
 
 const char JSON_NODENAME[] = "NodeName";
 const char JSON_APSSID[] = "AP_SSID";

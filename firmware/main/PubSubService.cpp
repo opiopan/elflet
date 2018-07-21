@@ -8,6 +8,7 @@
 #include <Task.h>
 #include <freertos/event_groups.h>
 #include <mqtt_client.h>
+#include <json11.hpp>
 #include "TimeObj.h"
 #include "Mutex.h"
 #include "webserver.h"
@@ -91,13 +92,13 @@ void PubSub::run(void *data){
     static const char* schemes[] = {"mqtt://", "mqtts://", "ws://", "wss://"};
     std::string uri = schemes[elfletConfig->getPubSubSessionType()];
     uri += elfletConfig->getPubSubServerAddr();
+    ESP_LOGI(tag, "mqtt broker is %s", uri.c_str());
     resolveHostname(uri);
     connect(uri);
     xEventGroupWaitBits(events, EV_CONNECTED,
 			pdTRUE, pdFALSE,
 			portMAX_DELAY);
-    ESP_LOGI(tag, "connected to mqtt broker: %s", uri.c_str());
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    ESP_LOGI(tag, "redy to publish to  mqtt broker: %s", uri.c_str());
     
     while(true){
 	xEventGroupWaitBits(events, EV_PUBLISH,
@@ -196,6 +197,7 @@ void PubSub::subscribe(){
 	    return;
 	}
     }
+    xEventGroupSetBits(events, EV_CONNECTED);
 }
 
 esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
@@ -204,7 +206,6 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     switch (event->event_id) {
     case MQTT_EVENT_CONNECTED: {
 	self->subscribeStage = 0;
-	xEventGroupSetBits(self->events, EV_CONNECTED);
 	self->subscribe();
 	break;
     }
@@ -236,6 +237,22 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 	    startIRReciever();
 	}else if (topic == downloadFirmware.c_str()){
 	    ESP_LOGI(tag, "recieve subscribed mqtt data: DwonloadFirmware");
+	    std::string err;
+	    auto msg = json11::Json::parse(std::string(event->data,
+						       event->data_len),
+					   err);
+	    if (msg.is_object()){
+		auto currentVersion = getVersion();
+		auto versionString = msg[JSON_FWVERSION];
+		if (versionString.is_string()){
+		    Version version(versionString.string_value().c_str());
+		    if (version > *currentVersion){
+			ESP_LOGI(tag, "Firmware will be updated: %s -> %s",
+				 getVersionString(),
+				 versionString.string_value().c_str());
+		    }
+		}
+	    }
 	}
 	break;
     }

@@ -264,7 +264,10 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 				resumeEnterDeepSleep();
 			    }
 			};
-			httpDownloadFirmware(uristr, callback);
+			if (httpDownloadFirmware(uristr, callback)
+			    != dfSucceed){
+			    resumeEnterDeepSleep();
+			}
 		    }
 		}
 	    }

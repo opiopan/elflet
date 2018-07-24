@@ -7,3 +7,6 @@ enum WakeupCause{
 WakeupCause initDeepSleep();
 int32_t getSleepTimeMs();
 void enterDeepSleep(int32_t ms);
+
+void suspendEnterDeepSleep();
+void resumeEnterDeepSleep();

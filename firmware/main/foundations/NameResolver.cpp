@@ -65,12 +65,7 @@ bool resolveHostname(std::string& hostname){
 	    }
 	    break;
 	case TAIL:
-	    if (val >= '0' && val <= '9'){
-		taillen++;
-	    }else{
-		// syntax error
-		return false;
-	    }
+	    taillen++;
 	    break;
 	}
     }

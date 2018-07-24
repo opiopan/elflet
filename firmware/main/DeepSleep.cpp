@@ -10,6 +10,7 @@
 #include <sstream>
 #include <functional>
 #include <Task.h>
+#include "Mutex.h"
 #include "Config.h"
 #include "DeepSleep.h"
 
@@ -42,6 +43,18 @@ int32_t getSleepTimeMs(){
 	(now.tv_usec - sleepEnterTime.tv_usec) / 1000;;
 }
 
+static Mutex mutex;
+static bool isSuspending = false;
+static bool mustEnterDeepSleep = false;
+
+static void transitToDeepSleepMode(){
+    ESP_LOGI(tag, "enter deep sleep state: wake up in %d sec",
+	     elfletConfig->getSensorFrequency());
+    vTaskDelay(20 / portTICK_PERIOD_MS);
+    gettimeofday(&sleepEnterTime, NULL);
+    esp_deep_sleep_start();
+}
+
 void enterDeepSleep(int32_t ms){
     esp_sleep_enable_timer_wakeup(
 	elfletConfig->getSensorFrequency() * 1000000);
@@ -50,11 +63,27 @@ void enterDeepSleep(int32_t ms){
     const uint64_t gpioMask = 1ULL << gpio;
     esp_sleep_enable_ext1_wakeup(gpioMask, ESP_EXT1_WAKEUP_ANY_HIGH);
 
-    ESP_LOGI(tag, "enter deep sleep state: wake up in %d sec",
-	     elfletConfig->getSensorFrequency());
-
     vTaskDelay(ms / portTICK_PERIOD_MS);
-    
-    gettimeofday(&sleepEnterTime, NULL);
-    esp_deep_sleep_start();
+
+    mutex.lock();
+    mustEnterDeepSleep = true;;
+    if (isSuspending){
+	mutex.unlock();
+	vTaskDelay(portMAX_DELAY);
+    }
+    transitToDeepSleepMode();
+}
+
+void suspendEnterDeepSleep(){
+    ESP_LOGI(tag, "suspend to enter deep sleep");
+    LockHolder holder(mutex);
+    isSuspending = true;
+}
+
+void resumeEnterDeepSleep(){
+    LockHolder holder(mutex);
+    isSuspending = false;
+    if (mustEnterDeepSleep){
+	transitToDeepSleepMode();
+    }
 }

@@ -13,10 +13,12 @@
 #include "Mutex.h"
 #include "webserver.h"
 #include "NameResolver.h"
+#include "reboot.h"
 #include "Config.h"
 #include "SensorService.h"
 #include "PubSubService.h"
 #include "IRService.h"
+#include "FirmwareDownloader.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -98,7 +100,7 @@ void PubSub::run(void *data){
     xEventGroupWaitBits(events, EV_CONNECTED,
 			pdTRUE, pdFALSE,
 			portMAX_DELAY);
-    ESP_LOGI(tag, "redy to publish to  mqtt broker: %s", uri.c_str());
+    ESP_LOGI(tag, "ready to publish to  mqtt broker: %s", uri.c_str());
     
     while(true){
 	xEventGroupWaitBits(events, EV_PUBLISH,
@@ -132,7 +134,7 @@ void PubSub::run(void *data){
 		elfletConfig->getFunctionMode() == Config::SensorOnly){
 		esp_mqtt_client_stop(client);
 		esp_mqtt_client_destroy(client);
-		enterDeepSleep(1000);
+		enterDeepSleep(0);
 	    }
 	}
 	if (request & PUB_IRRC){
@@ -244,12 +246,25 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 	    if (msg.is_object()){
 		auto currentVersion = getVersion();
 		auto versionString = msg[JSON_FWVERSION];
-		if (versionString.is_string()){
+		auto uri = msg[JSON_FWURI];
+		if (versionString.is_string() && uri.is_string()){
 		    Version version(versionString.string_value().c_str());
 		    if (version > *currentVersion){
-			ESP_LOGI(tag, "Firmware will be updated: %s -> %s",
+			ESP_LOGI(tag, "Firmware will be updated: "
+				 "%s -> %s\n\t\t%s",
 				 getVersionString(),
-				 versionString.string_value().c_str());
+				 versionString.string_value().c_str(),
+				 uri.string_value().c_str());
+			suspendEnterDeepSleep();
+			const char* uristr = uri.string_value().c_str();
+			DFCallback callback = [](DFStatus st)->void{
+			    if (st == dfSucceed){
+				rebootIn(100);
+			    }else{
+				resumeEnterDeepSleep();
+			    }
+			};
+			httpDownloadFirmware(uristr, callback);
 		    }
 		}
 	    }
@@ -270,7 +285,6 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     }    
     return ESP_OK;
 }
-
 
 //----------------------------------------------------------------------
 // interfaces for outer module

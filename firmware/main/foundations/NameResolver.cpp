@@ -94,8 +94,8 @@ bool resolveHostname(std::string& hostname){
     struct ip4_addr addr;
     addr.addr = 0;
     esp_err_t err = -1;
-    for (int i = 0; i < 3 && err != ESP_OK; i++){
-	err = mdns_query_a(in.c_str(), 2000,  &addr);
+    for (int i = 0; i < 6 && err != ESP_OK; i++){
+	err = mdns_query_a(in.c_str(), 1000,  &addr);
     }
     if (err != ESP_OK){
 	//fail to resolve

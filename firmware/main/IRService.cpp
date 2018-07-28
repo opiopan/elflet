@@ -65,7 +65,7 @@ bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
     if (status != ST_IDLE){
 	return false;
     }
-    if (bits / 8 > sizeof(data)){
+    if (bits / 8 > sizeof(this->data)){
 	return false;
     }
     status = ST_RUNNING;

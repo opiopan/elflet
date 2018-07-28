@@ -44,7 +44,7 @@ int32_t getSleepTimeMs(){
 }
 
 static Mutex mutex;
-static bool isSuspending = false;
+static int suspending = 0;
 static bool mustEnterDeepSleep = false;
 
 static void transitToDeepSleepMode(){
@@ -67,7 +67,7 @@ void enterDeepSleep(int32_t ms){
 
     mutex.lock();
     mustEnterDeepSleep = true;;
-    if (isSuspending){
+    if (suspending){
 	mutex.unlock();
 	vTaskDelay(portMAX_DELAY);
     }
@@ -77,13 +77,13 @@ void enterDeepSleep(int32_t ms){
 void suspendEnterDeepSleep(){
     ESP_LOGI(tag, "suspend to enter deep sleep");
     LockHolder holder(mutex);
-    isSuspending = true;
+    suspending++;
 }
 
 void resumeEnterDeepSleep(){
     LockHolder holder(mutex);
-    isSuspending = false;
-    if (mustEnterDeepSleep){
+    suspending--;
+    if (suspending == 0 && mustEnterDeepSleep){
 	transitToDeepSleepMode();
     }
 }

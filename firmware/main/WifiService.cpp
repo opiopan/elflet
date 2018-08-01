@@ -14,6 +14,8 @@
 #include "TimeService.h"
 #include "reboot.h"
 #include "PubSubService.h"
+#include "IRService.h"
+
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
@@ -88,6 +90,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 	observerTask->gotAddress();
 	notifySMTPserverAccesivility();
 	enablePubSub();
+	enableIRReciever();
         break;
     case SYSTEM_EVENT_AP_STA_GOT_IP6:
         break;

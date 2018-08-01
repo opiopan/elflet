@@ -138,16 +138,15 @@ void PubSub::run(void *data){
 	    }
 	}
 	if (request & PUB_IRRC){
-	    uint8_t buf[32];
+	    uint8_t buf[48];
 	    int32_t bits = sizeof(buf) * 8;
 	    IRRC_PROTOCOL protocol;
 	    if (getIRRecievedData(&protocol, &bits, buf)){
 		std::stringstream out;
 		if (protocol == IRRC_UNKNOWN){
-		    getIRRecievedDataRawJson(out);
-		}else{
-		    getIRRecievedDataJson(out);		    
+		    continue;
 		}
+		getIRRecievedDataJson(out);
 		const auto data = out.str();
 		esp_mqtt_client_publish(
 		    client, elfletConfig->getIrrcRecievedDataTopic().c_str(),

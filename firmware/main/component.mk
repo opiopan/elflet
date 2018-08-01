@@ -24,6 +24,7 @@ COMPONENT_EXTRA_CLEAN		:= $(COMPONENT_EMBED_TXTFILES) version.string
 version.o: update_version
 
 update_version:
+	echo GEN main/version.string
 	echo 'static const char verstr[] = "'`../../tools/version`'";' > \
 	    ../../main/version.string
 

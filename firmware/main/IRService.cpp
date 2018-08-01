@@ -173,10 +173,15 @@ protected:
     EventGroupHandle_t events;
     IRRC irContext;
 
+    IRRC_PROTOCOL rcvProtocol;
+    int32_t rcvBits;
+    uint8_t rcvBuf[48];
+
 public:
     RecieverTask();
     virtual ~RecieverTask();
 
+    void enableReciever();
     bool startReciever();
     bool getRecievedData(IRRC_PROTOCOL* protocol,
 			 int32_t* bits, uint8_t* data);
@@ -186,13 +191,20 @@ protected:
     void run(void *data) override;
 };
 
-RecieverTask::RecieverTask() : status(ST_IDLE){
+RecieverTask::RecieverTask() : status(ST_IDLE),
+			       rcvProtocol(IRRC_UNKNOWN), rcvBits(0){
     events = xEventGroupCreate();
     IRRCInit(&irContext, IRRC_RX, IRRC_NEC, GPIO_IRRX);
 }
 
 RecieverTask::~RecieverTask(){
     IRRCDeinit(&irContext);
+}
+
+void RecieverTask::enableReciever(){
+    if (elfletConfig->getIrrcRecieverMode() == Config::IrrcRecieverContinuous){
+	startReciever();
+    }
 }
 
 bool RecieverTask::startReciever(){
@@ -208,9 +220,9 @@ bool RecieverTask::startReciever(){
 bool RecieverTask::getRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits,
 				   uint8_t* data){
     LockHolder holder(mutex);
-    if (status != ST_IDLE){
-	return false;
-    }
+    *protocol = rcvProtocol;
+    *bits = rcvBits;
+    memcpy(data, rcvBuf, (rcvBits + 7) / 8);
     return IRRCDecodeRecievedData(&irContext, protocol, data, bits);
 }
 
@@ -222,6 +234,8 @@ bool RecieverTask::getRecievedDataRaw(
 }
 
 void RecieverTask::run(void *data){
+    auto isContinuousMode =
+	elfletConfig->getIrrcRecieverMode() == Config::IrrcRecieverContinuous;
     while (true){
 	mutex.lock();
 	while (status == ST_IDLE){
@@ -233,15 +247,32 @@ void RecieverTask::run(void *data){
 	}
 	mutex.unlock();
 
-	ledSetBlinkMode(LEDBM_IRRX);
+	if (!isContinuousMode){
+	    ledSetBlinkMode(LEDBM_IRRX);
+	}
 	if (IRRCRecieve(&irContext, 30 * 1000)){
+	    mutex.lock();
+	    if (!IRRCDecodeRecievedData(&irContext,
+					&rcvProtocol, rcvBuf, &rcvBits)){
+		rcvProtocol = IRRC_UNKNOWN;
+		rcvBits = 0;
+	    }else if (rcvBits > 0){
+		ESP_LOGI(tag, "recieved IR command [%s : %d bits]",
+			 rcvProtocol == IRRC_NEC ? "NEC" :
+			 rcvProtocol == IRRC_AEHA ? "AEHA" :
+			 rcvProtocol == IRRC_SONY ? "SONY" :
+			                            "Unknown",
+			 rcvBits);
+	    }
+	    mutex.unlock();
 	    publishIrrcData();
 	}
-	ledSetBlinkMode(LEDBM_DEFAULT);
-
-	mutex.lock();
-	status = ST_IDLE;
-	mutex.unlock();
+	if (!isContinuousMode){
+	    ledSetBlinkMode(LEDBM_DEFAULT);
+	    mutex.lock();
+	    status = ST_IDLE;
+	    mutex.unlock();
+	}
     }
 }
 
@@ -285,6 +316,12 @@ bool sendIRDataJson(const WebString& data){
     return false;
 }
 
+void enableIRReciever(){
+    if (rxTask){
+	rxTask->enableReciever();
+    }
+}
+
 bool startIRReciever(){
     return rxTask->startReciever();
 }
@@ -298,7 +335,7 @@ bool getIRRecievedDataRaw(const rmt_item32_t** data, int32_t* length){
 }
 
 bool getIRRecievedDataJson(std::ostream& out){
-    uint8_t buf[32];
+    uint8_t buf[48];
     int32_t bits = sizeof(buf) * 8;
     IRRC_PROTOCOL protocol;
 

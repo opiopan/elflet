@@ -11,6 +11,7 @@ public:
     enum FunctionMode{FullSpec, SensorOnly};
     enum SessionType{SessionTCP, SessionTLS,
 		     SessionWebSocket, SessionWebSocketSecure};
+    enum IrrcRecieverMode{IrrcRecieverOnDemand, IrrcRecieverContinuous};
     
 protected:
     static const char* defaultTimezone;
@@ -52,6 +53,8 @@ protected:
     std::string irrcRecievedDataTopic;
     std::string irrcSendTopic;
     std::string downloadFirmwareTopic;
+
+    int32_t irrcRecieverMode;
 
     std::string defaultSensorTopic;
     std::string defaultIrrcRecieveTopic;
@@ -112,7 +115,11 @@ public:
     };
     const std::string& getDownloadFirmwareTopic() const{
 	return downloadFirmwareTopic;
-    }
+    };
+
+    IrrcRecieverMode getIrrcRecieverMode() const{
+	return (IrrcRecieverMode)irrcRecieverMode;
+    };
     
     const char* getVerificationKeyPath();
     
@@ -141,6 +148,8 @@ public:
     bool setIrrcRecievedDataTopic(const std::string& topic);
     bool setIrrcSendTopic(const std::string& topic);
     bool setDownloadFirmwareTopic(const std::string& topic);
+
+    bool setIrrcRecieverMode(IrrcRecieverMode mode);
 
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
@@ -187,6 +196,8 @@ extern const char JSON_IRRCRECIEVETOPIC[];
 extern const char JSON_IRRCRECIEVEDDATATOPIC[];
 extern const char JSON_IRRCSENDTOPIC[];
 extern const char JSON_DOWNLOADFIRMWARETOPIC[];
+
+extern const char JSON_IRRCRECIEVERMODE[];
 
 extern const char JSON_DATE[];
 extern const char JSON_TEMP_UNIT[];

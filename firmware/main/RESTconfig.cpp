@@ -23,6 +23,10 @@ static const char* sessionTypeStr[]{
     "TCP", "TSL", "WebSocket", "WebSocketSecure", NULL
 };
 
+static const char* irrcRecieverModeStr[]{
+    "OnDemand", "Continuous", NULL
+};
+
 static bool ApplyValue(const json11::Json& json, const std::string& key,
 		       std::function<bool(const std::string&)> apply){
     auto obj = json[key];
@@ -66,6 +70,8 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_NTPSERVER, conf->getNtpServer()},
 	    {JSON_TIMEZONE, conf->getTimezone()},
 	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
+	    {JSON_IRRCRECIEVERMODE,
+		    irrcRecieverModeStr[conf->getIrrcRecieverMode()]},
 	});
     auto pubsub = json11::Json::object({
 	    {JSON_PUBSUBSERVERADDR, conf->getPubSubServerAddr()},
@@ -227,6 +233,22 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 		return rc;
 	    }else{
 		*msg = "invalid function mode is specified";
+		return false;
+	    }
+	});
+
+    ApplyValue(input, JSON_IRRCRECIEVERMODE, [&](const std::string& v) -> bool{
+	    int i;
+	    for (i = 0; irrcRecieverModeStr[i]; i++){
+		if (v == irrcRecieverModeStr[i]){
+		    break;
+		}
+	    }
+	    if (irrcRecieverModeStr[i]){
+		elfletConfig->setIrrcRecieverMode((Config::IrrcRecieverMode)i);
+		return true;
+	    }else{
+		*msg = "invalid irrc reciever mode is specified";
 		return false;
 	    }
 	});

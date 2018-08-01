@@ -221,7 +221,7 @@ typedef struct {
     int32_t max;
     int32_t min;
 } RANGE;
-#define RANGEVAL(v) {(v) * 1.2, (v) * 0.80}
+#define RANGEVAL(v) {(v) * 1.3, (v) * 0.70}
 #define INRANGE(v, r) ((v) < (r).max && (v) > (r).min)
 static RANGE necUnitRange = RANGEVAL(NEC_UNIT);
 static RANGE necLongRange = RANGEVAL(NEC_UNIT * 3);
@@ -231,6 +231,10 @@ static RANGE sonyUnitRange = RANGEVAL(SONY_UNIT);
 static RANGE sonyLongRange = RANGEVAL(SONY_UNIT * 2);
 static RANGE sonyLeader0Range = RANGEVAL(SONY_UNIT * 4);
 static RANGE sonyLeader1Range = RANGEVAL(SONY_UNIT);
+static RANGE aehaUnitRange = RANGEVAL(AEHA_UNIT);
+static RANGE aehaLongRange = RANGEVAL(AEHA_UNIT * 3);
+static RANGE aehaLeader0Range = RANGEVAL(AEHA_UNIT * 8);
+static RANGE aehaLeader1Range = RANGEVAL(AEHA_UNIT * 4);
 
 static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
     rmt_item32_t* items = ctx->buff;
@@ -268,6 +272,20 @@ static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
 	return IRRC_SONY;
     }else{
 	// in this case, it might AHEA format
+	if (INRANGE(items[0].duration0, aehaLeader0Range) &&
+	    INRANGE(items[0].duration1, aehaLeader1Range)){
+	    for (int i = 1; i < ctx->usedLen - 1; i++){
+		if (INRANGE(items[i].duration0, aehaUnitRange) &&
+		    (INRANGE(items[i].duration1, aehaUnitRange) ||
+		     INRANGE(items[i].duration1, aehaLongRange))){
+		    continue;
+		}else{
+		    return IRRC_UNKNOWN;
+		}
+	    }
+	    return IRRC_AEHA;
+	}
+	/*
 	int sum = 0;
 	for (int i = 1; i < ctx->usedLen - 1; i++){
 	    sum += items[i].duration0;
@@ -290,6 +308,7 @@ static IRRC_PROTOCOL presumeProtocol(IRRC* ctx){
 	    }
 	    return IRRC_AEHA;
 	}
+	*/
     }
     
     return IRRC_UNKNOWN;
@@ -357,7 +376,7 @@ void IRRCSend(IRRC* ctx, const uint8_t* data, int32_t bits)
 
 bool IRRCRecieve(IRRC* ctx, int32_t timeout)
 {
-    ESP_LOGI(tag,"start IR recieving");
+    ESP_LOGD(tag,"start IR recieving");
     ctx->usedLen = 0;
 
     RingbufHandle_t rb = NULL;
@@ -373,9 +392,9 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
     if (items){
 	ctx->usedLen = rx_size / sizeof(*items);
 	memcpy(ctx->buff, items, rx_size);
-	ESP_LOGI(tag,"%d unit data recieved", ctx->usedLen);
+	ESP_LOGD(tag,"%d unit data recieved", ctx->usedLen);
 	ctx->protocol = presumeProtocol(ctx);
-	ESP_LOGI(tag, "it seems %s format",
+	ESP_LOGD(tag, "it seems %s format",
 		 ctx->protocol == IRRC_NEC ? "NEC" : 
 		 ctx->protocol == IRRC_AEHA ? "AEHA" : 
 		 ctx->protocol == IRRC_SONY ? "SONY" :
@@ -383,7 +402,7 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
 	vRingbufferReturnItem(rb, (void*) items);
 	return true;
     }else{
-	ESP_LOGI(tag,"timeout, no data recieved");
+	ESP_LOGD(tag,"timeout, no data recieved");
 	return false;
     }
 }

@@ -31,6 +31,8 @@ const char JSON_IRRCRECIEVEDDATATOPIC[] = "IrrcRecievedDataTopic";
 const char JSON_IRRCSENDTOPIC[] = "IrrcSendTopic";
 const char JSON_DOWNLOADFIRMWARETOPIC[] = "DownloadFirmwareTopic";
 
+const char JSON_IRRCRECIEVERMODE[] = "IrrcRecieverMode";
+
 const char JSON_DATE[] = "date";
 const char JSON_TEMP_UNIT[] = "temperatureUnit";
 const char JSON_HUM_UNIT[] = "humidityUnit";

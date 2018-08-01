@@ -88,7 +88,7 @@ Config::Config(WakeupCause cause) :
     fromStorage(false), isDirtyBootMode(false), isDirty(false),
     wakeupCause(cause),
     functionMode(FullSpec), sensorFrequency(0), 
-    pubSubSessionType(SessionTCP){
+    pubSubSessionType(SessionTCP), irrcRecieverMode(IrrcRecieverOnDemand){
 }
 
 Config::~Config(){
@@ -121,6 +121,7 @@ Config& Config::operator = (const Config& src){
     irrcRecievedDataTopic = src.irrcRecievedDataTopic;
     irrcSendTopic = src.irrcSendTopic;
     downloadFirmwareTopic = src.downloadFirmwareTopic;
+    irrcRecieverMode = src.irrcRecieverMode;
 
     updateDefaultSensorTopic();
 
@@ -197,6 +198,7 @@ bool Config::load(){
     applyValue(config, JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic);
     applyValue(config, JSON_IRRCSENDTOPIC, irrcSendTopic);
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
+    applyValue(config, JSON_IRRCRECIEVERMODE, irrcRecieverMode);
 
     updateDefaultSensorTopic();
 
@@ -255,6 +257,7 @@ bool Config::commit(){
 		{JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic},
 		{JSON_IRRCSENDTOPIC, irrcSendTopic},
 		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
+		{JSON_IRRCRECIEVERMODE, (int32_t)irrcRecieverMode},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -418,6 +421,12 @@ bool Config::setIrrcSendTopic(const std::string& topic){
 
 bool Config::setDownloadFirmwareTopic(const std::string& topic){
     downloadFirmwareTopic = topic;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setIrrcRecieverMode(IrrcRecieverMode mode){
+    irrcRecieverMode = mode;
     isDirty = true;
     return true;
 }

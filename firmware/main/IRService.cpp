@@ -223,7 +223,7 @@ bool RecieverTask::getRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits,
     *protocol = rcvProtocol;
     *bits = rcvBits;
     memcpy(data, rcvBuf, (rcvBits + 7) / 8);
-    return IRRCDecodeRecievedData(&irContext, protocol, data, bits);
+    return true;
 }
 
 bool RecieverTask::getRecievedDataRaw(
@@ -236,6 +236,10 @@ bool RecieverTask::getRecievedDataRaw(
 void RecieverTask::run(void *data){
     auto isContinuousMode =
 	elfletConfig->getIrrcRecieverMode() == Config::IrrcRecieverContinuous;
+    if (isContinuousMode){
+	IRRC_SET_OPT(&irContext, IRRC_OPT_CONTINUOUS);
+    }
+    
     while (true){
 	mutex.lock();
 	while (status == ST_IDLE){
@@ -252,7 +256,9 @@ void RecieverTask::run(void *data){
 	}
 	if (IRRCRecieve(&irContext, 30 * 1000)){
 	    mutex.lock();
-	    if (!IRRCDecodeRecievedData(&irContext,
+	    rcvBits = sizeof(rcvBuf) * 8;
+	    if (irContext.protocol == IRRC_UNKNOWN ||
+		!IRRCDecodeRecievedData(&irContext,
 					&rcvProtocol, rcvBuf, &rcvBits)){
 		rcvProtocol = IRRC_UNKNOWN;
 		rcvBits = 0;
@@ -264,8 +270,11 @@ void RecieverTask::run(void *data){
 			                            "Unknown",
 			 rcvBits);
 	    }
+	    //ESP_LOG_BUFFER_HEX(tag, rcvBuf, (rcvBits + 7) / 8);
 	    mutex.unlock();
-	    publishIrrcData();
+	    if (rcvBits > 0){
+		publishIrrcData();
+	    }
 	}
 	if (!isContinuousMode){
 	    ledSetBlinkMode(LEDBM_DEFAULT);

@@ -215,6 +215,7 @@ static void initRx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
     
     rmt_config(&ctx->rmt);
     rmt_driver_install(ctx->rmt.channel, 2048, 0);
+    rmt_get_ringbuf_handle(ctx->rmt.channel, &(ctx->rb));
 }
 
 typedef struct {
@@ -325,6 +326,7 @@ bool IRRCInit(IRRC* ctx, IRRC_MODE mode, IRRC_PROTOCOL protocol, int32_t gpio)
     *ctx = (IRRC){
 	.protocol = mode == IRRC_TX ? protocol : IRRC_UNKNOWN,
 	.mode = mode,
+	.option = 0,
 	.gpio = gpio,
 	.buff = malloc(CMDBUFFLEN),
 	.buffLen = CMDBUFFLEN,
@@ -379,15 +381,19 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
     ESP_LOGD(tag,"start IR recieving");
     ctx->usedLen = 0;
 
-    RingbufHandle_t rb = NULL;
-    rmt_get_ringbuf_handle(ctx->rmt.channel, &rb);
-
-    rmt_rx_start(ctx->rmt.channel, 1);
+    if (!ctx->started || !(ctx->option & IRRC_OPT_CONTINUOUS)){
+	rmt_rx_start(ctx->rmt.channel, 1);
+	ctx->started = 1;
+    }
     uint32_t rx_size;
+    int32_t to = ctx->option & IRRC_OPT_CONTINUOUS ?
+	         portMAX_DELAY : timeout / portTICK_PERIOD_MS;
     rmt_item32_t *items =
-	(rmt_item32_t*)xRingbufferReceive(rb, &rx_size,
-					  timeout / portTICK_PERIOD_MS);
-    rmt_rx_stop(ctx->rmt.channel);
+	(rmt_item32_t*)xRingbufferReceive(ctx->rb, &rx_size, to);
+
+    if (!(ctx->option & IRRC_OPT_CONTINUOUS)){
+	rmt_rx_stop(ctx->rmt.channel);
+    }
 
     if (items){
 	ctx->usedLen = rx_size / sizeof(*items);
@@ -399,7 +405,7 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
 		 ctx->protocol == IRRC_AEHA ? "AEHA" : 
 		 ctx->protocol == IRRC_SONY ? "SONY" :
 		 "unknown");
-	vRingbufferReturnItem(rb, (void*) items);
+	vRingbufferReturnItem(ctx->rb, (void*) items);
 	return true;
     }else{
 	ESP_LOGD(tag,"timeout, no data recieved");

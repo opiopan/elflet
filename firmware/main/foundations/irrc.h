@@ -22,12 +22,17 @@ typedef enum {
 typedef struct {
     IRRC_PROTOCOL protocol;
     IRRC_MODE mode;
+    int32_t option;
     int32_t gpio;
     rmt_config_t rmt;
     rmt_item32_t* buff;
     int32_t buffLen;
     int32_t usedLen;
+    RingbufHandle_t rb;
+    int32_t started;
 } IRRC;
+
+#define IRRC_OPT_CONTINUOUS 1
 
 extern bool IRRCInit(IRRC* ctx, IRRC_MODE mode,
 		     IRRC_PROTOCOL protocol, int32_t gpio);
@@ -39,9 +44,11 @@ extern bool IRRCDecodeRecievedData(IRRC* ctx,
 				   IRRC_PROTOCOL* protocol,
 				   uint8_t* data, int32_t* bits);
 
+#define IRRC_SET_OPT(ctx, opt) ((ctx)->option = opt)
+    
 #define IRRC_PROTOCOL(ctx) ((ctx)->protocol)
-#define IRRC_ITEM_LENGTH(ctx) ((ctx)->usedLen);
-#define IRRC_ITEMS(ctx) ((const rmt_item32_t*)(ctx)->buff);
+#define IRRC_ITEM_LENGTH(ctx) ((ctx)->usedLen)
+#define IRRC_ITEMS(ctx) ((const rmt_item32_t*)(ctx)->buff)
 
 #ifdef __cplusplus
 }

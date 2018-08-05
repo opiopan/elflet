@@ -151,7 +151,6 @@ void PubSub::run(void *data){
 		esp_mqtt_client_publish(
 		    client, elfletConfig->getIrrcRecievedDataTopic().c_str(),
 		    data.data(), data.length(), 0, 0);
-		
 	    }
 	}
     }

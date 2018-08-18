@@ -11,6 +11,7 @@
 #include "IRService.h"
 #include "LEDService.h"
 #include "PubSubService.h"
+#include "ShadowDevice.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -269,6 +270,14 @@ void RecieverTask::run(void *data){
 			 rcvProtocol == IRRC_SONY ? "SONY" :
 			                            "Unknown",
 			 rcvBits);
+		if (elfletConfig->getIrrcRecieverMode() ==
+		    Config::IrrcRecieverContinuous){
+		    IRCommand cmd;
+		    cmd.protocol = rcvProtocol;
+		    cmd.bits = rcvBits;
+		    cmd.data = rcvBuf;
+		    applyIRCommand(&cmd);
+		}
 	    }
 	    //ESP_LOG_BUFFER_HEX(tag, rcvBuf, (rcvBits + 7) / 8);
 	    mutex.unlock();
@@ -292,6 +301,8 @@ bool startIRService(){
     if (rxTask || txTask){
 	return false;
     }
+
+    initShadowDevicePool();
 
     rxTask = new RecieverTask;
     rxTask->start();
@@ -352,7 +363,7 @@ bool getIRRecievedDataJson(std::ostream& out){
 	if (protocol == IRRC_UNKNOWN){
 	    out << "{\"Protocol\" : \"UNKNOWN\"}";
 	}else{
-	    char hexstr[65];
+	    char hexstr[sizeof(buf) * 2 + 1];
 	    for (int i = 0; i < ((bits + 7) / 8) * 2; i++){
 		int data = (buf[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
 		static const unsigned char dic[] = "0123456789abcdef";

@@ -11,6 +11,7 @@
 #include <CPPNVS.h>
 #include <json11.hpp>
 #include "Config.h"
+#include "ShadowDevice.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -23,6 +24,8 @@ static const std::string CONFIGGEN_KEY = "configgen";
 
 static const char SPIFFS_MP[] = "/spiffs";
 static const char VERIFICATION_KEY_PATH[] = "/spiffs/verificationkey.pem";
+static const char SHADOW_DEFS_PATH[] = "/spiffs/shadowdefs.json";
+static const char TMP_SHADOW_DEFS_PATH[] = "/spiffs/shadowdefs_tmp.json";
 static const char* CONFIGPATH[] = {
     "/spiffs/pdata.json",
     "/spiffs/config01.json",
@@ -271,6 +274,9 @@ bool Config::commit(){
 
     if (isDirtyBootMode){
 	nvs.set(BOOTMODE_KEY, (uint32_t)bootMode);
+	if (bootMode == FactoryReset){
+	    resetShadowDevicePool();
+	}
     }
 
     nvs.commit();
@@ -445,6 +451,14 @@ void Config::updateDefaultSensorTopic(){
 //----------------------------------------------------------------------
 // static value handling
 //----------------------------------------------------------------------
-const char* Config::getVerificationKeyPath(){
+const char* Config::getVerificationKeyPath() const{
     return VERIFICATION_KEY_PATH;
+}
+
+const char* Config::getShadowDefsPath() const{
+    return SHADOW_DEFS_PATH;
+}
+
+const char* Config::getTmpShadowDefsPath() const{
+    return TMP_SHADOW_DEFS_PATH;
 }

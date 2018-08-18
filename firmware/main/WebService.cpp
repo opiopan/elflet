@@ -32,6 +32,7 @@ bool startWebService(){
     registerConfigRESTHandler(webserver);
     registerIrRESTHandler(webserver);
     registerSensorRESTHandler(webserver);
+    registerShadowRESTHandler(webserver);
     webserver->setContentProvider(createContentProvider());
     std::stringstream name;
     name << "elflet " << getVersionString();

@@ -121,7 +121,9 @@ public:
 	return (IrrcRecieverMode)irrcRecieverMode;
     };
     
-    const char* getVerificationKeyPath();
+    const char* getVerificationKeyPath() const;
+    const char* getShadowDefsPath() const;
+    const char* getTmpShadowDefsPath() const;
     
     bool setBootMode(BootMode mode);
 

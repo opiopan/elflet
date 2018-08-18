@@ -64,9 +64,14 @@ public:
         return *this;
     };
 
+    operator T* () const
+    {
+	return handle ? handle->pointer() : NULL;
+    }
+    
     T* operator -> (void) const
     {
-        return handle ? handle->pointer() : NULL;
+	return static_cast<T*>(*this);
     }
 
     void setNull()

@@ -1,0 +1,30 @@
+{
+    "ShadowName": "ac",
+    "CommonCondition" : {
+	"Type" : "COMBINATION",
+	"Operator" : "AND",
+	"Formulas" : [
+	    {
+		"Type" : "PROTOCOL",
+		"Protocol" : "AEHA",
+		"BitCount" : 144
+	    },{
+		"Type" : "DATA",
+		"Offset" : 0,
+		"Data" : "23cb260100"
+	    }
+	]
+    },
+    "OnCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "20",
+	"Mask" : "f0"
+    },
+    "OffCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "00",
+	"Mask" : "f0"
+    }
+}

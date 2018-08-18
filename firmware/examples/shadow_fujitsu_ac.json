@@ -1,0 +1,26 @@
+{
+    "ShadowName": "ac",
+    "CommonCondition" : {
+	"Type" : "COMBINATION",
+	"Operator" : "AND",
+	"Formulas" : [
+	    {
+		"Type" : "PROTOCOL",
+		"Protocol" : "AEHA"
+	    },{
+		"Type" : "DATA",
+		"Data" : "1463001010"
+	    }
+	]
+    },
+    "OnCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "fe"
+    },
+    "OffCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "02"
+    }
+}

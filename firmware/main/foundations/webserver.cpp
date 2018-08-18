@@ -356,7 +356,7 @@ bool WebServerConnection::authenticate(http_message* hm){
 	fseek(htdigest->fp, 0, SEEK_SET);
 	if (!mg_http_check_digest_auth(hm, htdigest->domain,
 				       htdigest->fp)){
-	    ESP_LOGE(tag, "authorize failed");
+	    ESP_LOGD(tag, "authorize failed");
 	    mg_http_send_digest_auth_request(connection, htdigest->domain);
 	    responseData.close(HttpResponse::ST_FLUSHED);
 	    connection->flags |= MG_F_SEND_AND_CLOSE;;
@@ -430,14 +430,14 @@ void WebServer::handler(struct mg_connection* con, int ev, void* p){
 	char addr[32];
 	mg_sock_addr_to_str(&con->sa, addr, sizeof(addr),
 			    MG_SOCK_STRINGIFY_IP | MG_SOCK_STRINGIFY_PORT);
-	ESP_LOGI(tag, "Connection %p from %s", con, addr);
+	ESP_LOGD(tag, "Connection %p from %s", con, addr);
 
 	auto wcon = new WebServerConnection(self, con);
 	con->user_data = wcon;
 	break;
     }
     case MG_EV_CLOSE: {
-	ESP_LOGI(tag, "Connection %p closed", con);
+	ESP_LOGD(tag, "Connection %p closed", con);
 	auto wcon = (WebServerConnection*)con->user_data;
 	delete wcon;
 	con->user_data = NULL;

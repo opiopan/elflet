@@ -26,6 +26,8 @@ protected:
 
     WakeupCause wakeupCause;
 
+    int32_t configVersion;
+
     int32_t functionMode;
 
     std::string boardVersion;
@@ -55,11 +57,6 @@ protected:
     std::string downloadFirmwareTopic;
 
     int32_t irrcRecieverMode;
-
-    std::string defaultSensorTopic;
-    std::string defaultIrrcRecieveTopic;
-    std::string defaultIrrcRecievedDataTopic;
-    std::string defaultIrrcSendTopic;
     
 public:
     Config(WakeupCause cause);
@@ -98,25 +95,15 @@ public:
     const std::string& getPubSubServerCert() const{return pubSubServerCert;};
     const std::string& getPubSubUser() const{return pubSubUser;};
     const std::string& getPubSubPassword() const{return pubSubPassword;};
-    const std::string& getSensorTopic() const{
-	return sensorTopic.length() == 0 ? defaultSensorTopic : sensorTopic;
-    };
-    const std::string& getIrrcRecieveTopic() const{
-	return irrcRecieveTopic.length() == 0 ?
-	    defaultIrrcRecieveTopic : irrcRecieveTopic;
-    };
+    const std::string& getSensorTopic() const{return sensorTopic;};
+    const std::string& getIrrcRecieveTopic() const{return irrcRecieveTopic;};
     const std::string& getIrrcRecievedDataTopic() const{
-	return irrcRecievedDataTopic.length() == 0 ?
-	    defaultIrrcRecievedDataTopic : irrcRecievedDataTopic;
+	return irrcRecievedDataTopic;
     };
-    const std::string& getIrrcSendTopic() const{
-	return irrcSendTopic.length() == 0 ?
-	    defaultIrrcSendTopic : irrcSendTopic;
-    };
+    const std::string& getIrrcSendTopic() const{return irrcSendTopic;};
     const std::string& getDownloadFirmwareTopic() const{
 	return downloadFirmwareTopic;
     };
-
     IrrcRecieverMode getIrrcRecieverMode() const{
 	return (IrrcRecieverMode)irrcRecieverMode;
     };
@@ -160,14 +147,15 @@ protected:
 		    int32_t& value);
     void applyValue(const json11::Json& json, const std::string& key,
 		    std::string& value);
-
-    void updateDefaultSensorTopic();
+    void migrateConfig();
+    void updateDefaultTopic(const std::string& oldNodeName);
 };
 
 extern Config* elfletConfig;
 
 bool initConfig();
 
+extern const char JSON_CONFIGVERSION[];
 extern const char JSON_FUNCTIONMODE[];
 extern const char JSON_BOARDTYPE[];
 extern const char JSON_BOARDVERSION[];

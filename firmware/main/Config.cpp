@@ -18,6 +18,8 @@
 
 static const char tag[] = "Config";
 
+static const int32_t CONFIG_VERSION = 1;
+
 static const char NVS_NS[] = "elflet";
 static const std::string BOOTMODE_KEY = "bootmode";
 static const std::string CONFIGGEN_KEY = "configgen";
@@ -90,6 +92,7 @@ bool initConfig(){
 Config::Config(WakeupCause cause) :
     fromStorage(false), isDirtyBootMode(false), isDirty(false),
     wakeupCause(cause),
+    configVersion(0),
     functionMode(FullSpec), sensorFrequency(0), 
     pubSubSessionType(SessionTCP), irrcRecieverMode(IrrcRecieverOnDemand){
 }
@@ -104,6 +107,7 @@ Config& Config::operator = (const Config& src){
     bootMode = src.bootMode;
     wakeupCause = src.wakeupCause;
     fileGeneration = src.fileGeneration;
+    configVersion = src.configVersion;
     functionMode = src.functionMode;
     boardVersion = src.boardVersion;
     nodeName = src.nodeName;
@@ -125,8 +129,6 @@ Config& Config::operator = (const Config& src){
     irrcSendTopic = src.irrcSendTopic;
     downloadFirmwareTopic = src.downloadFirmwareTopic;
     irrcRecieverMode = src.irrcRecieverMode;
-
-    updateDefaultSensorTopic();
 
     return *this;
 }
@@ -181,6 +183,7 @@ bool Config::load(){
     }
     
     // reflect configuration file to object attribute
+    applyValue(config, JSON_CONFIGVERSION, configVersion);
     applyValue(config, JSON_FUNCTIONMODE, functionMode);
     applyValue(config, JSON_BOARDVERSION, boardVersion);
     applyValue(config, JSON_NODENAME, nodeName);
@@ -203,10 +206,10 @@ bool Config::load(){
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
     applyValue(config, JSON_IRRCRECIEVERMODE, irrcRecieverMode);
 
-    updateDefaultSensorTopic();
-
     isDirty = false;
     isDirtyBootMode = false;
+
+    migrateConfig();
     
     return true;
 }
@@ -240,6 +243,7 @@ bool Config::commit(){
 
     if (isDirty && bootMode != FactoryReset){
 	auto obj = json11::Json::object({
+		{JSON_CONFIGVERSION, configVersion},
 		{JSON_FUNCTIONMODE, functionMode},
 		{JSON_BOARDVERSION, boardVersion},
 		{JSON_NODENAME, nodeName},
@@ -287,6 +291,25 @@ bool Config::commit(){
 }
 
 //----------------------------------------------------------------------
+// migration between different version
+//----------------------------------------------------------------------
+void Config::migrateConfig(){
+    if (configVersion < 1){
+	auto setTopic = [&](std::string& v, const char* suffix){
+	    if (v.length() == 0){
+		v = this->nodeName;
+		v += suffix;
+	    }
+	};
+	setTopic(sensorTopic,"/sensor");
+	setTopic(irrcRecieveTopic, "/irrcRecieve");
+	setTopic(irrcRecievedDataTopic, "/irrcRecievedData");
+	setTopic(irrcSendTopic, "/irrcSend");
+    }
+    configVersion = CONFIG_VERSION;
+}
+
+//----------------------------------------------------------------------
 // update value
 //----------------------------------------------------------------------
 bool Config::setBootMode(BootMode mode){
@@ -308,9 +331,10 @@ bool Config::setNodeName(const std::string& name){
     if (name.length() > MAX_NODENAME_LEN){
 	return false;
     }
+    const std::string oldNodeName = std::move(nodeName);
     nodeName = name;
     isDirty = true;
-    updateDefaultSensorTopic();
+    updateDefaultTopic(oldNodeName);
     return true;
 }
 
@@ -437,15 +461,17 @@ bool Config::setIrrcRecieverMode(IrrcRecieverMode mode){
     return true;
 }
 
-void Config::updateDefaultSensorTopic(){
-    defaultSensorTopic = nodeName;
-    defaultSensorTopic += "/sensor";
-    defaultIrrcRecieveTopic = nodeName;
-    defaultIrrcRecieveTopic += "/irrcRecieve";
-    defaultIrrcRecievedDataTopic = nodeName;
-    defaultIrrcRecievedDataTopic += "/irrcRecievedData";
-    defaultIrrcSendTopic = nodeName;
-    defaultIrrcSendTopic += "/irrcSend";
+void Config::updateDefaultTopic(const std::string& oldNodeName){
+    auto updateTopic = [&](std::string& v, const char* suffix){
+	if (v == oldNodeName + suffix){
+	    v = this->nodeName;
+	    v += suffix;
+	}
+    };
+    updateTopic(sensorTopic,"/sensor");
+    updateTopic(irrcRecieveTopic, "/irrcRecieve");
+    updateTopic(irrcRecievedDataTopic, "/irrcRecievedData");
+    updateTopic(irrcSendTopic, "/irrcSend");
 }
 
 //----------------------------------------------------------------------

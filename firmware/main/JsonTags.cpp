@@ -1,5 +1,6 @@
 #include "Config.h"
 
+const char JSON_CONFIGVERSION[] = "ConfigVersion";
 const char JSON_FUNCTIONMODE[] = "FunctionMode";
 const char JSON_BOARDTYPE[] = "BoardType";
 const char JSON_BOARDVERSION[] = "BoardVersion";

@@ -1,5 +1,4 @@
 {
-    "ShadowName": "ac",
     "CommonCondition" : {
 	"Type" : "COMBINATION",
 	"Operator" : "AND",

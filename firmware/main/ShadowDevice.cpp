@@ -443,7 +443,7 @@ typedef SmartPtr<ShadowDeviceImp> ShadowDevicePtr;
 
 bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
     auto nameStr = in[JSON_SHADOW_NAME];
-    if (nameStr.string_value() != name){
+    if (nameStr.is_string() && nameStr.string_value() != name){
 	err = "Shadow name specified in uri is not same name in JSON data.";
 	return false;
     }

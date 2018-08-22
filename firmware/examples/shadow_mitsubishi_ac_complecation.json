@@ -1,0 +1,65 @@
+{
+    "CommonCondition" : {
+	"Type" : "COMBINATION",
+	"Operator" : "AND",
+	"Formulas" : [
+	    {
+		"Type" : "PROTOCOL",
+		"Protocol" : "AEHA",
+		"BitCount" : 144
+	    },{
+		"Type" : "DATA",
+		"Offset" : 0,
+		"Data" : "23cb260100"
+	    }
+	]
+    },
+    "OnCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "20",
+	"Mask" : "f0"
+    },
+    "OffCondition" : {
+	"Type" : "DATA",
+	"Offset" : 5,
+	"Data" : "00",
+	"Mask" : "f0"
+    },
+    "Attributes": [
+	{
+	    "AttrName": "Mode",
+	    "Value" : {
+		"Type": "PORTION",
+		"Offset" : 6
+	    },
+	    "Dictionary": {
+		"58": "Cooler",
+		"50": "Dehum",
+		"48": "Heater"
+	    },
+	    "Default": "Cooler"
+	},
+	{
+	    "AttrName": "Temperature",
+	    "Value" : {
+		"Type": "ADD",
+		"Values": [
+		    {
+			"Type": "PORTION",
+			"Offset" : 7,
+			"Mask": "0f",
+			"Bias": 16
+		    },
+		    {
+			"Type": "PORTION",
+			"Offset" : 7,
+			"Mask": "f0",
+			"DividedBy": 32
+		    }
+		]
+	    },
+	    "Default": 27
+	}
+    ]
+}

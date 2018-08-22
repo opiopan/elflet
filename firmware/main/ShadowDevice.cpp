@@ -34,7 +34,7 @@ static const char JSON_FORMULA_DATA[] = "Data";
 static const char JSON_FORMULA_MASK[] = "Mask";
 
 static const char* FORMULA_TYPE_STR[] = {
-    "COMBINATION", "PROTOCOL", "DATA", NULL
+    "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
 };
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
@@ -102,9 +102,10 @@ static bool ApplyHexValue(const json11::Json& json, const std::string& key,
 //----------------------------------------------------------------------
 // base class
 //----------------------------------------------------------------------
-class FormulaNode {
+template <typename T>  class FormulaNode {
 public:
-    enum Type {COMBINATION, PROTOCOL, DATA};
+    enum Type {COMBINATION, PROTOCOL, DATA, ATTRIBUTE};
+    using Ptr = SmartPtr<FormulaNode<T>>;
 
 protected:
     const Type type;
@@ -120,31 +121,38 @@ public:
 	out << "\"" << JSON_FORMULA_TYPE << "\":\""
 	    << FORMULA_TYPE_STR[(int)type] << "\"";
     };
-    virtual bool testIRCommand(const IRCommand* cmd) = 0;
+    virtual bool test(const T* testee) = 0;
 };
 
-typedef SmartPtr<FormulaNode> FormulaNodePtr;
-static FormulaNodePtr createFormula(const json11::Json& in, std::string& err);
+
+static void createFormula(const json11::Json& in, std::string& err,
+			  FormulaNode<IRCommand>::Ptr& ptr);
+
+class ShadowDeviceImp;
+static void createFormula(const json11::Json& in, std::string& err,
+			  FormulaNode<ShadowDeviceImp>::Ptr& ptr);
 
 //----------------------------------------------------------------------
 // combination node
 //----------------------------------------------------------------------
-class CombinationNode : public FormulaNode {
+template <typename T> class CombinationNode : public FormulaNode<T> {
 protected:
+    using Base = FormulaNode<T>;
     enum Operation {OP_AND = 0, OP_OR, OP_NAND, OP_NOR};
     Operation operation;
-    std::vector<FormulaNodePtr> children;
+    std::vector<typename Base::Ptr> children;
     
 public:
-    CombinationNode() : FormulaNode(FormulaNode::COMBINATION){};
+    CombinationNode() : Base(Base::COMBINATION){};
     virtual ~CombinationNode(){};
     
     bool deserialize(const json11::Json& in, std::string& err) override;
     void serialize(std::ostream& out) override;
-    bool testIRCommand(const IRCommand* cmd) override;
+    bool test(const T* testee) override;
 };
 
-bool CombinationNode::deserialize(const json11::Json& in, std::string& err){
+template <typename T>
+bool CombinationNode<T>::deserialize(const json11::Json& in, std::string& err){
     if (!ApplyValue(in, JSON_FORMULA_OPERATOR, false,
 		    [&](const std::string& v) -> bool{
 			for (int i = 0; OP_TYPE_STR[i]; i++){
@@ -166,7 +174,8 @@ bool CombinationNode::deserialize(const json11::Json& in, std::string& err){
 		      "specified as JSON object.";
 		return false;
 	    }
-	    auto child = createFormula(json11::Json(f.object_items()), err);
+	    typename Base::Ptr child;
+	    createFormula(json11::Json(f.object_items()), err, child);
 	    if (child.isNull()){
 		return false;
 	    }
@@ -182,9 +191,10 @@ bool CombinationNode::deserialize(const json11::Json& in, std::string& err){
     return true;
 }
 
-void CombinationNode::serialize(std::ostream& out){
+template <typename T>
+void CombinationNode<T>::serialize(std::ostream& out){
     out << "{";
-    FormulaNode::serialize(out);
+    Base::serialize(out);
     out << ",\"" << JSON_FORMULA_OPERATOR << "\":\""
 	<< OP_TYPE_STR[(int)operation];
     out << "\",\"" << JSON_FORMULA_CHILDREN << "\":[";
@@ -197,7 +207,8 @@ void CombinationNode::serialize(std::ostream& out){
     out << "]}";
 }
 
-bool CombinationNode::testIRCommand(const IRCommand* cmd){
+template <typename T>
+bool CombinationNode<T>::test(const T* testee){
     static const uint8_t INITIAL =   0b1000000;
     static const uint8_t BREAKABLE = 0b0100000;
     static const uint8_t BREAK =     0b0010000;
@@ -216,7 +227,7 @@ bool CombinationNode::testIRCommand(const IRCommand* cmd){
     auto rc = tftable & INITIAL;
 
     for (auto i = children.begin(); i != children.end(); i++){
-	auto rvalue = (*i)->testIRCommand(cmd);
+	auto rvalue = (*i)->test(testee);
 	rc = test(rc, rvalue);
 	if (tftable & BREAKABLE &&
 	    (rc != 0) == ((tftable & BREAK) != 0)){
@@ -231,19 +242,21 @@ bool CombinationNode::testIRCommand(const IRCommand* cmd){
 //----------------------------------------------------------------------
 // protocol comparison node
 //----------------------------------------------------------------------
-class ProtocolNode : public FormulaNode {
+class ProtocolNode : public FormulaNode<IRCommand> {
 protected:
+    using Base = FormulaNode<IRCommand>;
+
     IRRC_PROTOCOL protocol;
     int32_t bits;
     
 public:
-    ProtocolNode() : FormulaNode(FormulaNode::PROTOCOL),
+    ProtocolNode() : Base(Base::PROTOCOL),
 		     protocol(IRRC_UNKNOWN), bits(-1){};
     virtual ~ProtocolNode(){};
     
     bool deserialize(const json11::Json& in, std::string& err) override;
-    void serialize(std::ostream& out) override;
-    bool testIRCommand(const IRCommand* cmd) override;
+    void serialize(std::ostream& out) override;    
+    bool test(const IRCommand* cmd) override;
 };
 
 bool ProtocolNode::deserialize(const json11::Json& in, std::string& err){
@@ -278,7 +291,7 @@ void ProtocolNode::serialize(std::ostream& out){
     out << "}";
 }
 
-bool ProtocolNode::testIRCommand(const IRCommand* cmd){
+bool ProtocolNode::test(const IRCommand* cmd){
     if (cmd->protocol != protocol){
 	ESP_LOGD(tag, "PROTOCOL: false");
 	return false;
@@ -294,19 +307,21 @@ bool ProtocolNode::testIRCommand(const IRCommand* cmd){
 //----------------------------------------------------------------------
 // data comparison node
 //----------------------------------------------------------------------
-class DataNode : public FormulaNode {
+class DataNode : public FormulaNode<IRCommand> {
 protected:
+    using Base = FormulaNode<IRCommand>;
+
     int32_t offset;
     std::string data;
     std::string mask;
     
 public:
-    DataNode() : FormulaNode(FormulaNode::DATA), offset(0){};
+    DataNode() : Base(Base::DATA), offset(0){};
     virtual ~DataNode(){};
     
     bool deserialize(const json11::Json& in, std::string& err) override;
     void serialize(std::ostream& out) override;
-    bool testIRCommand(const IRCommand* cmd) override;
+    bool test(const IRCommand* cmd) override;
 };
 
 bool DataNode::deserialize(const json11::Json& in, std::string& err){
@@ -360,7 +375,7 @@ void DataNode::serialize(std::ostream& out){
     out << "}";
 }
 
-bool DataNode::testIRCommand(const IRCommand* cmd){
+bool DataNode::test(const IRCommand* cmd){
     if ((cmd->bits + 7) * 8 < data.length() + offset){
 	ESP_LOGD(tag, "DATA: false");
 	return false;
@@ -387,29 +402,28 @@ bool DataNode::testIRCommand(const IRCommand* cmd){
 //----------------------------------------------------------------------
 // formula node factory
 //----------------------------------------------------------------------
-static FormulaNodePtr createFormula(const json11::Json& in, std::string& err){
-    FormulaNodePtr rc;
-
+static void createFormula(const json11::Json& in, std::string& err,
+			  FormulaNode<IRCommand>::Ptr& ptr){
     auto type = in[JSON_FORMULA_TYPE];
+    ptr = FormulaNode<IRCommand>::Ptr(NULL);
+    
     if (type.is_string()){
 	auto typeStr = type.string_value();
 	if (typeStr == "COMBINATION"){
-	    rc = FormulaNodePtr(new CombinationNode);
+	    ptr = FormulaNode<IRCommand>::Ptr(new CombinationNode<IRCommand>);
 	}else if (typeStr == "PROTOCOL"){
-	    rc = FormulaNodePtr(new ProtocolNode);
+	    ptr = FormulaNode<IRCommand>::Ptr(new ProtocolNode);
 	}else if (typeStr == "DATA"){
-	    rc = FormulaNodePtr(new DataNode);
+	    ptr = FormulaNode<IRCommand>::Ptr(new DataNode);
 	}else{
 	    err = "Invalid formula type was specified.";
 	}
-	if (!rc->deserialize(in, err)){
-	    rc = FormulaNodePtr(NULL);
+	if (!ptr->deserialize(in, err)){
+	    ptr = FormulaNode<IRCommand>::Ptr(NULL);
 	}
     }else{
 	err = "No formula type was specified.";
     }
-    
-    return rc;
 }
 
 //======================================================================
@@ -418,9 +432,9 @@ static FormulaNodePtr createFormula(const json11::Json& in, std::string& err){
 class ShadowDeviceImp : public ShadowDevice {
 protected:
     std::string name;
-    FormulaNodePtr commonCondition;
-    FormulaNodePtr onCondition;
-    FormulaNodePtr offCondition;
+    FormulaNode<IRCommand>::Ptr commonCondition;
+    FormulaNode<IRCommand>::Ptr onCondition;
+    FormulaNode<IRCommand>::Ptr offCondition;
 
     bool powerStatus;
 
@@ -439,7 +453,7 @@ public:
     void dumpStatus(std::ostream& out) override;
 };
 
-typedef SmartPtr<ShadowDeviceImp> ShadowDevicePtr;
+using ShadowDevicePtr = SmartPtr<ShadowDeviceImp>;
 
 bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
     auto nameStr = in[JSON_SHADOW_NAME];
@@ -448,11 +462,11 @@ bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
 	return false;
     }
 
-    auto applyFormula = [&](const char* tag, FormulaNodePtr& ptr)->bool{
+    auto applyFormula =
+	[&](const char* tag, FormulaNode<IRCommand>::Ptr& ptr)->bool{
 	auto defs = in[tag];
 	if (defs.is_object()){
-	    ptr = createFormula(
-		json11::Json(defs.object_items()), err);
+	    createFormula(json11::Json(defs.object_items()), err, ptr);
 	    if (ptr.isNull()){
 		return false;
 	    }
@@ -505,13 +519,13 @@ void ShadowDeviceImp::serialize(std::ostream& out){
 bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
     ESP_LOGD(tag, "start commonCondition");
     if (!commonCondition.isNull() &&
-	!commonCondition->testIRCommand(cmd)){
+	!commonCondition->test(cmd)){
 	ESP_LOGD(tag, "commonCondition: false");
 	return false;
     }
     ESP_LOGD(tag, "start onCondition");
     if (!onCondition.isNull()){
-	if (onCondition->testIRCommand(cmd)){
+	if (onCondition->test(cmd)){
 	    powerStatus = true;
 	    ESP_LOGD(tag, "onCondition: true: on");
 	    return true;
@@ -523,7 +537,7 @@ bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
     }
     ESP_LOGD(tag, "start endCondition");
     if (!offCondition.isNull()){
-	if (offCondition->testIRCommand(cmd)){
+	if (offCondition->test(cmd)){
 	    ESP_LOGD(tag, "offCondition: true: off");
 	    powerStatus = false;
 	    return true;

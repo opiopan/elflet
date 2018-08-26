@@ -34,9 +34,9 @@
 		"Offset" : 6
 	    },
 	    "Dictionary": {
-		"58": "Cooler",
-		"50": "Dehum",
-		"48": "Heater"
+		"Cooler": "58",
+		"Dehum": "50",
+		"Heater": "48"
 	    },
 	    "Default": "Cooler"
 	},

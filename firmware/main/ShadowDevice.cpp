@@ -4,9 +4,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <limits>
+#include <iomanip>
 #include <GeneralUtils.h>
 #include <json11.hpp>
 #include "SmartPtr.h"
@@ -24,6 +27,7 @@ static const char JSON_SHADOW_COMMON_COND[] = "CommonCondition";
 static const char JSON_SHADOW_ON_COND[] = "OnCondition";
 static const char JSON_SHADOW_OFF_COND[] = "OffCondition";
 static const char JSON_SHADOW_ISON[] = "IsOn";
+static const char JSON_SHADOW_ATTRIBUTES[] = "Attributes";
 static const char JSON_FORMULA_TYPE[] = "Type";
 static const char JSON_FORMULA_OPERATOR[] = "Operator";
 static const char JSON_FORMULA_CHILDREN[] = "Formulas";
@@ -32,16 +36,59 @@ static const char JSON_FORMULA_BITS[] = "BitCount";
 static const char JSON_FORMULA_OFFSET[] = "Offset";
 static const char JSON_FORMULA_DATA[] = "Data";
 static const char JSON_FORMULA_MASK[] = "Mask";
+static const char JSON_FORMULA_ATTRNAME[] = "AttrName";
+static const char JSON_FORMULA_ATTRVALUE[] = "Value";
+static const char JSON_ATTR_NAME[] = "AttrName";
+static const char JSON_ATTR_NOAPPINOFF[] = "NotApplyInOff";
+static const char JSON_ATTR_VALUE[] = "Value";
+static const char JSON_ATTR_DICT[] = "Dictionary";
+static const char JSON_ATTR_DEFAULT[] = "Default";
+static const char JSON_ATTR_VISIBLE_COND[] = "VisibleCondition";
+static const char JSON_ATTRVAL_TYPE[] = "Type";
+static const char JSON_ATTRVAL_OFFSET[] = "Offset";
+static const char JSON_ATTRVAL_MASK[] = "Mask";
+static const char JSON_ATTRVAL_BIAS[] = "Bias";
+static const char JSON_ATTRVAL_DIV[] = "DividedBy";
+static const char JSON_ATTRVAL_MUL[] = "MultiplyBy";
+static const char JSON_ATTRVAL_CHILDREN[] = "Values";
 
 static const char* FORMULA_TYPE_STR[] = {
     "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
 };
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
+static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", NULL};
 
 //======================================================================
 // JSON handling functions
 //======================================================================
+static std::string strToHex(const std::string& str){
+    auto hexval = [](int c)->int {
+	if (c >= '0' && c <= '9'){
+	    return c - '0';
+	}else if (c >= 'a' && c <= 'f'){
+	    return c - 'a' + 10;
+	}else if (c >= 'A' && c <= 'F'){
+	    return c - 'A' + 10;
+	}else{
+	    return -1;
+	}
+    };
+    std::string hexdata;
+    if (!(str.length() & 1)){
+	for (int i = 0; i < str.length(); i += 2){
+	    auto hval = hexval(str[i]);
+	    auto lval = hexval(str[i + 1]);
+	    if (hval < 0 || lval < 0){
+		hexdata.clear();
+		return std::move(hexdata);
+	    }
+	    hexdata.push_back((hval << 4) | lval);
+	}
+    }
+    return std::move(hexdata);
+}
+
 static bool ApplyValue(const json11::Json& json, const std::string& key,
 		       bool notFound,
 		       std::function<bool(const std::string&)> apply){
@@ -62,35 +109,36 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
     return notFound;
 }
 
+static bool ApplyBoolValue(const json11::Json& json, const std::string& key,
+			   bool notFound,
+			   std::function<bool(bool)> apply){
+    auto obj = json[key];
+    if (obj.is_bool()){
+	return apply(obj.bool_value());
+    }
+    return notFound;
+}
+
+static bool ApplyNumValue(const json11::Json& json, const std::string& key,
+		       bool notFound,
+		       std::function<bool(float)> apply){
+    auto obj = json[key];
+    if (obj.is_number()){
+	return apply(obj.number_value());
+    }
+    return notFound;
+}
+
 static bool ApplyHexValue(const json11::Json& json, const std::string& key,
 			  bool notFound,
 			  std::function<bool(std::string&)> apply){
     auto obj = json[key];
-    auto hexval = [](int c)->int {
-	if (c >= '0' && c <= '9'){
-	    return c - '0';
-	}else if (c >= 'a' && c <= 'f'){
-	    return c - 'a' + 10;
-	}else if (c >= 'A' && c <= 'F'){
-	    return c - 'A' + 10;
-	}else{
-	    return -1;
-	}
-    };
     if (obj.is_string() && !(obj.string_value().length() & 1)){
-	auto in = obj.string_value();
-	std::string hexdata;
-
-	for (int i = 0; i < in.length(); i += 2){
-	    auto hval = hexval(in[i]);
-	    auto lval = hexval(in[i + 1]);
-	    if (hval < 0 || lval < 0){
-		return false;
-	    }
-	    hexdata.push_back((hval << 4) | lval);
+	auto hex = strToHex(obj.string_value());
+	if (hex.length() == 0){
+	    return false;
 	}
-	
-	return apply(hexdata);
+	return apply(hex);
     }
     return notFound;
 }
@@ -128,9 +176,8 @@ public:
 static void createFormula(const json11::Json& in, std::string& err,
 			  FormulaNode<IRCommand>::Ptr& ptr);
 
-class ShadowDeviceImp;
 static void createFormula(const json11::Json& in, std::string& err,
-			  FormulaNode<ShadowDeviceImp>::Ptr& ptr);
+			  FormulaNode<ShadowDevice>::Ptr& ptr);
 
 //----------------------------------------------------------------------
 // combination node
@@ -187,7 +234,6 @@ bool CombinationNode<T>::deserialize(const json11::Json& in, std::string& err){
 	      "for combination operator.";
 	return false;
     }
-
     return true;
 }
 
@@ -209,14 +255,13 @@ void CombinationNode<T>::serialize(std::ostream& out){
 
 template <typename T>
 bool CombinationNode<T>::test(const T* testee){
-    static const uint8_t INITIAL =   0b1000000;
-    static const uint8_t BREAKABLE = 0b0100000;
-    static const uint8_t BREAK =     0b0010000;
+    static const uint8_t INITIAL =   0b100000;
+    static const uint8_t BREAK =     0b010000;
     static const uint8_t TFTABLES[] = {
-	0b1000 | (INITIAL & 0xff) | (BREAKABLE & 0xff) | (BREAK & 0x00),
-	0b1110 | (INITIAL & 0x00) | (BREAKABLE & 0xff) | (BREAK & 0xff),
-	0b0111 | (INITIAL & 0xff) | (BREAKABLE & 0x00) | (BREAK & 0x00),
-	0b0001 | (INITIAL & 0x00) | (BREAKABLE & 0x00) | (BREAK & 0x00),
+	0b1000 | (INITIAL & 0xff) | (BREAK & 0x00), // AND
+	0b1110 | (INITIAL & 0x00) | (BREAK & 0xff), // OR
+	0b0111 | (INITIAL & 0xff) | (BREAK & 0x00), // NAND
+	0b0001 | (INITIAL & 0x00) | (BREAK & 0xff), // NOR
     };
     const auto test = [&](bool l, bool r) -> bool{
 	auto bit = 1 << ((l ? 0b10 : 0) | (r ? 0b1 : 0));
@@ -229,8 +274,7 @@ bool CombinationNode<T>::test(const T* testee){
     for (auto i = children.begin(); i != children.end(); i++){
 	auto rvalue = (*i)->test(testee);
 	rc = test(rc, rvalue);
-	if (tftable & BREAKABLE &&
-	    (rc != 0) == ((tftable & BREAK) != 0)){
+	if ((rvalue != 0) == ((tftable & BREAK) != 0)){
 	    break;
 	}
     }
@@ -400,29 +444,525 @@ bool DataNode::test(const IRCommand* cmd){
 }
 
 //----------------------------------------------------------------------
+// attribute comparison node
+//----------------------------------------------------------------------
+class AttributeNode : public FormulaNode<ShadowDevice> {
+protected:
+    using Base = FormulaNode<ShadowDevice>;
+
+    std::string attrName;
+    bool compareAsString;
+    float numericValue;
+    std::string stringValue;
+    
+public:
+    AttributeNode() : Base(Base::ATTRIBUTE),
+		 compareAsString(false), numericValue(0){};
+    virtual ~AttributeNode(){};
+    
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    bool test(const ShadowDevice* shadow) override;
+};
+
+bool AttributeNode::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_FORMULA_ATTRNAME, false, [&](const std::string v){
+		this->attrName = v;
+		return true;
+	    })){
+	err = "Attribute name must be specified for Attribute "
+	      "comparison node.";
+	return false;
+    }
+    auto value = in[JSON_FORMULA_ATTRVALUE];
+    if (value.is_string()){
+	compareAsString = true;
+	stringValue = value.string_value();
+    }else if (value.is_number()){
+	compareAsString = false;
+	numericValue = value.number_value();
+    }else{
+	err = "Attribute value type is invalid or "
+	    "attribute value is not specified.";
+	return false;
+    }
+    return true;
+}
+
+void AttributeNode::serialize(std::ostream& out){
+    out << "{";
+    FormulaNode::serialize(out);
+    out << ",\"" << JSON_FORMULA_ATTRNAME << "\":\"" << attrName << "\",\"";
+    out << JSON_FORMULA_ATTRVALUE << "\":";
+    if (compareAsString){
+	out << "\"" << stringValue << "\"}";
+    }else{
+	out << numericValue << "}";
+    }
+}
+
+bool AttributeNode::test(const ShadowDevice* shadow){
+    auto value = shadow->getAttribute(attrName);
+    if (compareAsString){
+	return value->getStringValue() == stringValue;
+    }else{
+	return value->getNumericValue() == numericValue;
+    }
+}
+
+//----------------------------------------------------------------------
 // formula node factory
 //----------------------------------------------------------------------
 static void createFormula(const json11::Json& in, std::string& err,
 			  FormulaNode<IRCommand>::Ptr& ptr){
+    using Formula = FormulaNode<IRCommand>;
     auto type = in[JSON_FORMULA_TYPE];
-    ptr = FormulaNode<IRCommand>::Ptr(NULL);
+    ptr = Formula::Ptr(NULL);
     
     if (type.is_string()){
 	auto typeStr = type.string_value();
-	if (typeStr == "COMBINATION"){
-	    ptr = FormulaNode<IRCommand>::Ptr(new CombinationNode<IRCommand>);
-	}else if (typeStr == "PROTOCOL"){
-	    ptr = FormulaNode<IRCommand>::Ptr(new ProtocolNode);
-	}else if (typeStr == "DATA"){
-	    ptr = FormulaNode<IRCommand>::Ptr(new DataNode);
+	if (typeStr == FORMULA_TYPE_STR[Formula::COMBINATION]){
+	    ptr = Formula::Ptr(new CombinationNode<IRCommand>);
+	}else if (typeStr == FORMULA_TYPE_STR[Formula::PROTOCOL]){
+	    ptr = Formula::Ptr(new ProtocolNode);
+	}else if (typeStr == FORMULA_TYPE_STR[Formula::DATA]){
+	    ptr = Formula::Ptr(new DataNode);
 	}else{
 	    err = "Invalid formula type was specified.";
 	}
 	if (!ptr->deserialize(in, err)){
-	    ptr = FormulaNode<IRCommand>::Ptr(NULL);
+	    ptr = Formula::Ptr(NULL);
 	}
     }else{
 	err = "No formula type was specified.";
+    }
+}
+
+static void createFormula(const json11::Json& in, std::string& err,
+			  FormulaNode<ShadowDevice>::Ptr& ptr){
+    using Formula = FormulaNode<ShadowDevice>;
+    auto type = in[JSON_FORMULA_TYPE];
+    ptr = Formula::Ptr(NULL);
+    
+    if (type.is_string()){
+	auto typeStr = type.string_value();
+	if (typeStr == FORMULA_TYPE_STR[Formula::COMBINATION]){
+	    ptr = Formula::Ptr(new CombinationNode<ShadowDevice>);
+	}else if (typeStr == FORMULA_TYPE_STR[Formula::ATTRIBUTE]){
+	    ptr = Formula::Ptr(new AttributeNode);
+	}else{
+	    err = "Invalid formula type was specified.";
+	}
+	if (!ptr->deserialize(in, err)){
+	    ptr = Formula::Ptr(NULL);
+	}
+    }else{
+	err = "No formula type was specified.";
+    }
+}
+
+//======================================================================
+// attribute value formula nodes
+//======================================================================
+
+//----------------------------------------------------------------------
+// base class
+//----------------------------------------------------------------------
+class ValueFormulaNode {
+public:
+    enum Type {PORTION, ADD};
+    using Ptr = SmartPtr<ValueFormulaNode>;
+
+protected:
+    const Type type;
+
+public:
+    ValueFormulaNode(Type type):type(type){};
+    virtual ~ValueFormulaNode(){};
+    
+    Type getType() const {return type;};
+
+    virtual bool deserialize(const json11::Json& in, std::string& err) = 0;
+    virtual void serialize(std::ostream& out){
+	out << "\"" << JSON_ATTRVAL_TYPE << "\":\""
+	    << VFORMULA_TYPE_STR[type] << "\"";
+    };
+    virtual float extract(const IRCommand* cmd) = 0;
+};
+
+static void createValueFormula(const json11::Json& in, std::string& err,
+			       ValueFormulaNode::Ptr& ptr);
+
+//----------------------------------------------------------------------
+// portion data node
+//----------------------------------------------------------------------
+class PortionNode : public ValueFormulaNode{
+protected:
+    using Base = ValueFormulaNode;
+    int offset;
+    uint8_t mask;
+    float divFactor;
+    float mulFactor;
+    float bias;
+
+public:
+    PortionNode(): Base(Base::PORTION),
+		   mask(0xff), divFactor(1.0), mulFactor(1.0), bias(0.0){};
+    virtual ~PortionNode(){};
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float extract(const IRCommand* cmd) override;
+};
+
+bool PortionNode::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_ATTRVAL_OFFSET, false, [&](int32_t v){
+		this->offset = v;
+		return true;
+	    })){
+	err = "Offset must be specified for portion node.";
+	return false;
+    }
+    if (!ApplyHexValue(in, JSON_ATTRVAL_MASK, true, [&](const std::string& v){
+		if (v.length() != 1){
+		    return false;
+		}
+		this->mask = v[0];
+		return true;
+	    })){
+	err = "Maks in portion node  must be 1 byte hex data as string.";
+	return false;
+    }
+    ApplyNumValue(in, JSON_ATTRVAL_BIAS, true, [&](float v){
+	    bias = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_ATTRVAL_DIV, true, [&](float v){
+	    divFactor = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_ATTRVAL_MUL, true, [&](float v){
+	    mulFactor = v;
+	    return true;
+	});
+
+    return true;
+}
+
+void PortionNode::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_ATTRVAL_OFFSET << "\":" << offset;
+    if (mask != 0xff){
+	out << ",\"" << JSON_ATTRVAL_MASK << "\":\""
+	    << std::setw(2) << std::setfill('0') << std::hex
+	    << (int)mask << "\"";
+    }
+    if (bias != 0){
+	out << ",\"" << JSON_ATTRVAL_BIAS << "\":" << bias;
+    }
+    if (mulFactor != 1){
+	out << ",\"" << JSON_ATTRVAL_MUL << "\":" << mulFactor;
+    }
+    if (divFactor != 1){
+	out << ",\"" << JSON_ATTRVAL_DIV << "\":" << divFactor;
+    }
+    out << "}";
+}
+
+float PortionNode::extract(const IRCommand* cmd){
+    auto rc = std::numeric_limits<float>::quiet_NaN();
+    if ((cmd->bits + 7) / 8 >= offset){
+	rc = ((uint8_t*)cmd->data)[offset];
+	rc = rc * mulFactor / divFactor + bias;
+    }
+    return rc;
+}
+
+//----------------------------------------------------------------------
+// add value node
+//----------------------------------------------------------------------
+class AddValueNode : public ValueFormulaNode{
+protected:
+    using Base = ValueFormulaNode;
+    std::vector<Base::Ptr> children;
+
+public:
+    AddValueNode(): Base(Base::ADD){};
+    virtual ~AddValueNode(){};
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float extract(const IRCommand* cmd) override;
+};
+
+bool AddValueNode::deserialize(const json11::Json& in, std::string& err){
+    auto elements = in[JSON_ATTRVAL_CHILDREN];
+    if (elements.is_array()){
+	for (auto &f : elements.array_items()){
+	    if (!f.is_object()){
+		err = "Sub-formula of add value node must be "
+		      "specified as JSON object.";
+		return false;
+	    }
+	    typename Base::Ptr child;
+	    createValueFormula(json11::Json(f.object_items()), err, child);
+	    if (child.isNull()){
+		return false;
+	    }
+	    children.push_back(child);
+	}
+    }
+    if (children.size() == 0){
+	err = "At least one sub-formula must be specified "
+	      "for add value node.";
+	return false;
+    }
+    return true;
+}
+
+void AddValueNode::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_ATTRVAL_CHILDREN << "\":[";
+    for (auto i = children.begin(); i != children.end(); i++){
+	if (i != children.begin()){
+	    out << ",";
+	}
+	(*i)->serialize(out);
+    }
+    out << "]}";
+}
+
+float AddValueNode::extract(const IRCommand* cmd){
+    float rc = 0;
+    for (auto i = children.begin(); i != children.end(); i++){
+	rc += (*i)->extract(cmd);
+    }
+    return rc;
+}
+
+//----------------------------------------------------------------------
+// value formula node factory
+//----------------------------------------------------------------------
+static void createValueFormula(const json11::Json& in, std::string& err,
+			       ValueFormulaNode::Ptr& ptr){
+    using Formula = ValueFormulaNode;
+    auto type = in[JSON_ATTRVAL_TYPE];
+    ptr = Formula::Ptr(NULL);
+    
+    if (type.is_string()){
+	auto typeStr = type.string_value();
+	if (typeStr == VFORMULA_TYPE_STR[Formula::ADD]){
+	    ptr = Formula::Ptr(new AddValueNode);
+	}else if (typeStr == VFORMULA_TYPE_STR[Formula::PORTION]){
+	    ptr = Formula::Ptr(new PortionNode);
+	}else{
+	    err = "Invalid value formula type was specified: ";
+	    err += typeStr;
+	}
+	if (!ptr->deserialize(in, err)){
+	    ptr = Formula::Ptr(NULL);
+	}
+    }else{
+	err = "No value formula type was specified.";
+    }
+}
+
+//======================================================================
+// attribute inmplementation
+//======================================================================
+class AttributeImp : public ShadowDevice::Attribute{
+protected:
+    using Base = ShadowDevice::Attribute;
+    const ShadowDevice* shadow;
+    
+    float numericValue;
+    std::string* stringValue;
+    
+    bool notApplyInOff;
+    float defaultValue;
+    ValueFormulaNode::Ptr valueFormula;
+    std::map<float, std::string> dict;
+    FormulaNode<ShadowDevice>::Ptr visibleCondition;
+    
+public:    
+    using Ptr = SmartPtr<AttributeImp>;
+
+    AttributeImp(const ShadowDevice* dev):
+	shadow(dev), numericValue(0), stringValue(NULL), notApplyInOff(false),
+	defaultValue(std::numeric_limits<float>::quiet_NaN()){};
+    virtual ~AttributeImp(){};
+    bool deserialize(const json11::Json& in, std::string& err);
+    void serialize(std::ostream& out, const std::string& name);
+    bool applyIRCommand(const IRCommand* cmd);
+    bool printKV(std::ostream& out, const std::string& name)const override;
+
+    float getNumericValue()const override{
+	return numericValue;
+    };
+    const std::string& getStringValue()const override{
+	static auto nullstr = std::string();
+	return stringValue ? *stringValue : nullstr;
+    };
+};
+
+bool AttributeImp::deserialize(const json11::Json& in, std::string& err){
+    ApplyBoolValue(in, JSON_ATTR_NOAPPINOFF, true, [&](bool v){
+	    this->notApplyInOff = v;
+	    return true;
+	});
+
+    //
+    // Value Formula
+    //
+    auto vformula = in[JSON_ATTR_VALUE];
+    if (vformula.is_object()){
+	createValueFormula(json11::Json(vformula.object_items()),
+			   err, valueFormula);
+	if (valueFormula.isNull()){
+	    return false;
+	}
+    }else{
+	err = "Formula to extract attribute value "
+	      "must be specified as object.";
+	return false;
+    }
+
+    //
+    // Dictionary
+    //
+    auto dictDefs = in[JSON_ATTR_DICT];
+    if (dictDefs.is_object()){
+	const char*  errStr = "Dictionary value must be numeric or "
+	                      "string presented 1 byte hex.";
+	for (auto &kv : dictDefs.object_items()){
+	    float key = std::numeric_limits<float>::quiet_NaN();
+	    if (kv.second.is_string()){
+		auto hex = strToHex(kv.second.string_value());
+		if (hex.length() != 1){
+		    err = errStr;
+		    return false;
+		}
+		key = hex[0];
+	    }else if (kv.second.is_number()){
+		key = kv.second.number_value();
+	    }else{
+		err = errStr;
+		return false;
+	    }
+	    dict[key] = kv.first;
+	}
+    }
+
+    //
+    // Default Value
+    //
+    auto defaultDef = in[JSON_ATTR_DEFAULT];
+    const char* defError = "Default value must indicate one of imtems "
+	                   "in the dictionary";
+    if (defaultDef.is_string()){
+	auto value = defaultDef.string_value();
+	float key = std::numeric_limits<float>::quiet_NaN();
+	for (auto &i : dict){
+	    if (i.second == value){
+		key = i.first;
+		break;
+	    }
+	}
+	if (std::isnan(key)){
+	    err = defError;
+	    return false;
+	}
+	defaultValue = key;
+    }else if (defaultDef.is_number()){
+	defaultValue = defaultDef.number_value();
+	if (!dict.empty()){
+	    auto i = dict.find(defaultValue);
+	    if (i == dict.end()){
+		err = defError;
+		return false;
+	    }
+	}
+    }
+
+    //
+    // Visible Condition
+    //
+    auto vcondDefs = in[JSON_ATTR_VISIBLE_COND];
+    if (vcondDefs.is_object()){
+	createFormula(json11::Json(vcondDefs.object_items()), err,
+		       visibleCondition);
+	if (visibleCondition.isNull()){
+	    return false;
+	}
+    }
+    
+    return true;
+}
+
+void AttributeImp::serialize(std::ostream& out, const std::string& name){
+    out << "{\"" << JSON_ATTR_NAME << "\":\"" << name << "\"";
+    if (notApplyInOff){
+	out << ",\"" << JSON_ATTR_NOAPPINOFF << "\":true";
+    }
+    out << ",\"" << JSON_ATTR_VALUE << "\":";
+    valueFormula->serialize(out);
+    if (!dict.empty()){
+	out << ",\"" << JSON_ATTR_DICT << "\":{";
+	for (auto i = dict.begin(); i != dict.end(); i++){
+	    out << (i == dict.begin() ? "\"" : ",\"")
+		<< i->second << "\":" << i->first;
+	}
+	out << "}";
+    }
+    if (!std::isnan(defaultValue)){
+	out << ",\"" << JSON_ATTR_DEFAULT << "\":";
+	if (dict.empty()){
+	    out << defaultValue;
+	}else{
+	    auto v = dict.at(defaultValue);
+	    out << "\"" << v << "\"";
+	}
+    }
+    if (!visibleCondition.isNull()){
+	out << ",\"" << JSON_ATTR_VISIBLE_COND << "\":";
+	visibleCondition->serialize(out);
+    }
+    out << "}";
+}
+
+bool AttributeImp::applyIRCommand(const IRCommand* cmd){
+    if (notApplyInOff && !shadow->isOn()){
+	return false;
+    }
+    auto value = valueFormula->extract(cmd);
+    if (std::isnan(value)){
+	return false;
+    }
+    if (!dict.empty()){
+	numericValue = value;
+    }else{
+	auto i = dict.find(value);
+	if (i == dict.end()){
+	    return false;
+	}
+	numericValue = value;
+	stringValue = &(i->second);
+    }
+
+    return true;
+}
+
+bool AttributeImp::printKV(std::ostream& out, const std::string& name) const{
+    if (visibleCondition.isNull() || visibleCondition->test(shadow)){
+	out << "\"" << name << "\":";
+	if (stringValue){
+	    out << "\"" << stringValue << "\"";
+	}else{
+	    out << numericValue;
+	}
+	return true;
+    }else{
+	return false;
     }
 }
 
@@ -435,6 +975,7 @@ protected:
     FormulaNode<IRCommand>::Ptr commonCondition;
     FormulaNode<IRCommand>::Ptr onCondition;
     FormulaNode<IRCommand>::Ptr offCondition;
+    std::map<std::string, AttributeImp::Ptr> attributes;
 
     bool powerStatus;
 
@@ -448,9 +989,13 @@ public:
     void serialize(std::ostream& out) override;
     bool applyIRCommand(const IRCommand* cmd);
         
-    bool isOn() override;
+    bool isOn()const override;
     void setPowerStatus(bool isOn) override;
     void dumpStatus(std::ostream& out) override;
+    const Attribute* getAttribute(const std::string& name)const override;
+    
+protected:
+    bool applyIRCommandToSW(const IRCommand* cmd);
 };
 
 using ShadowDevicePtr = SmartPtr<ShadowDeviceImp>;
@@ -495,6 +1040,25 @@ bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
 	      "if you omit to specify on condition or off condition.";
 	return false;
     }
+
+    auto attrDefs = in[JSON_SHADOW_ATTRIBUTES];
+    if (attrDefs.is_array()){
+	for (auto &def : attrDefs.array_items()){
+	    if (def.is_object()){
+		auto obj = json11::Json(def.object_items());
+		auto name = obj[JSON_ATTR_NAME];
+		if (!name.is_string()){
+		    err = "Attribute name must be specified.";
+		    return false;
+		}
+		AttributeImp::Ptr ptr(new AttributeImp(this));
+		if (!ptr->deserialize(obj, err)){
+		    return false;
+		}
+		attributes[name.string_value()] = ptr;;
+	    }
+	}
+    }
     
     return true;
 }
@@ -513,10 +1077,27 @@ void ShadowDeviceImp::serialize(std::ostream& out){
 	out << ",\"" << JSON_SHADOW_OFF_COND << "\":";
 	offCondition->serialize(out);
     }
+    if (!attributes.empty()){
+	out << ",\"" << JSON_SHADOW_ATTRIBUTES << "\":[";
+	for (auto i = attributes.begin(); i != attributes.end(); i++){
+	    i->second->serialize(out, i->first);
+	}
+	out << "]";
+    }
     out << "}";
 }
 
 bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
+    auto rc = applyIRCommandToSW(cmd);
+    if (rc){
+	for (auto &attr : attributes){
+	    attr.second->applyIRCommand(cmd);
+	}
+    }
+    return rc;
+}
+
+bool ShadowDeviceImp::applyIRCommandToSW(const IRCommand* cmd){
     ESP_LOGD(tag, "start commonCondition");
     if (!commonCondition.isNull() &&
 	!commonCondition->test(cmd)){
@@ -551,7 +1132,7 @@ bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
     return false;
 }
 
-bool ShadowDeviceImp::isOn(){
+bool ShadowDeviceImp::isOn() const{
     return powerStatus;
 }
 
@@ -564,8 +1145,31 @@ void ShadowDeviceImp::dumpStatus(std::ostream& out){
 	<< elfletConfig->getNodeName() << "\",\"";
     out << JSON_SHADOW_NAME << "\":\"" << name << "\",\"";
     out << JSON_SHADOW_ISON << "\":"
-	<< (isOn() ? "true" : "false") << "}";
+	<< (isOn() ? "true" : "false");
+    if (!attributes.empty()){
+	out << ",\"" << JSON_SHADOW_ATTRIBUTES << "\":{";
+	bool needSep = false;
+	for (auto &attr : attributes){
+	    if (needSep){
+		out << ",";
+	    }
+	    needSep = (attr.second->printKV(out, attr.first) || needSep);
+	}
+	out << "}";
+    }
+    out << "}";
 }
+
+const ShadowDevice::Attribute* ShadowDeviceImp::getAttribute(
+    const std::string& name) const{
+    auto i = attributes.find(name);
+    if (i == attributes.end()){
+	return NULL;
+    }else{
+	return i->second;
+    }
+}
+
 
 //======================================================================
 // Shadow device list management

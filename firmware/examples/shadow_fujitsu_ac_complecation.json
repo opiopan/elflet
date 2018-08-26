@@ -32,11 +32,11 @@
 		"Mask" : "0f"
 	    },
 	    "Dictionary": {
-		"00": "Auto",
-		"01": "Cooler",
-		"03": "Blower",
-		"04": "Heater",
-		"05": "Dehum"
+		"Auto":   0,
+		"Cooler": 1,
+		"Blower": 3,
+		"Heater": 4,
+		"Dehum":  5
 	    },
 	    "Default": "Cooler"
 	},

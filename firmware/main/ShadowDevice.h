@@ -6,10 +6,18 @@
 
 class ShadowDevice {
 public:
-    virtual bool isOn() = 0;
+    class Attribute {
+    public:
+	virtual float getNumericValue()const  = 0;
+	virtual const std::string& getStringValue()const  = 0;
+	virtual bool printKV(std::ostream& out,
+			     const std::string& name)const = 0;
+    };
+    virtual bool isOn()const = 0;
     virtual void setPowerStatus(bool isOn) = 0;
     virtual void serialize(std::ostream& out) = 0;
     virtual void dumpStatus(std::ostream& out) = 0;
+    virtual const Attribute* getAttribute(const std::string& name)const = 0;
 };
 
 struct IRCommand {

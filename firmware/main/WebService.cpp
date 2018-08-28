@@ -30,6 +30,7 @@ bool startWebService(){
 	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true),
 	"/manage/otaupdate");
     registerConfigRESTHandler(webserver);
+    registerStatusRESTHandler(webserver);
     registerIrRESTHandler(webserver);
     registerSensorRESTHandler(webserver);
     registerShadowRESTHandler(webserver);

@@ -109,6 +109,7 @@ void MainTask::run(void *data){
 }
 
 extern "C" void app_main() {
+    ESP_LOGI(tag, "free heap size: %d", (int32_t)xPortGetFreeHeapSize());
     auto task = new MainTask;
     task->setStackSize(15000);
     task->start();

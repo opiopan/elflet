@@ -53,12 +53,22 @@
 	    "Default": 27,
 	    "VisibleCondition": {
 		"Type" : "COMBINATION",
-		"Operator" : "NAND",
+		"Operator" : "OR",
 		"Formulas" : [
 		    {
 			"Type": "ATTRIBUTE",
 			"AttrName": "Mode",
-			"Value": "Auto"
+			"Value": "Cooler"
+		    },
+		    {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Mode",
+			"Value": "Heater"
+		    },
+		    {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Mode",
+			"Value": "Dehum"
 		    }
 		]
 	    }

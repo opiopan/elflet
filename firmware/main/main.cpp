@@ -110,5 +110,6 @@ void MainTask::run(void *data){
 
 extern "C" void app_main() {
     auto task = new MainTask;
+    task->setStackSize(15000);
     task->start();
 }

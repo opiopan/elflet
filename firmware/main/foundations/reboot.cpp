@@ -22,6 +22,6 @@ private:
 
 void rebootIn(int msec) {
     RebootTask* task = new RebootTask(msec);
+    task->setStackSize(1024);
     task->start();
 }
-

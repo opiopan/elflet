@@ -70,9 +70,10 @@
 		"Type": "PORTION",
 		"Offset" : 8,
 		"Mask": "0e",
-		"Bias": -6
+		"DividedBy": 2,
+		"Bias": -3
 	    },
-	    "Default": -6,
+	    "Default": -3,
 	    "VisibleCondition": {
 		"Type": "ATTRIBUTE",
 		"AttrName": "Mode",

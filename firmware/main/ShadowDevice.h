@@ -11,7 +11,7 @@ public:
 	virtual float getNumericValue()const  = 0;
 	virtual const std::string& getStringValue()const  = 0;
 	virtual bool printKV(std::ostream& out,
-			     const std::string& name)const = 0;
+			     const std::string& name, bool needSep)const = 0;
     };
     virtual bool isOn()const = 0;
     virtual void setPowerStatus(bool isOn) = 0;

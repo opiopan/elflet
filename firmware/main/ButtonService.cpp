@@ -163,7 +163,9 @@ void ButtonFilterTask::run(void *data){
 bool startButtonService(){
     if (!eventTask || !filterTask){
 	filterTask = new ButtonFilterTask;
+	filterTask->setStackSize(2048);
 	eventTask = new ButtonEventTask;
+	eventTask->setStackSize(2048);
 	filterTask->start();
 	eventTask->start();
     }

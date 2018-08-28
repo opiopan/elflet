@@ -672,7 +672,7 @@ void PortionNode::serialize(std::ostream& out){
 float PortionNode::extract(const IRCommand* cmd){
     auto rc = std::numeric_limits<float>::quiet_NaN();
     if ((cmd->bits + 7) / 8 >= offset){
-	rc = ((uint8_t*)cmd->data)[offset];
+	rc = (((uint8_t*)cmd->data)[offset] & mask);
 	rc = rc * mulFactor / divFactor + bias;
     }
     return rc;
@@ -794,7 +794,8 @@ public:
     bool deserialize(const json11::Json& in, std::string& err);
     void serialize(std::ostream& out, const std::string& name);
     bool applyIRCommand(const IRCommand* cmd);
-    bool printKV(std::ostream& out, const std::string& name)const override;
+    bool printKV(std::ostream& out, const std::string& name,
+		 bool needSep)const override;
 
     float getNumericValue()const override{
 	return numericValue;
@@ -883,6 +884,13 @@ bool AttributeImp::deserialize(const json11::Json& in, std::string& err){
 	    }
 	}
     }
+    if (!std::isnan(defaultValue)){
+	numericValue = defaultValue;
+	auto i = dict.find(numericValue);
+	if (i != dict.end()){
+	    stringValue = &(i->second);
+	}
+    }
 
     //
     // Visible Condition
@@ -932,31 +940,40 @@ void AttributeImp::serialize(std::ostream& out, const std::string& name){
 
 bool AttributeImp::applyIRCommand(const IRCommand* cmd){
     if (notApplyInOff && !shadow->isOn()){
+	ESP_LOGD(tag, "false: notApplyInOff");
 	return false;
     }
     auto value = valueFormula->extract(cmd);
+    ESP_LOGD(tag, "value: %f", value);
     if (std::isnan(value)){
+	ESP_LOGD(tag, "false: value is NaN");
 	return false;
     }
-    if (!dict.empty()){
+    if (dict.empty()){
 	numericValue = value;
     }else{
 	auto i = dict.find(value);
 	if (i == dict.end()){
+	    ESP_LOGD(tag, "false: no muched item in dictionary");
 	    return false;
 	}
 	numericValue = value;
 	stringValue = &(i->second);
     }
 
+    ESP_LOGD(tag, "true: applied");
     return true;
 }
 
-bool AttributeImp::printKV(std::ostream& out, const std::string& name) const{
+bool AttributeImp::printKV(std::ostream& out, const std::string& name,
+			   bool needSep) const{
     if (visibleCondition.isNull() || visibleCondition->test(shadow)){
+	if (needSep){
+	    out << ",";
+	}
 	out << "\"" << name << "\":";
 	if (stringValue){
-	    out << "\"" << stringValue << "\"";
+	    out << "\"" << *stringValue << "\"";
 	}else{
 	    out << numericValue;
 	}
@@ -1080,6 +1097,9 @@ void ShadowDeviceImp::serialize(std::ostream& out){
     if (!attributes.empty()){
 	out << ",\"" << JSON_SHADOW_ATTRIBUTES << "\":[";
 	for (auto i = attributes.begin(); i != attributes.end(); i++){
+	    if (i != attributes.begin()){
+		out << ",";
+	    }
 	    i->second->serialize(out, i->first);
 	}
 	out << "]";
@@ -1091,6 +1111,7 @@ bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
     auto rc = applyIRCommandToSW(cmd);
     if (rc){
 	for (auto &attr : attributes){
+	    ESP_LOGD(tag, "apply attr: %s", attr.first.c_str());
 	    attr.second->applyIRCommand(cmd);
 	}
     }
@@ -1148,12 +1169,9 @@ void ShadowDeviceImp::dumpStatus(std::ostream& out){
 	<< (isOn() ? "true" : "false");
     if (!attributes.empty()){
 	out << ",\"" << JSON_SHADOW_ATTRIBUTES << "\":{";
-	bool needSep = false;
-	for (auto &attr : attributes){
-	    if (needSep){
-		out << ",";
-	    }
-	    needSep = (attr.second->printKV(out, attr.first) || needSep);
+	for (auto attr = attributes.begin(); attr != attributes.end(); attr++){
+	    attr->second->printKV(out, attr->first,
+				  attr != attributes.begin());
 	}
 	out << "}";
     }

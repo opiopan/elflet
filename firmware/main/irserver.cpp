@@ -378,7 +378,7 @@ void IRServerTask::run(void *data)
 		}
 	    }
 	    if (task){
-		task->setStackSize(8000);
+		task->setStackSize(4096);
 		task->setSocket(newfd);
 		task->start();
 	    }else{
@@ -398,7 +398,7 @@ void startIRServer()
     if (server == NULL){
 	server = new IRServerTask();
 	server->init(IRSERVER_PORT);
-	server->setStackSize(8000);
+	server->setStackSize(2048);
 	server->start();
 	ESP_LOGI(tag, "IR server has been started. port: %d", IRSERVER_PORT);
     }

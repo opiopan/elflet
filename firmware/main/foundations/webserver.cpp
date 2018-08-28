@@ -417,6 +417,7 @@ bool WebServer::startServer(const char* address){
 	return false;
     }
     mg_set_protocol_http_websocket(listener);
+    this->setStackSize(18000);
     this->start();
 
     return true;

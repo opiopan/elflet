@@ -84,6 +84,7 @@ void TimeTask::run(void *data){
 bool startTimeService(){
     if (!task){
 	task = new TimeTask;
+	task->setStackSize(2048);
 	task->start();
     }
     return true;

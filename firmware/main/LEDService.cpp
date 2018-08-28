@@ -275,6 +275,7 @@ void LEDTask::initLED(){
 bool startLedService(){
     if (ledTask == NULL){
 	ledTask = new LEDTask;
+	ledTask->setStackSize(2048);
 	return ledTask->startService();
     }
     

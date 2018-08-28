@@ -9,7 +9,7 @@
 static const char tag[] = "NameResolver";
 
 
-bool resolveHostname(std::string& hostname){
+RNAME_RESULT resolveHostname(std::string& hostname){
     enum Status {INDOUBT, COLON, HEAD, HOSTNAME, TAIL};
     Status status = INDOUBT;
     int headlen = 0;
@@ -40,7 +40,7 @@ bool resolveHostname(std::string& hostname){
 		taillen = 2;
 	    }else{
 		//syntax error
-		return false;
+		return RNAME_NO_NEED_TO_RESOLVE;
 	    }
 	    break;
 	case HEAD:
@@ -48,7 +48,7 @@ bool resolveHostname(std::string& hostname){
 		headlen++;
 	    }else if (val == ':'){
 		// syntax error
-		return false;
+		return RNAME_NO_NEED_TO_RESOLVE;
 	    }else{
 		status = HOSTNAME;
 		name = headlen;
@@ -76,7 +76,7 @@ bool resolveHostname(std::string& hostname){
 	headlen = 0;
     }
     if (status != HOSTNAME && status != TAIL){
-	return false;
+	return RNAME_NO_NEED_TO_RESOLVE;
     }
 
     // Is hostname mDNS name?
@@ -85,7 +85,7 @@ bool resolveHostname(std::string& hostname){
 	memcmp(hostname.data() + name + namelen - sizeof(domain),
 	       domain, sizeof(domain)) != 0){
 	// no need to resolve
-	return false;
+	return RNAME_NO_NEED_TO_RESOLVE;
     }
 
     // resolve mDNS name
@@ -99,7 +99,7 @@ bool resolveHostname(std::string& hostname){
     }
     if (err != ESP_OK){
 	//fail to resolve
-	return false;
+	return RNAME_FAIL_TO_RESOLVE;
     }
 
     // make result
@@ -114,5 +114,5 @@ bool resolveHostname(std::string& hostname){
     }
     hostname = result;
     
-    return true;
+    return RNAME_SUCCEED;
 }

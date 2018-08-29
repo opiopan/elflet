@@ -38,11 +38,14 @@ protected:
     Mutex mutex;
     static const int PUB_SENSOR = 1;
     static const int PUB_IRRC = 2;
+    static const int PUB_SHADOW = 4;
     int publish;
     bool publishing;
     
     esp_mqtt_client_handle_t client;
     int subscribeStage;
+
+    ShadowDevice* shadowToPublish;
 
 public:
     PubSub();
@@ -51,6 +54,7 @@ public:
     void enable();
     void publishSensorData();
     void publishIrrcData();
+    void publishShadowStatus(ShadowDevice* shadow);
 
 protected:
     void run(void *data) override;
@@ -59,7 +63,8 @@ protected:
     static esp_err_t mqttEventHandler(esp_mqtt_event_handle_t event);
 };
 
-PubSub::PubSub() : publish(0), publishing(false), client(NULL){
+PubSub::PubSub() : publish(0), publishing(false), client(NULL),
+		   shadowToPublish(NULL){
     events = xEventGroupCreate();
 }
 
@@ -83,6 +88,16 @@ void PubSub::publishSensorData(){
 void PubSub::publishIrrcData(){
     auto holder = LockHolder(mutex);
     publish |= PUB_IRRC;
+    xEventGroupSetBits(events, EV_PUBLISH);
+}
+
+void PubSub::publishShadowStatus(ShadowDevice* shadow){
+    auto holder = LockHolder(mutex);
+    if (shadowToPublish){
+	return;
+    }
+    shadowToPublish = shadow;
+    publish |= PUB_SHADOW;
     xEventGroupSetBits(events, EV_PUBLISH);
 }
 
@@ -155,6 +170,15 @@ void PubSub::run(void *data){
 		    client, elfletConfig->getIrrcRecievedDataTopic().c_str(),
 		    data.data(), data.length(), 0, 0);
 	    }
+	}
+	if (request & PUB_SHADOW){
+	    std::stringstream out;
+	    shadowToPublish->dumpStatus(out);
+	    const auto data = out.str();
+	    esp_mqtt_client_publish(
+		    client, elfletConfig->getShadowTopic().c_str(),
+		    data.data(), data.length(), 0, 0);
+	    shadowToPublish = NULL;
 	}
     }
 }
@@ -318,5 +342,11 @@ void publishSensorData(){
 void publishIrrcData(){
     if (task){
 	task->publishIrrcData();
+    }
+}
+
+void publishShadowStatus(ShadowDevice* shadow){
+    if (task){
+	task->publishShadowStatus(shadow);
     }
 }

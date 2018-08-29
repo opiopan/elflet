@@ -13,6 +13,7 @@
 
 static const char tag[] = "RESTstatus";
 
+extern const char JSON_INITIAL_HEAP[] = "InitialHeapSize";
 extern const char JSON_FREE_HEAP[] = "FreeHeapSize";
 
 class StatusHandler : public WebServerHandler {
@@ -31,8 +32,9 @@ class StatusHandler : public WebServerHandler {
 		{JSON_BOARDVERSION, conf->getBoardVersion()},
 		{JSON_FWVERSION, getVersionString()},
 		{JSON_NODENAME, conf->getNodeName()},
+		{JSON_INITIAL_HEAP, (int32_t)initialHeapSize},
 		{JSON_FREE_HEAP, (int32_t)xPortGetFreeHeapSize()},
-		    });
+	    });
 
 	stringPtr body(new std::string(json11::Json(obj).dump()));
 	resp->setBody(body);

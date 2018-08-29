@@ -18,7 +18,7 @@
 
 static const char tag[] = "Config";
 
-static const int32_t CONFIG_VERSION = 1;
+static const int32_t CONFIG_VERSION = 2;
 
 static const char NVS_NS[] = "elflet";
 static const std::string BOOTMODE_KEY = "bootmode";
@@ -37,9 +37,10 @@ static const char* CONFIGPATH[] = {
 static const int MAX_NODENAME_LEN = 32;
 static const int MAX_PASSWORD_LEN = 64;
 
-Config* elfletConfig = NULL;
-
 const char* Config::defaultTimezone = "JST-9";
+
+Config* elfletConfig = NULL;
+size_t initialHeapSize = 0;
 
 //----------------------------------------------------------------------
 // initialize global configuration
@@ -128,6 +129,7 @@ Config& Config::operator = (const Config& src){
     irrcRecievedDataTopic = src.irrcRecievedDataTopic;
     irrcSendTopic = src.irrcSendTopic;
     downloadFirmwareTopic = src.downloadFirmwareTopic;
+    shadowTopic = src.shadowTopic;
     irrcRecieverMode = src.irrcRecieverMode;
 
     return *this;
@@ -204,6 +206,7 @@ bool Config::load(){
     applyValue(config, JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic);
     applyValue(config, JSON_IRRCSENDTOPIC, irrcSendTopic);
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
+    applyValue(config, JSON_SHADOWTOPIC, shadowTopic);
     applyValue(config, JSON_IRRCRECIEVERMODE, irrcRecieverMode);
 
     isDirty = false;
@@ -264,6 +267,7 @@ bool Config::commit(){
 		{JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic},
 		{JSON_IRRCSENDTOPIC, irrcSendTopic},
 		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
+		{JSON_SHADOWTOPIC, sensorTopic},
 		{JSON_IRRCRECIEVERMODE, (int32_t)irrcRecieverMode},
 	    });
 	
@@ -294,17 +298,20 @@ bool Config::commit(){
 // migration between different version
 //----------------------------------------------------------------------
 void Config::migrateConfig(){
+    auto setTopic = [&](std::string& v, const char* suffix){
+	if (v.length() == 0){
+	    v = this->nodeName;
+	    v += suffix;
+	}
+    };
     if (configVersion < 1){
-	auto setTopic = [&](std::string& v, const char* suffix){
-	    if (v.length() == 0){
-		v = this->nodeName;
-		v += suffix;
-	    }
-	};
 	setTopic(sensorTopic,"/sensor");
 	setTopic(irrcRecieveTopic, "/irrcRecieve");
 	setTopic(irrcRecievedDataTopic, "/irrcRecievedData");
 	setTopic(irrcSendTopic, "/irrcSend");
+    }
+    if (configVersion < 2){
+	setTopic(shadowTopic, "/shadow");
     }
     configVersion = CONFIG_VERSION;
 }
@@ -451,6 +458,12 @@ bool Config::setIrrcSendTopic(const std::string& topic){
 
 bool Config::setDownloadFirmwareTopic(const std::string& topic){
     downloadFirmwareTopic = topic;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setShadowTopic(const std::string& topic){
+    shadowTopic = topic;
     isDirty = true;
     return true;
 }

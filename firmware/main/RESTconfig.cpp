@@ -83,6 +83,7 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_IRRCRECIEVETOPIC, conf->getIrrcRecieveTopic()},
 	    {JSON_IRRCRECIEVEDDATATOPIC, conf->getIrrcRecievedDataTopic()},
 	    {JSON_IRRCSENDTOPIC, conf->getIrrcSendTopic()},
+	    {JSON_SHADOWTOPIC, conf->getShadowTopic()},
 	    {JSON_DOWNLOADFIRMWARETOPIC, conf->getDownloadFirmwareTopic()},
     });
     
@@ -147,6 +148,9 @@ static bool applyPubSub(const json11::Json& input, const char** rmsg){
     ApplyValue(input, JSON_DOWNLOADFIRMWARETOPIC,
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setDownloadFirmwareTopic(v);});
+    ApplyValue(input, JSON_SHADOWTOPIC,
+	       [](const std::string& v) -> bool{
+		   return elfletConfig->setShadowTopic(v);});
 
     if (msg){
 	*rmsg = msg;

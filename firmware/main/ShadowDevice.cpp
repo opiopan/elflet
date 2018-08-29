@@ -16,6 +16,7 @@
 #include "irrc.h"
 #include "Config.h"
 #include "ShadowDevice.h"
+#include "PubSubService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -1354,6 +1355,7 @@ bool dumpShadowDeviceNames(std::ostream& out){
 bool applyIRCommand(const IRCommand* cmd){
     for (auto i = shadows.begin(); i != shadows.end(); i++){
 	if ((*i)->applyIRCommand(cmd)){
+	    publishShadowStatus(*i);
 	    ESP_LOGI(tag, "shadow '%s' turned %s",
 		     (*i)->getName().c_str(), (*i)->isOn() ? "on" : "off");
 	    return true;

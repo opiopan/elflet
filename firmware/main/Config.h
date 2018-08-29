@@ -55,6 +55,7 @@ protected:
     std::string irrcRecievedDataTopic;
     std::string irrcSendTopic;
     std::string downloadFirmwareTopic;
+    std::string shadowTopic;
 
     int32_t irrcRecieverMode;
     
@@ -104,6 +105,7 @@ public:
     const std::string& getDownloadFirmwareTopic() const{
 	return downloadFirmwareTopic;
     };
+    const std::string& getShadowTopic()const {return shadowTopic;};
     IrrcRecieverMode getIrrcRecieverMode() const{
 	return (IrrcRecieverMode)irrcRecieverMode;
     };
@@ -137,6 +139,7 @@ public:
     bool setIrrcRecievedDataTopic(const std::string& topic);
     bool setIrrcSendTopic(const std::string& topic);
     bool setDownloadFirmwareTopic(const std::string& topic);
+    bool setShadowTopic(const std::string& topic);
 
     bool setIrrcRecieverMode(IrrcRecieverMode mode);
 
@@ -152,6 +155,7 @@ protected:
 };
 
 extern Config* elfletConfig;
+extern size_t initialHeapSize;
 
 bool initConfig();
 
@@ -186,6 +190,7 @@ extern const char JSON_IRRCRECIEVETOPIC[];
 extern const char JSON_IRRCRECIEVEDDATATOPIC[];
 extern const char JSON_IRRCSENDTOPIC[];
 extern const char JSON_DOWNLOADFIRMWARETOPIC[];
+extern const char JSON_SHADOWTOPIC[];
 
 extern const char JSON_IRRCRECIEVERMODE[];
 

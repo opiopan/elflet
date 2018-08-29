@@ -31,6 +31,7 @@ const char JSON_IRRCRECIEVETOPIC[] = "IrrcRecieveTopic";
 const char JSON_IRRCRECIEVEDDATATOPIC[] = "IrrcRecievedDataTopic";
 const char JSON_IRRCSENDTOPIC[] = "IrrcSendTopic";
 const char JSON_DOWNLOADFIRMWARETOPIC[] = "DownloadFirmwareTopic";
+const char JSON_SHADOWTOPIC[] = "ShadowTopic";
 
 const char JSON_IRRCRECIEVERMODE[] = "IrrcRecieverMode";
 

@@ -656,6 +656,7 @@ void PortionNode::serialize(std::ostream& out){
 	out << ",\"" << JSON_ATTRVAL_MASK << "\":\""
 	    << std::setw(2) << std::setfill('0') << std::hex
 	    << (int)mask << "\"";
+	out << std::setfill(' ') << std::dec;
     }
     if (bias != 0){
 	out << ",\"" << JSON_ATTRVAL_BIAS << "\":" << bias;
@@ -1250,10 +1251,7 @@ static bool loadShadowDevicePool(){
     return true;
 }
 
-static bool saveShadowDevicePool(){
-    auto defspath = elfletConfig->getShadowDefsPath();
-
-    auto out = std::ofstream(defspath);
+static bool saveShadowDevicePool(std::ostream& out){
     out << "[";
     for (auto i = shadows.begin(); i != shadows.end(); i++){
 	if (i != shadows.begin()){
@@ -1262,8 +1260,14 @@ static bool saveShadowDevicePool(){
 	(*i)->serialize(out);
     }
     out << "]";
+    return true;
+}
+
+static bool saveShadowDevicePool(){
+    auto defspath = elfletConfig->getShadowDefsPath();
+    auto out = std::ofstream(defspath);
+    saveShadowDevicePool(out);
     out.close();
-    
     return true;
 }
 

@@ -1355,7 +1355,9 @@ bool dumpShadowDeviceNames(std::ostream& out){
 bool applyIRCommand(const IRCommand* cmd){
     for (auto i = shadows.begin(); i != shadows.end(); i++){
 	if ((*i)->applyIRCommand(cmd)){
-	    publishShadowStatus(*i);
+	    if (elfletConfig->getShadowTopic().length() > 0){
+		publishShadowStatus(*i);
+	    }
 	    ESP_LOGI(tag, "shadow '%s' turned %s",
 		     (*i)->getName().c_str(), (*i)->isOn() ? "on" : "off");
 	    return true;

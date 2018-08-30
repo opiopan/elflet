@@ -267,7 +267,7 @@ bool Config::commit(){
 		{JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic},
 		{JSON_IRRCSENDTOPIC, irrcSendTopic},
 		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
-		{JSON_SHADOWTOPIC, sensorTopic},
+		{JSON_SHADOWTOPIC, shadowTopic},
 		{JSON_IRRCRECIEVERMODE, (int32_t)irrcRecieverMode},
 	    });
 	
@@ -485,6 +485,7 @@ void Config::updateDefaultTopic(const std::string& oldNodeName){
     updateTopic(irrcRecieveTopic, "/irrcRecieve");
     updateTopic(irrcRecievedDataTopic, "/irrcRecievedData");
     updateTopic(irrcSendTopic, "/irrcSend");
+    updateTopic(shadowTopic,"/shadow");
 }
 
 //----------------------------------------------------------------------

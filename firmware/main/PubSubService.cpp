@@ -112,7 +112,7 @@ void PubSub::run(void *data){
     ESP_LOGI(tag, "mqtt broker is %s", uri.c_str());
     while (resolveHostname(uri) == RNAME_FAIL_TO_RESOLVE){
 	ESP_LOGE(tag, "fail to resolve mdns name, retry in 5 sec.");
-	delay(50000);
+	delay(5000);
     }
     connect(uri);
     xEventGroupWaitBits(events, EV_CONNECTED,

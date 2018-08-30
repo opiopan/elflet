@@ -59,7 +59,39 @@
 		    }
 		]
 	    },
-	    "Default": 27
+	    "Default": 27,
+	    "VisibleCondition": {
+		"Type" : "COMBINATION",
+		"Operator" : "NAND",
+		"Formulas" : [
+		    {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Mode",
+			"Value": "Dehum"
+		    }
+		]
+	    }
+	},
+	{
+	    "AttrName": "Humidity",
+	    "Value" : {
+		"Type": "PORTION",
+		"Offset" : 8,
+		"MultiplyBy": 5,
+		"Bias": 40
+	    },
+	    "Default": 50,
+	    "VisibleCondition": {
+		"Type" : "COMBINATION",
+		"Operator" : "NAND",
+		"Formulas" : [
+		    {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Mode",
+			"Value": "Heater"
+		    }
+		]
+	    }
 	}
     ]
 }

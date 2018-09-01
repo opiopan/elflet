@@ -9,6 +9,7 @@
 #include "TimeObj.h"
 #include "SensorService.h"
 #include "TimeService.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -67,6 +68,9 @@ void TimeTask::run(void *data){
 	    Time now;
 	    ESP_LOGI(tag, "adjusted time: %s",
 		     now.format(Time::SIMPLE_DATETIME));
+	    if (baseStat.boottime < 60 * 60 * 24 * 365){
+		baseStat.boottime = now.getTime();
+	    }
 	}
 
 	if (first){

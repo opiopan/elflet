@@ -26,6 +26,8 @@ protected:
 
     WakeupCause wakeupCause;
 
+    int32_t otaCount;
+
     int32_t configVersion;
 
     int32_t functionMode;
@@ -70,6 +72,7 @@ public:
 
     BootMode getBootMode() const{return bootModeCurrent;};
     WakeupCause getWakeupCause() const{return wakeupCause;};
+    int32_t getOtaCount() const{return otaCount;};
     FunctionMode getFunctionMode() const{return (FunctionMode)functionMode;};
     const std::string& getBoardVersion() const{return boardVersion;};
     const std::string& getNodeName() const{return nodeName;};
@@ -115,6 +118,8 @@ public:
     const char* getTmpShadowDefsPath() const;
     
     bool setBootMode(BootMode mode);
+
+    bool incrementOtaCount();
 
     bool setFunctionMode(FunctionMode mode);
     

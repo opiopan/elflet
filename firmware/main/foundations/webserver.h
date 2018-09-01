@@ -394,6 +394,12 @@ protected:
 };
 
 class WebServer : protected Task, mg_mgr {
+public:
+    struct Stat{
+	int32_t sessionCount;
+
+	Stat():sessionCount(0){};
+    };
 protected:
     const  ContentProvider* contentProvider;
     mg_connection* listener;
@@ -405,10 +411,13 @@ protected:
 	const char* domain;
     } htdigest;
     WebString serverName;
+    Stat stat;
     
 public:
     WebServer();
     virtual ~WebServer();
+
+    const Stat* getStat()const {return &stat;};
 
     void setContentProvider(const ContentProvider* provider){
 	contentProvider = provider;

@@ -435,6 +435,7 @@ void WebServer::handler(struct mg_connection* con, int ev, void* p){
 
 	auto wcon = new WebServerConnection(self, con);
 	con->user_data = wcon;
+	self->stat.sessionCount++;
 	break;
     }
     case MG_EV_CLOSE: {

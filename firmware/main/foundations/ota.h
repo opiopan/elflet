@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <functional>
 #include <esp_ota_ops.h>
 
 #define OTA_SIGNATURE_LENGTH 128
@@ -25,4 +26,5 @@ OTARESULT startOTA(const char* pubkey_path, size_t imageSize, OTA** outp);
 OTARESULT endOTA(const OTA* handle, bool needCommit);
 
 class WebServerHandler;
-WebServerHandler* getOTAWebHandler(const char* vkyepath, bool needDigestAuth);
+WebServerHandler* getOTAWebHandler(const char* vkyepath, bool needDigestAuth,
+				   std::function<void()>* complete = nullptr);

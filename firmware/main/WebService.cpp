@@ -17,6 +17,12 @@
 
 static const char tag[] = "WebService";
 
+static std::function<void()> completeOtaHandler = [](){
+    elfletConfig->incrementOtaCount();
+};
+
+static WebServer* webserver;
+
 bool startWebService(){
     auto domain = "elflet";
     
@@ -24,10 +30,11 @@ bool startWebService(){
     htdigestfs_register("admin", domain,
 			elfletConfig->getAdminPassword().c_str());
     
-    auto webserver = new WebServer();
+    webserver = new WebServer();
     webserver->setHtdigest(htdigestfs_fp(), domain);
     webserver->setHandler(
-	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true),
+	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true,
+			 &completeOtaHandler),
 	"/manage/otaupdate");
     registerConfigRESTHandler(webserver);
     registerStatusRESTHandler(webserver);
@@ -45,4 +52,8 @@ bool startWebService(){
     ESP_LOGI(tag, "http server has been started. port: 80");
 
     return true;
+}
+
+const WebServer::Stat* getWebStat(){
+    return webserver->getStat();
 }

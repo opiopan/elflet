@@ -23,6 +23,7 @@ static const int32_t CONFIG_VERSION = 2;
 static const char NVS_NS[] = "elflet";
 static const std::string BOOTMODE_KEY = "bootmode";
 static const std::string CONFIGGEN_KEY = "configgen";
+static const std::string OTACOUNT_KEY = "otacount";
 
 static const char SPIFFS_MP[] = "/spiffs";
 static const char VERIFICATION_KEY_PATH[] = "/spiffs/verificationkey.pem";
@@ -105,6 +106,7 @@ Config& Config::operator = (const Config& src){
     isDirty = true;
     isDirtyBootMode = true;
 
+    otaCount = src.otaCount;
     bootMode = src.bootMode;
     wakeupCause = src.wakeupCause;
     fileGeneration = src.fileGeneration;
@@ -142,9 +144,11 @@ bool Config::load(){
     // decide bootmode & config file from sotred data in NVS
     NVS nvs(NVS_NS, NVS_READONLY);
     uint32_t mode;
+    uint32_t ota;
     if (nvs.get(BOOTMODE_KEY, mode) != ESP_OK){
 	bootMode = FactoryReset;
 	fileGeneration = 0;
+	ota = 0;
     }else{
 	bootMode = (BootMode)mode;
 	if (nvs.get(CONFIGGEN_KEY, fileGeneration) != ESP_OK ||
@@ -152,8 +156,12 @@ bool Config::load(){
 	    bootMode = FactoryReset;
 	    fileGeneration = 0;
 	}
+	if (nvs.get(OTACOUNT_KEY, ota) != ESP_OK){
+	    ota = 0;
+	}
     }
     bootModeCurrent = bootMode;
+    otaCount = ota;
 
     // parse configuration file
     auto path = CONFIGPATH[fileGeneration];
@@ -319,6 +327,14 @@ void Config::migrateConfig(){
 //----------------------------------------------------------------------
 // update value
 //----------------------------------------------------------------------
+bool Config::incrementOtaCount(){
+    otaCount++;
+    NVS nvs(NVS_NS, NVS_READWRITE);
+    nvs.set(OTACOUNT_KEY, (uint32_t)otaCount);
+    nvs.commit();
+    return true;
+}
+
 bool Config::setBootMode(BootMode mode){
     bootMode = mode;
     isDirtyBootMode = true;

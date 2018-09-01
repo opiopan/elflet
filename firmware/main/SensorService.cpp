@@ -11,6 +11,7 @@
 #include "SensorService.h"
 #include "bme280.h"
 #include "PubSubService.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -96,6 +97,7 @@ void SensorTask::run(void *data){
 	    vTaskDelay(100 / portTICK_PERIOD_MS);
 	    bme280->measure();
 	    Time now;
+	    sensorStat.bme280CaptureCount++;
 	}
 
 	{

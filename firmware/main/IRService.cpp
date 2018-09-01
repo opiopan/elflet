@@ -12,6 +12,7 @@
 #include "LEDService.h"
 #include "PubSubService.h"
 #include "ShadowDevice.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -91,6 +92,9 @@ void TransmitterTask::run(void *){
 
 	IRRCChangeProtocol(&irContext, protocol);
 	IRRCSend(&irContext, data, bits);
+	irrcStat.protocol[protocol].sendCmds++;
+	irrcStat.protocol[protocol].sendBits += bits;
+	irrcStat.sendPulses += bits + 2;
 
 	mutex.lock();
 	status = ST_IDLE;
@@ -257,10 +261,14 @@ void RecieverTask::run(void *data){
 	}
 	if (IRRCRecieve(&irContext, 30 * 1000)){
 	    mutex.lock();
+	    auto pulses = IRRC_ITEM_LENGTH(&irContext);
+	    irrcStat.rcvPulses += pulses;
 	    rcvBits = sizeof(rcvBuf) * 8;
 	    if (irContext.protocol == IRRC_UNKNOWN ||
 		!IRRCDecodeRecievedData(&irContext,
 					&rcvProtocol, rcvBuf, &rcvBits)){
+		irrcStat.rcvUnknownCmds++;
+		irrcStat.rcvUnknownPulses += pulses;
 		rcvProtocol = IRRC_UNKNOWN;
 		rcvBits = 0;
 	    }else if (rcvBits > 0){
@@ -270,6 +278,8 @@ void RecieverTask::run(void *data){
 			 rcvProtocol == IRRC_SONY ? "SONY" :
 			                            "Unknown",
 			 rcvBits);
+		irrcStat.protocol[rcvProtocol].rcvCmds++;
+		irrcStat.protocol[rcvProtocol].rcvBits += rcvBits;
 		if (elfletConfig->getIrrcRecieverMode() ==
 		    Config::IrrcRecieverContinuous){
 		    IRCommand cmd;

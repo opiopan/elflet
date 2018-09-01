@@ -31,9 +31,11 @@ protected:
     };
     const char* vkeypath;
     bool needDigestAuth;
+    std::function<void()>* complete;
 
 public:
-    OTAWebHandler(const char* vkey, bool auth);
+    OTAWebHandler(const char* vkey, bool auth,
+		  std::function<void()>* complete);
     virtual ~OTAWebHandler();
 
     virtual bool needDigestAuthentication(HttpRequest& req) override;
@@ -58,8 +60,9 @@ static void buildInvalidResp(HttpResponse* resp){
     resp->close();
 }
 
-OTAWebHandler::OTAWebHandler(const char* vkey, bool auth) :
-    vkeypath(vkey), needDigestAuth(auth){
+OTAWebHandler::OTAWebHandler(const char* vkey, bool auth,
+			     std::function<void()>* complete) :
+    vkeypath(vkey), needDigestAuth(auth), complete(complete){
 }
 
 OTAWebHandler::~OTAWebHandler(){
@@ -158,6 +161,9 @@ void OTAWebHandler::endMultipartData(WebServerConnection& connection){
 	    resp->addHeader(WebString("Content-Type"),
 			    WebString("text/plain"));
 	    resp->setBody("firmware updating finished");
+	    if (complete){
+		(*complete)();
+	    }
 	    rebootIn(2000);
 	}else{
 	    ESP_LOGE(tag, "commit failed");
@@ -171,12 +177,8 @@ void OTAWebHandler::endMultipartData(WebServerConnection& connection){
     }
 }
 
-static OTAWebHandler* handler;
-
 WebServerHandler* getOTAWebHandler(const char* vkeypath,
-				   bool needDigestAuth){
-    if (!handler){
-	handler = new OTAWebHandler(vkeypath, needDigestAuth);
-    }
-    return handler;
+				   bool needDigestAuth,
+				   std::function<void()>* complete){
+    return new OTAWebHandler(vkeypath, needDigestAuth, complete);
 }

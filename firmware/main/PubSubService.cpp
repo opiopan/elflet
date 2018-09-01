@@ -19,6 +19,7 @@
 #include "PubSubService.h"
 #include "IRService.h"
 #include "FirmwareDownloader.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -284,6 +285,7 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
 			const char* uristr = uri.string_value().c_str();
 			DFCallback callback = [](DFStatus st)->void{
 			    if (st == dfSucceed){
+				elfletConfig->incrementOtaCount();
 				rebootIn(100);
 			    }else{
 				resumeEnterDeepSleep();
@@ -336,17 +338,20 @@ void enablePubSub(){
 void publishSensorData(){
     if (task){
 	task->publishSensorData();
+	pubsubStat.publishSensorCount++;
     }
 }
 
 void publishIrrcData(){
     if (task){
 	task->publishIrrcData();
+	pubsubStat.publishIrrcCount++;
     }
 }
 
 void publishShadowStatus(ShadowDevice* shadow){
     if (task){
 	task->publishShadowStatus(shadow);
+	pubsubStat.publishShadowCount++;
     }
 }

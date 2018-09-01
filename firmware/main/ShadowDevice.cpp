@@ -17,6 +17,7 @@
 #include "Config.h"
 #include "ShadowDevice.h"
 #include "PubSubService.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -1112,6 +1113,7 @@ void ShadowDeviceImp::serialize(std::ostream& out){
 bool ShadowDeviceImp::applyIRCommand(const IRCommand* cmd){
     auto rc = applyIRCommandToSW(cmd);
     if (rc){
+	shadowStat.recognizeCount++;
 	for (auto &attr : attributes){
 	    ESP_LOGD(tag, "apply attr: %s", attr.first.c_str());
 	    attr.second->applyIRCommand(cmd);

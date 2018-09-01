@@ -12,6 +12,7 @@
 #include "SensorService.h"
 #include "TimeService.h"
 #include "PubSubService.h"
+#include "Stat.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -47,6 +48,7 @@ void MainTask::run(void *data){
 
     auto wakeupCause = elfletConfig->getWakeupCause();
     if (wakeupCause != WC_NOTSLEEP){
+	baseStat.deepSleepCount++;
 	ESP_LOGI(tag, "wakeup from deep sleep by %s",
 		 wakeupCause == WC_TIMER ? "time out" : "pushing a button");
     }

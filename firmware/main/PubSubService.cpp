@@ -336,21 +336,24 @@ void enablePubSub(){
 }
 
 void publishSensorData(){
-    if (task){
+    if (task &&
+	elfletConfig->getSensorTopic().length() > 0){
 	task->publishSensorData();
 	pubsubStat.publishSensorCount++;
     }
 }
 
 void publishIrrcData(){
-    if (task){
+    if (task &&
+	elfletConfig->getIrrcRecievedDataTopic().length() > 0){
 	task->publishIrrcData();
 	pubsubStat.publishIrrcCount++;
     }
 }
 
 void publishShadowStatus(ShadowDevice* shadow){
-    if (task){
+    if (task &&
+	elfletConfig->getShadowTopic().length() > 0){
 	task->publishShadowStatus(shadow);
 	pubsubStat.publishShadowCount++;
     }

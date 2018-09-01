@@ -56,7 +56,7 @@ static const char JSON_STAT_SHADOW_RECOGNIZE[] = "RecognizeCount";
 static const char JSON_STAT_SHADOW_SYNTHESIZE[] = "SynthesizeCount";
 
 extern "C" {
-    RTC_DATA_ATTR struct BaseStat baseStat;
+    RTC_DATA_ATTR struct BaseStat baseStat = {0,0};
     struct IrrcStat irrcStat;
     struct PubSubStat pubsubStat;
     struct SensorStat sensorStat;

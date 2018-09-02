@@ -60,6 +60,9 @@
 		]
 	    },
 	    "Default": 27,
+	    "Max": 31,
+	    "Min": 16,
+	    "Unit": 0.5,
 	    "VisibleCondition": {
 		"Type" : "COMBINATION",
 		"Operator" : "NAND",
@@ -81,6 +84,9 @@
 		"Bias": 40
 	    },
 	    "Default": 50,
+	    "Max": 70,
+	    "Min": 40,
+	    "Unit": 20,
 	    "VisibleCondition": {
 		"Type" : "COMBINATION",
 		"Operator" : "NAND",
@@ -93,5 +99,66 @@
 		]
 	    }
 	}
-    ]
+    ],
+    "Synthesizer":{
+	"Protocol": "AEHA",
+	"PlaceHolder": "23cb26010000000000c08e00004008030200",
+	"BitCount": 144,
+	"Variables": [
+	    {
+		"Offset": 5,
+		"MultiplyBy": 32,
+		"Value": {
+		    "Type": "POWER"
+		}
+	    },
+	    {
+		"Offset": 6,
+		"Value": {
+		    "Type": "ATTRIBUTE",
+		    "AttrName": "Mode"
+		}
+	    },
+	    {
+		"Offset": 7,
+		"Mask": "0f",
+		"Bias": -16,
+		"Value": {
+		    "Type": "INTEGER",
+		    "SubFormula": {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Temperature"
+		    }
+		}
+	    },
+	    {
+		"Offset": 7,
+		"Mask": "f0",
+		"MultiplyBy": 32,
+		"Value": {
+		    "Type": "DECIMAL",
+		    "SubFormula": {
+			"Type": "ATTRIBUTE",
+			"AttrName": "Temperature"
+		    }
+		}
+	    },
+	    {
+		"Offset": 8,
+		"Bias": 40,
+		"DividedBy": 5,
+		"Value": {
+		    "Type": "ATTRIBUTE",
+		    "AttrName": "Humidity"
+		}
+	    },
+	    {
+		"Offset": 17,
+		"Value": {
+		    "Type": "REDUNDANT",
+		    "Operator": "CHECKSUM"
+		}
+	    }
+	]
+    }
 }

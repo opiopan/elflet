@@ -6,6 +6,7 @@
 #include <GeneralUtils.h>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include "irrc.h"
 #include "TimeObj.h"
 #include "Config.h"
@@ -74,15 +75,16 @@ const json11::Json::object getStatisticsJson(){
     int32_t sec = rmin - min * 60;
     std::stringstream out;
     if (day){
-	out << day << " days, ";
+	out << day << " days ,";
     }
     if (day || hour){
-	out << hour << " hours, ";
+	out << std::setfill('0');
+	out << std::setw(2) << hour << ":" << std::setw(2) << min;
+    }else if (min){
+	out << min << " minutes, " << sec << " seconds";
+    }else{
+	out << sec << " seconds";
     }
-    if (day || hour || min){
-	out << min << " minutes, ";
-    }
-    out << sec << " seconds";
     
     json11::Json::object root({
 	    {JSON_STAT_UPTIME, out.str()},

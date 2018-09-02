@@ -45,6 +45,10 @@ static const char JSON_ATTR_NOAPPINOFF[] = "NotApplyInOff";
 static const char JSON_ATTR_VALUE[] = "Value";
 static const char JSON_ATTR_DICT[] = "Dictionary";
 static const char JSON_ATTR_DEFAULT[] = "Default";
+static const char JSON_ATTR_MAX[] = "Max";
+static const char JSON_ATTR_MIN[] = "Min";
+static const char JSON_ATTR_UNIT[] = "Unit";
+static const char JSON_ATTR_APPLY_COND[] = "ApplyCondition";
 static const char JSON_ATTR_VISIBLE_COND[] = "VisibleCondition";
 static const char JSON_ATTRVAL_TYPE[] = "Type";
 static const char JSON_ATTRVAL_OFFSET[] = "Offset";
@@ -53,6 +57,25 @@ static const char JSON_ATTRVAL_BIAS[] = "Bias";
 static const char JSON_ATTRVAL_DIV[] = "DividedBy";
 static const char JSON_ATTRVAL_MUL[] = "MultiplyBy";
 static const char JSON_ATTRVAL_CHILDREN[] = "Values";
+static const char JSON_SYN[] = "Synthesizing";
+static const char JSON_SYNOFF[] = "SynthesizingToOff";
+static const char JSON_SYN_PROTOCOL[] = "Protocol";
+static const char JSON_SYN_BITS[] = "BitCount";
+static const char JSON_SYN_PLACEHOLDER[] = "Placeholder";
+static const char JSON_SYN_VER[] = "Valiables";
+static const char JSON_SYNVER_OFFSET[] = "Offset";
+static const char JSON_SYNVER_MASK[] = "Mask";
+static const char JSON_SYNVER_BIAS[] = "Bias";
+static const char JSON_SYNVER_MUL[] = "MultiplyBy";
+static const char JSON_SYNVER_DIV[] = "DividedBy";
+static const char JSON_SYNVER_RELATTR[] = "RelateWithVisibilityOfAttribute";
+static const char JSON_SYNVER_VALUE[] = "Value";
+static const char JSON_SYNVAL_TYPE[] = "Type";
+static const char JSON_SYNVAL_ATTRNAME[] = "AttrName";
+static const char JSON_SYNVAL_CONSTVAL[] = "Value";
+static const char JSON_SYNVAL_SUBFORMULA[] = "SubFormula";
+static const char JSON_SYNVAL_OPERATOR[] = "Operator";
+static const char JSON_SYNVAL_SEED[] = "Seed";
 
 static const char* FORMULA_TYPE_STR[] = {
     "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
@@ -60,6 +83,11 @@ static const char* FORMULA_TYPE_STR[] = {
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
 static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", NULL};
+static const char* SYNVAL_TYPE_STR[] = {
+    "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT", "REDUNDANT"
+};
+static const char* SYNVAL_OP_TYPE_STR[] = {"CHECKSUM", "4BITSUB", NULL};
+
 
 //======================================================================
 // JSON handling functions
@@ -783,8 +811,12 @@ protected:
     
     bool notApplyInOff;
     float defaultValue;
+    float valueMax;
+    float valueMin;
+    float valueUnit;
     ValueFormulaNode::Ptr valueFormula;
     std::map<float, std::string> dict;
+    FormulaNode<IRCommand>::Ptr applyCondition;
     FormulaNode<ShadowDevice>::Ptr visibleCondition;
     
 public:    
@@ -792,7 +824,10 @@ public:
 
     AttributeImp(const ShadowDevice* dev):
 	shadow(dev), numericValue(0), stringValue(NULL), notApplyInOff(false),
-	defaultValue(std::numeric_limits<float>::quiet_NaN()){};
+	defaultValue(std::numeric_limits<float>::quiet_NaN()),
+	valueMax(std::numeric_limits<float>::quiet_NaN()),
+	valueMin(std::numeric_limits<float>::quiet_NaN()),
+	valueUnit(std::numeric_limits<float>::quiet_NaN()){};
     virtual ~AttributeImp(){};
     bool deserialize(const json11::Json& in, std::string& err);
     void serialize(std::ostream& out, const std::string& name);
@@ -896,12 +931,40 @@ bool AttributeImp::deserialize(const json11::Json& in, std::string& err){
     }
 
     //
+    // Value Range
+    //
+    ApplyNumValue(in, JSON_ATTR_MAX, true, [&](float v){
+	    valueMax = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_ATTR_MIN, true, [&](float v){
+	    valueMin = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_ATTR_UNIT, true, [&](float v){
+	    valueUnit = v;
+	    return true;
+	});
+
+    //
+    // Apply Condition
+    //
+    auto acondDefs = in[JSON_ATTR_APPLY_COND];
+    if (acondDefs.is_object()){
+	createFormula(json11::Json(acondDefs.object_items()), err,
+		      applyCondition);
+	if (applyCondition.isNull()){
+	    return false;
+	}
+    }
+
+    //
     // Visible Condition
     //
     auto vcondDefs = in[JSON_ATTR_VISIBLE_COND];
     if (vcondDefs.is_object()){
 	createFormula(json11::Json(vcondDefs.object_items()), err,
-		       visibleCondition);
+		      visibleCondition);
 	if (visibleCondition.isNull()){
 	    return false;
 	}
@@ -934,6 +997,19 @@ void AttributeImp::serialize(std::ostream& out, const std::string& name){
 	    out << "\"" << v << "\"";
 	}
     }
+    if (!std::isnan(valueMax)){
+	    out << ",\"" << JSON_ATTR_MAX << "\":" << valueMax;
+	}
+    if (!std::isnan(valueMin)){
+	    out << ",\"" << JSON_ATTR_MIN << "\":" << valueMin;
+	}
+    if (!std::isnan(valueUnit)){
+	    out << ",\"" << JSON_ATTR_UNIT << "\":" << valueUnit;
+	}
+    if (!applyCondition.isNull()){
+	out << ",\"" << JSON_ATTR_APPLY_COND << "\":";
+	applyCondition->serialize(out);
+    }
     if (!visibleCondition.isNull()){
 	out << ",\"" << JSON_ATTR_VISIBLE_COND << "\":";
 	visibleCondition->serialize(out);
@@ -944,6 +1020,10 @@ void AttributeImp::serialize(std::ostream& out, const std::string& name){
 bool AttributeImp::applyIRCommand(const IRCommand* cmd){
     if (notApplyInOff && !shadow->isOn()){
 	ESP_LOGD(tag, "false: notApplyInOff");
+	return false;
+    }
+    if (!applyCondition.isNull() && !applyCondition->test(cmd)){
+	ESP_LOGI(tag, "false: apply condition");
 	return false;
     }
     auto value = valueFormula->extract(cmd);

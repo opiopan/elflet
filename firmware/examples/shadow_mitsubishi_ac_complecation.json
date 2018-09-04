@@ -100,9 +100,9 @@
 	    }
 	}
     ],
-    "Synthesizer":{
+    "Synthesizing":{
 	"Protocol": "AEHA",
-	"PlaceHolder": "23cb26010000000000c08e00004008030200",
+	"Placeholder": "23cb26010000000000c08e00004008030200",
 	"BitCount": 144,
 	"Variables": [
 	    {
@@ -151,14 +151,11 @@
 		    "Type": "ATTRIBUTE",
 		    "AttrName": "Humidity"
 		}
-	    },
-	    {
-		"Offset": 17,
-		"Value": {
-		    "Type": "REDUNDANT",
-		    "Operator": "CHECKSUM"
-		}
 	    }
-	]
+	],
+	"Redundant": {
+	    "Operator": "CHECKSUM",
+	    "Offset": 17
+	}
     }
 }

@@ -10,6 +10,7 @@ public:
     public:
 	virtual float getNumericValue()const  = 0;
 	virtual const std::string& getStringValue()const  = 0;
+	virtual bool isVisible()const = 0;
 	virtual bool printKV(std::ostream& out,
 			     const std::string& name, bool needSep)const = 0;
     };
@@ -18,6 +19,7 @@ public:
     virtual void serialize(std::ostream& out) = 0;
     virtual void dumpStatus(std::ostream& out) = 0;
     virtual const Attribute* getAttribute(const std::string& name)const = 0;
+    virtual bool setStatus(const std::string& json, std::string& err) = 0;
 };
 
 struct IRCommand {

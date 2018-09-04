@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -18,6 +19,7 @@
 #include "ShadowDevice.h"
 #include "PubSubService.h"
 #include "Stat.h"
+#include "IRService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -30,6 +32,8 @@ static const char JSON_SHADOW_ON_COND[] = "OnCondition";
 static const char JSON_SHADOW_OFF_COND[] = "OffCondition";
 static const char JSON_SHADOW_ISON[] = "IsOn";
 static const char JSON_SHADOW_ATTRIBUTES[] = "Attributes";
+static const char JSON_SHADOW_SYN[] = "Synthesizing";
+static const char JSON_SHADOW_SYNOFF[] = "SynthesizingToOff";
 static const char JSON_FORMULA_TYPE[] = "Type";
 static const char JSON_FORMULA_OPERATOR[] = "Operator";
 static const char JSON_FORMULA_CHILDREN[] = "Formulas";
@@ -57,12 +61,11 @@ static const char JSON_ATTRVAL_BIAS[] = "Bias";
 static const char JSON_ATTRVAL_DIV[] = "DividedBy";
 static const char JSON_ATTRVAL_MUL[] = "MultiplyBy";
 static const char JSON_ATTRVAL_CHILDREN[] = "Values";
-static const char JSON_SYN[] = "Synthesizing";
-static const char JSON_SYNOFF[] = "SynthesizingToOff";
 static const char JSON_SYN_PROTOCOL[] = "Protocol";
 static const char JSON_SYN_BITS[] = "BitCount";
 static const char JSON_SYN_PLACEHOLDER[] = "Placeholder";
-static const char JSON_SYN_VER[] = "Valiables";
+static const char JSON_SYN_VARS[] = "Variables";
+static const char JSON_SYN_REDUNDANT[] = "Redundant";
 static const char JSON_SYNVER_OFFSET[] = "Offset";
 static const char JSON_SYNVER_MASK[] = "Mask";
 static const char JSON_SYNVER_BIAS[] = "Bias";
@@ -74,8 +77,9 @@ static const char JSON_SYNVAL_TYPE[] = "Type";
 static const char JSON_SYNVAL_ATTRNAME[] = "AttrName";
 static const char JSON_SYNVAL_CONSTVAL[] = "Value";
 static const char JSON_SYNVAL_SUBFORMULA[] = "SubFormula";
-static const char JSON_SYNVAL_OPERATOR[] = "Operator";
-static const char JSON_SYNVAL_SEED[] = "Seed";
+static const char JSON_SYNRED_OPERATOR[] = "Operator";
+static const char JSON_SYNRED_OFFSET[] = "Offset";
+static const char JSON_SYNRED_SEED[] = "Seed";
 
 static const char* FORMULA_TYPE_STR[] = {
     "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
@@ -84,9 +88,9 @@ static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
 static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", NULL};
 static const char* SYNVAL_TYPE_STR[] = {
-    "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT", "REDUNDANT"
+    "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT"
 };
-static const char* SYNVAL_OP_TYPE_STR[] = {"CHECKSUM", "4BITSUB", NULL};
+static const char* SYN_REDUNDANT_TYPE_STR[] = {"CHECKSUM", "4BITSUB", NULL};
 
 
 //======================================================================
@@ -173,6 +177,14 @@ static bool ApplyHexValue(const json11::Json& json, const std::string& key,
     return notFound;
 }
 
+static void printhex(std::ostream& out, const std::string& data){
+    for (auto i = data.begin(); i != data.end(); i++){
+	static const char dict[] = "0123456789abcdef";
+	out.put(dict[(*i & 0xf0) >> 4]);
+	out.put(dict[*i & 0xf]);
+    }
+}
+ 
 //======================================================================
 // element of condition formula
 //======================================================================
@@ -425,24 +437,16 @@ bool DataNode::deserialize(const json11::Json& in, std::string& err){
 }
 
 void DataNode::serialize(std::ostream& out){
-    auto printhex = [](std::ostream& out, const std::string& data){
-	for (auto i = data.begin(); i != data.end(); i++){
-	    static const char dict[] = "0123456789abcdef";
-	    out.put(dict[(*i & 0xf0) >> 4]);
-	    out.put(dict[*i & 0xf]);
-	}
-    };
-    
     out << "{";
     FormulaNode::serialize(out);
     if (offset >= 0){
-	out << ", \"" << JSON_FORMULA_OFFSET << "\":" << offset;;
+	out << ",\"" << JSON_FORMULA_OFFSET << "\":" << offset;;
     }
-    out << ", \"" << JSON_FORMULA_DATA << "\":\"";
+    out << ",\"" << JSON_FORMULA_DATA << "\":\"";
     printhex(out, data);
     out << "\"";
     if (mask.length() > 0){
-	out << ", \"" << JSON_FORMULA_MASK << "\":\"";
+	out << ",\"" << JSON_FORMULA_MASK << "\":\"";
 	printhex(out, mask);
 	out << "\"";
     }
@@ -805,9 +809,11 @@ class AttributeImp : public ShadowDevice::Attribute{
 protected:
     using Base = ShadowDevice::Attribute;
     const ShadowDevice* shadow;
-    
+
     float numericValue;
     std::string* stringValue;
+    float numericValueBkup;
+    std::string* stringValueBkup;
     
     bool notApplyInOff;
     float defaultValue;
@@ -823,7 +829,10 @@ public:
     using Ptr = SmartPtr<AttributeImp>;
 
     AttributeImp(const ShadowDevice* dev):
-	shadow(dev), numericValue(0), stringValue(NULL), notApplyInOff(false),
+	shadow(dev),
+	numericValue(0), stringValue(NULL),
+	numericValueBkup(0), stringValueBkup(NULL),
+	notApplyInOff(false),
 	defaultValue(std::numeric_limits<float>::quiet_NaN()),
 	valueMax(std::numeric_limits<float>::quiet_NaN()),
 	valueMin(std::numeric_limits<float>::quiet_NaN()),
@@ -832,6 +841,7 @@ public:
     bool deserialize(const json11::Json& in, std::string& err);
     void serialize(std::ostream& out, const std::string& name);
     bool applyIRCommand(const IRCommand* cmd);
+    bool isVisible()const override;
     bool printKV(std::ostream& out, const std::string& name,
 		 bool needSep)const override;
 
@@ -842,6 +852,17 @@ public:
 	static auto nullstr = std::string();
 	return stringValue ? *stringValue : nullstr;
     };
+
+    void backup(){
+	numericValueBkup = numericValue;
+	stringValueBkup = stringValue;
+    };
+    void restore(){
+	numericValue = numericValueBkup;
+	stringValue = stringValueBkup;
+    };
+    bool setNumericValue(float value);
+    bool setStringValue(const std::string& value);
 };
 
 bool AttributeImp::deserialize(const json11::Json& in, std::string& err){
@@ -1023,7 +1044,7 @@ bool AttributeImp::applyIRCommand(const IRCommand* cmd){
 	return false;
     }
     if (!applyCondition.isNull() && !applyCondition->test(cmd)){
-	ESP_LOGI(tag, "false: apply condition");
+	ESP_LOGD(tag, "false: apply condition");
 	return false;
     }
     auto value = valueFormula->extract(cmd);
@@ -1048,6 +1069,10 @@ bool AttributeImp::applyIRCommand(const IRCommand* cmd){
     return true;
 }
 
+bool AttributeImp::isVisible()const {
+    return visibleCondition.isNull() || visibleCondition->test(shadow);
+}
+
 bool AttributeImp::printKV(std::ostream& out, const std::string& name,
 			   bool needSep) const{
     if (visibleCondition.isNull() || visibleCondition->test(shadow)){
@@ -1066,6 +1091,608 @@ bool AttributeImp::printKV(std::ostream& out, const std::string& name,
     }
 }
 
+bool AttributeImp::setNumericValue(float value){
+    if (!std::isnan(valueMax) && value > valueMax){
+	return false;
+    }
+    if (!std::isnan(valueMin) && value < valueMin){
+	return false;
+    }
+    if (!std::isnan(valueUnit)){
+	double integer;
+	if (modf(value / valueUnit, &integer) != 0){
+	    return false;
+	}
+    }
+    numericValue = value;
+    ESP_LOGD(tag, "set attribute value: %f", numericValue);
+    return true;
+}
+
+bool AttributeImp::setStringValue(const std::string& value){
+    for (auto &kv : dict){
+	if (kv.second == value){
+	    stringValue = &(kv.second);
+	    numericValue = kv.first;
+	    return true;
+	}
+    }
+    return false;
+}
+
+//======================================================================
+// synthesizer variable formula node
+//======================================================================
+
+//----------------------------------------------------------------------
+// base class
+//----------------------------------------------------------------------
+class SvFormulaNode {
+public:
+    enum Type {INTEGER, DECIMAL, POWER, ATTRIBUTE, CONSTANT};
+    using Ptr = SmartPtr<SvFormulaNode>;
+
+protected:
+    const Type type;
+
+public:
+    SvFormulaNode(Type type):type(type){};
+    virtual ~SvFormulaNode(){};
+    
+    Type getType() const {return type;};
+
+    virtual bool deserialize(const json11::Json& in, std::string& err) = 0;
+    virtual void serialize(std::ostream& out){
+	out << "\"" << JSON_SYNVAL_TYPE << "\":\""
+	    << SYNVAL_TYPE_STR[type] << "\"";
+    };
+    virtual float getValue(const ShadowDevice* shadow) = 0;
+};
+
+static void createSvFormula(const json11::Json& in, std::string& err,
+			    SvFormulaNode::Ptr& ptr);
+
+//----------------------------------------------------------------------
+// monadic operator
+//----------------------------------------------------------------------
+class SvMonadicOperator : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+    Base::Ptr subFormula;
+
+public:
+    SvMonadicOperator(Base::Type type):Base(type){};
+    virtual ~SvMonadicOperator(){};
+
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override {
+	return subFormula->getValue(shadow);
+    };
+};
+
+bool SvMonadicOperator::deserialize(const json11::Json& in, std::string& err){
+    auto sub = in[JSON_SYNVAL_SUBFORMULA];
+    if (sub.is_object()){
+	createSvFormula(json11::Json(sub.object_items()), err, subFormula);
+	if (subFormula.isNull()){
+	    return false;
+	}
+    }else{
+	err = "A sub-furmula must be specified for monadic operator.";
+	return false;
+    }
+    return true;
+}
+
+void SvMonadicOperator::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_SYNVAL_SUBFORMULA << "\":";
+    subFormula->serialize(out);
+    out << "}";
+}
+
+//----------------------------------------------------------------------
+// power status node
+//----------------------------------------------------------------------
+class SvPower : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+
+public:
+    SvPower():Base(Base::POWER){};
+    virtual ~SvPower(){};
+
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override;
+};
+
+bool SvPower::deserialize(const json11::Json& in, std::string& err){
+    return true;
+}
+
+void SvPower::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << "}";
+}
+
+float SvPower::getValue(const ShadowDevice* shadow){
+    return shadow->isOn() ? 1 : 0;
+}
+
+//----------------------------------------------------------------------
+// attribute value node
+//----------------------------------------------------------------------
+class SvAttribute : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+    std::string attrName;
+
+public:
+    SvAttribute():Base(Base::ATTRIBUTE){};
+    virtual ~SvAttribute(){};
+
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override;
+};
+
+bool SvAttribute::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYNVAL_ATTRNAME, false, [&](const std::string& v){
+		this->attrName = v;
+		return true;
+	    })){
+	err = "Attribute name must be specified for Attribute node.";
+	return false;
+    }
+    return true;
+}
+
+void SvAttribute::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_SYNVAL_ATTRNAME << "\":\"" << attrName << "\"";
+    out << "}";
+}
+
+float SvAttribute::getValue(const ShadowDevice* shadow){
+    auto attr = shadow->getAttribute(attrName);
+    if (attr == nullptr){
+	return std::numeric_limits<float>::quiet_NaN();
+    }
+    return attr->getNumericValue();
+}
+
+//----------------------------------------------------------------------
+// constant value node
+//----------------------------------------------------------------------
+class SvConstant : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+    float value;
+
+public:
+    SvConstant():Base(Base::CONSTANT),
+		 value(std::numeric_limits<float>::quiet_NaN()){};
+    virtual ~SvConstant(){};
+
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override{return value;};
+};
+
+bool SvConstant::deserialize(const json11::Json& in, std::string& err){
+    auto json = in[JSON_SYNVAL_CONSTVAL];
+    if (json.is_string()){
+	auto hex = strToHex(json.string_value());
+	if (hex.length() == 1){
+	    value = hex[0];
+	}
+    }else if (json.is_number()){
+	value = json.number_value();
+    }
+    if (std::isnan(value)){
+	err = "Value must be specified as numeric or one byte hex string "
+	      "for constant node.";
+	return false;
+    }
+    return true;
+}
+
+void SvConstant::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_SYNVAL_CONSTVAL << "\":" << value;
+    out << "}";
+}
+
+//----------------------------------------------------------------------
+// synthesizer variable formula node factory
+//----------------------------------------------------------------------
+static void createSvFormula(const json11::Json& in, std::string& err,
+			    SvFormulaNode::Ptr& ptr){
+    ptr.setNull();
+    using Formula = SvFormulaNode;
+    auto type = in[JSON_SYNVAL_TYPE];
+    
+    if (type.is_string()){
+	auto typeStr = type.string_value();
+	if (typeStr == SYNVAL_TYPE_STR[Formula::INTEGER]){
+	    ptr = Formula::Ptr(new SvMonadicOperator(Formula::INTEGER));
+	}else if (typeStr == SYNVAL_TYPE_STR[Formula::DECIMAL]){
+	    ptr = Formula::Ptr(new SvMonadicOperator(Formula::DECIMAL));
+	}else if (typeStr == SYNVAL_TYPE_STR[Formula::POWER]){
+	    ptr = Formula::Ptr(new SvPower);
+	}else if (typeStr == SYNVAL_TYPE_STR[Formula::ATTRIBUTE]){
+	    ptr = Formula::Ptr(new SvAttribute);
+	}else if (typeStr == SYNVAL_TYPE_STR[Formula::CONSTANT]){
+	    ptr = Formula::Ptr(new SvConstant);
+	}else{
+	    err = "Invalid synthesizer variable value type was specified.";
+	}
+	if (!ptr->deserialize(in, err)){
+	    ptr.setNull();
+	}
+    }else{
+	err = "No synthesizer variable value type was specified.";
+    }
+}
+
+//======================================================================
+// redundant code generator inmplementation
+//======================================================================
+class RedundantCode{
+public:
+    enum Type{CHECKSUM, SUB4BIT};
+    using Ptr = SmartPtr<RedundantCode>;
+protected:
+    Type type;
+    int32_t offset;
+    int32_t seed;
+public:
+    RedundantCode(): offset(-1), seed(0){};
+    virtual ~RedundantCode(){};
+
+    virtual bool deserialize(const json11::Json& in, std::string& err);
+    virtual void serialize(std::ostream& out);
+    virtual bool addRedundantCode(std::string& code);
+};
+
+bool RedundantCode::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYNRED_OPERATOR, false, [&](const std::string& v){
+		for (int i = 0; SYN_REDUNDANT_TYPE_STR[i]; i++){
+		    if (v == SYN_REDUNDANT_TYPE_STR[i]){
+			this->type = (Type)i;
+			return true;
+		    }
+		}
+		return false;
+	    })){
+	err = "Invarid rudundant operator type or "
+	    "no operator type was specified.";
+	return false;
+    }
+    ApplyValue(in, JSON_SYNRED_OFFSET, true, [&](int32_t v){
+	    this->offset = v;
+	    return true;
+	});
+
+    auto json = in[JSON_SYNRED_SEED];
+    if (json.is_string()){
+	auto hex = strToHex(json.string_value());
+	if (hex.length() == 1){
+	    err = "Seed of redundant coding must be numeric or "
+		  "one byte hex data as string.";
+	}
+	seed = hex[0];
+    }else if (json.is_number()){
+	seed = json.number_value();
+    }
+	
+    return true;
+}
+
+void RedundantCode::serialize(std::ostream& out){
+    out << "{\"" << JSON_SYNRED_OPERATOR << "\":\""
+	<< SYN_REDUNDANT_TYPE_STR[type] << "\"";
+    if (offset >= 0){
+	out << ",\"" << JSON_SYNRED_OFFSET << "\":" << offset;
+    }
+    if (seed != 0){
+	out << ",\"" << JSON_SYNRED_SEED << "\":" << seed;
+    }
+    out << "}";
+}
+
+bool RedundantCode::addRedundantCode(std::string& code){
+    auto offset = this->offset;
+    if (offset < 0){
+	offset = code.length() - 1;
+    }
+    if (code.length() <= offset){
+	return false;
+    }
+
+    int32_t rc = seed;
+    if (type == CHECKSUM){
+	for (int i = 0; i < offset; i++){
+	    rc += code[i];
+	}
+    }else if (type == SUB4BIT){
+	int32_t hrc = 0xf0 & seed;
+	int32_t lrc = 0x0f & seed;
+	for (int i = 0; i < offset; i++){
+	    int32_t hh = 0xf0 & (uint8_t)code[i];
+	    int32_t lh = 0x0f & (uint8_t)code[i];
+	    hrc -= hh;
+	    lrc -= lh;
+	}
+	rc = (hrc & 0xf0) | (lrc & 0x0f);
+    }
+    code[offset] = rc;
+    
+    return true;
+}
+
+//======================================================================
+// synthesizer variable
+//======================================================================
+class SynVariable{
+protected:
+    int32_t offset;
+    uint8_t mask;
+    float bias;
+    float mulFactor;
+    float divFactor;
+    std::string relativeAttribute;
+    SvFormulaNode::Ptr value;
+    
+public:
+    using Ptr = SmartPtr<SynVariable>;
+    SynVariable(): offset(0), mask(0xff),
+		   bias(0), mulFactor(1), divFactor(1){};
+    virtual ~SynVariable(){};
+
+    virtual bool deserialize(const json11::Json& in, std::string& err);
+    virtual void serialize(std::ostream& out);
+    virtual bool isApplicable(const ShadowDevice* shadow);
+    virtual bool apply(const ShadowDevice* shadow, std::string& code);
+};
+
+bool SynVariable::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYNVER_OFFSET, false, [&](int32_t v){
+		this->offset = v;
+		return true;
+	    })){
+	err = "Offset must be specified for synthesizer variable.";
+	return false;
+    }
+    if (!ApplyHexValue(in, JSON_SYNVER_MASK, true, [&](const std::string& v){
+		if (v.length() != 1){
+		    return false;
+		}
+		this->mask = v[0];
+		return true;
+	    })){
+	err = "Maks in synthesizer variable must be "
+	      "one byte hex data as string.";
+	return false;
+    }
+    ApplyNumValue(in, JSON_SYNVER_BIAS, true, [&](float v){
+	    bias = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_SYNVER_DIV, true, [&](float v){
+	    divFactor = v;
+	    return true;
+	});
+    ApplyNumValue(in, JSON_SYNVER_MUL, true, [&](float v){
+	    mulFactor = v;
+	    return true;
+	});
+    ApplyValue(in, JSON_SYNVER_RELATTR, true, [&](const std::string& v){
+	    this->relativeAttribute = v;
+	    return true;
+	});
+
+    auto valDef = in[JSON_SYNVER_VALUE];
+    if (valDef.is_object()){
+	createSvFormula(json11::Json(valDef.object_items()), err, value);
+	if (value.isNull()){
+	    return false;
+	}
+    }
+    return true;
+}
+
+void SynVariable::serialize(std::ostream& out){
+    out << "{\"" << JSON_SYNVER_OFFSET << "\":" << offset;
+    if (mask != 0xff){
+	out << ",\"" << JSON_SYNVER_MASK << "\":\""
+	    << std::setw(2) << std::setfill('0') << std::hex
+	    << (int)mask << "\"";
+	out << std::setfill(' ') << std::dec;
+    }
+    if (bias != 0){
+	out << ",\"" << JSON_SYNVER_BIAS << "\":" << bias;
+    }
+    if (mulFactor != 1){
+	out << ",\"" << JSON_SYNVER_MUL << "\":" << mulFactor;
+    }
+    if (divFactor != 1){
+	out << ",\"" << JSON_SYNVER_DIV << "\":" << divFactor;
+    }
+    if (!value.isNull()){
+	out << ",\"" << JSON_SYNVER_VALUE << "\":";
+	value->serialize(out);
+    }
+    if (relativeAttribute.length() > 0){
+	out << ",\"" << JSON_SYNVER_RELATTR << "\":\""
+	    << relativeAttribute << "\"";
+    }
+    out << "}";
+}
+
+bool SynVariable::isApplicable(const ShadowDevice* shadow){
+    if (relativeAttribute.length() > 0){
+	auto attr = shadow->getAttribute(relativeAttribute);
+	if (!attr){
+	    return false;
+	}
+	return attr->isVisible();
+    }
+    return true;
+}
+
+bool SynVariable::apply(const ShadowDevice* shadow, std::string& code){
+    ESP_LOGD(tag, "offset: %d, mask: %.2x", offset, mask);
+    if (!isApplicable(shadow)){
+	ESP_LOGD(tag, "not applicable");
+	return false;
+    }
+
+    float v = (value->getValue(shadow) + bias) * mulFactor / divFactor;
+    int32_t iv = (int32_t)v;
+    int32_t byte = (iv & mask) | (code[offset] & ~mask);
+    code[offset] = byte;
+    ESP_LOGD(tag, "applied: %.2x : %.2x", iv, byte);
+    
+    return true;
+}
+
+//======================================================================
+// synthesizer implementation
+//======================================================================
+class Synthesizer{
+protected:
+    IRRC_PROTOCOL protocol;
+    std::string placeholder;
+    int32_t bits;
+    std::vector<SynVariable::Ptr> variables;
+    RedundantCode::Ptr redundant;
+
+public:
+    using Ptr = SmartPtr<Synthesizer>;
+    Synthesizer():bits(0){};
+    virtual ~Synthesizer(){};
+
+    bool deserialize(const json11::Json& in, std::string& err);
+    void serialize(std::ostream& out);
+    void issueIRCommand(const ShadowDevice* shadow);
+};
+
+bool Synthesizer::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYN_PROTOCOL, false,
+		    [&](const std::string& v) -> bool{
+			for (int i = 0; PROTOCOL_STR[i]; i++){
+			    if (v == PROTOCOL_STR[i]){
+				this->protocol = (IRRC_PROTOCOL)i;
+				return true;
+			    }
+			}
+			return false;
+		    })){
+	err = "Invalid protocol type or no protocol type was specivied.";
+	return false;
+    }
+    if (!ApplyHexValue(in, JSON_SYN_PLACEHOLDER, true,
+		       [&](std::string& v)->bool{
+			   this->placeholder = std::move(v);
+			   return true;
+		       })){
+	err = "Invalid hex data was specified for synthesizer placeholder.";
+	return false;
+    }
+    ApplyValue(in, JSON_SYN_BITS, true, [&](int32_t v) -> bool{
+	    this->bits = v;
+	    return true;
+	});
+    if (placeholder.length() == 0 && bits <= 0){
+	err = "Placeholder or bit count must be specified "
+	      "for synthsizer definition at least.";
+	return false;
+    }
+
+    auto valsDef = in[JSON_SYN_VARS];
+    if (valsDef.is_array()){
+	for (auto &v : valsDef.array_items()){
+	    if (!v.is_object()){
+		err = "Variable definition of synthesizer must be "
+		      "JSON object.";
+		return false;
+	    }
+	    SynVariable::Ptr variable(new SynVariable);
+	    if (!variable->deserialize(json11::Json(v.object_items()), err)){
+		return false;
+	    }
+	    variables.push_back(variable);
+	}
+    }
+
+    auto redundantDef = in[JSON_SYN_REDUNDANT];
+    if (redundantDef.is_object()){
+	redundant = RedundantCode::Ptr(new RedundantCode);
+	if (!redundant->deserialize(
+		json11::Json(redundantDef.object_items()), err)){
+	    return false;
+	}
+    }
+
+    return true;
+}
+
+void Synthesizer::serialize(std::ostream& out){
+    out << "{\"" << JSON_SYN_PROTOCOL << "\":\""
+	<< PROTOCOL_STR[(int)protocol] << "\"";
+    if (placeholder.length() > 0){
+	out << ",\"" << JSON_SYN_PLACEHOLDER << "\":\"";
+	printhex(out, placeholder);
+	out << "\"";
+    }
+    if (bits > 0){
+	out << ",\"" << JSON_SYN_BITS << "\":" << bits;
+    }
+    if (variables.size() > 0){
+	out << ",\"" << JSON_SYN_VARS << "\":[";
+	for (auto v = variables.begin(); v != variables.end(); v++){
+	    if (v != variables.begin()){
+		out << ",";
+	    }
+	    (*v)->serialize(out);
+	}
+	out << "]";
+    }
+    if (!redundant.isNull()){
+	out << ",\"" << JSON_SYN_REDUNDANT << "\":";
+	redundant->serialize(out);
+    }
+    out << "}";
+}
+
+void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
+    std::string cmd;
+    if (placeholder.length() > 0){
+	cmd = placeholder;
+    }else{
+	cmd.assign((bits + 7) / 8, 0);
+    }
+    auto bits = this->bits;
+    if (bits <= 0){
+	bits = cmd.length() * 8;
+    }
+    for (auto &v : variables){
+	v->apply(shadow, cmd);
+    }
+    if (!redundant.isNull()){
+	redundant->addRedundantCode(cmd);
+    }
+
+    sendIRData(protocol, bits, (uint8_t*)cmd.data());
+}
+
 //======================================================================
 // shadow device inmplementation
 //======================================================================
@@ -1076,11 +1703,16 @@ protected:
     FormulaNode<IRCommand>::Ptr onCondition;
     FormulaNode<IRCommand>::Ptr offCondition;
     std::map<std::string, AttributeImp::Ptr> attributes;
+    Synthesizer::Ptr synthesizer;
+    Synthesizer::Ptr synthesizerToOff;
 
     bool powerStatus;
+    bool powerStatusBkup;
 
 public:
-    ShadowDeviceImp(const char* name):name(name), powerStatus(false){};
+    ShadowDeviceImp(const char* name):name(name),
+				      powerStatus(false),
+				      powerStatusBkup(false){};
     virtual ~ShadowDeviceImp(){};
 
     const std::string& getName() const{return name;};
@@ -1093,8 +1725,11 @@ public:
     void setPowerStatus(bool isOn) override;
     void dumpStatus(std::ostream& out) override;
     const Attribute* getAttribute(const std::string& name)const override;
+    bool setStatus(const std::string& json, std::string& err) override;
     
 protected:
+    void backup();
+    void restore();
     bool applyIRCommandToSW(const IRCommand* cmd);
 };
 
@@ -1159,7 +1794,24 @@ bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
 	    }
 	}
     }
-    
+
+    auto synDef = in[JSON_SHADOW_SYN];
+    if (synDef.is_object()){
+	synthesizer = Synthesizer::Ptr(new Synthesizer);
+	if (!synthesizer->deserialize(
+		json11::Json(synDef.object_items()), err)){
+	    return false;
+	}
+    }
+    synDef = in[JSON_SHADOW_SYNOFF];
+    if (synDef.is_object()){
+	synthesizerToOff = Synthesizer::Ptr(new Synthesizer);
+	if (!synthesizerToOff->deserialize(
+		json11::Json(synDef.object_items()), err)){
+	    return false;
+	}
+    }
+
     return true;
 }
 
@@ -1186,6 +1838,14 @@ void ShadowDeviceImp::serialize(std::ostream& out){
 	    i->second->serialize(out, i->first);
 	}
 	out << "]";
+    }
+    if (!synthesizer.isNull()){
+	out << ",\"" << JSON_SHADOW_SYN << "\":";
+	synthesizer->serialize(out);
+    }
+    if (!synthesizerToOff.isNull()){
+	out << ",\"" << JSON_SHADOW_SYNOFF << "\":";
+	synthesizerToOff->serialize(out);
     }
     out << "}";
 }
@@ -1272,6 +1932,97 @@ const ShadowDevice::Attribute* ShadowDeviceImp::getAttribute(
     }
 }
 
+void ShadowDeviceImp::backup(){
+    powerStatusBkup = powerStatus;
+    for (auto &attr : attributes){
+	attr.second->backup();
+    }
+}
+
+void ShadowDeviceImp::restore(){
+    powerStatus = powerStatusBkup;
+    for (auto &attr : attributes){
+	attr.second->restore();
+    }
+}
+
+bool ShadowDeviceImp::setStatus(const std::string& json, std::string& err){
+    auto status = json11::Json::parse(json, err);
+    if (!status.is_object()){
+	if (err.length() == 0){
+	    err = "Shadow status must be specified as Json object.";
+	}
+	return false;
+    }
+
+    class ValueCommiter{
+    protected:
+	ShadowDeviceImp* shadow;
+	bool commited;
+    public:
+	ValueCommiter(ShadowDeviceImp* shadow):shadow(shadow), commited(false){
+	    shadow->backup();
+	};
+	~ValueCommiter(){
+	    if (!commited){
+		shadow->restore();
+	    }
+	};
+	void commit(){commited = true;}
+    };
+    ValueCommiter commiter(this);
+    
+    //
+    // apply power status
+    //
+    ApplyBoolValue(status, JSON_SHADOW_ISON, true, [&](bool v){
+	    this->powerStatus = v;
+	    return true;
+	});
+    
+    //
+    // apply attribute value
+    //
+    auto attrs = status[JSON_SHADOW_ATTRIBUTES];
+    if (attrs.is_object()){
+	for (auto &kv : attrs.object_items()){
+	    auto attr = attributes.find(kv.first);
+	    if (attr == attributes.end()){
+		err = "There isn't specified attribute: ";
+		err += kv.first;
+		return false;
+	    }
+	    if (kv.second.is_string()){
+		auto sv = kv.second.string_value();
+		if (!attr->second->setStringValue(sv)){
+		    err = "Specified attribute value is not included in "
+			  "attribute dictionary: ";
+		    err += sv;
+		    return false;
+		}
+	    }else if (kv.second.is_number()){
+		auto nv = kv.second.number_value();
+		if (!attr->second->setNumericValue(nv)){
+		    err = "Specified attribute value is out of range: ";
+		    err += kv.first;
+		    return false;
+		}
+	    }
+	}
+    }
+
+    //
+    // synthesize IR command and issue IR command
+    //
+    if (!powerStatus && !synthesizerToOff.isNull()){
+	synthesizerToOff->issueIRCommand(this);
+    }else if (!synthesizer.isNull()){
+	synthesizer->issueIRCommand(this);
+    }
+
+    commiter.commit();
+    return false;
+}
 
 //======================================================================
 // Shadow device list management

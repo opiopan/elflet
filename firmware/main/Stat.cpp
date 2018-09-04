@@ -25,7 +25,7 @@ static const char JSON_STAT_OTACOUNT[] = "FirmwareUpdateCount";
 static const char JSON_STAT_HTTP[] = "Http";
 static const char JSON_STAT_HTTP_SESSION[] = "SessionCount";
 
-static const char JSON_STAT_IRRC[] = "Irrc";
+static const char JSON_STAT_IRRC[] = "IRRC";
 static const char JSON_STAT_IRRC_RPULSE[] = "RcvPulses";
 static const char JSON_STAT_IRRC_SPULSE[] = "SndPulses";
 static const char JSON_STAT_IRRC_RCMD_NEC[] = "NecRcvCommands";

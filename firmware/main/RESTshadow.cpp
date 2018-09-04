@@ -53,7 +53,7 @@ class ListShadowsHandler: public WebServerHandler{
 };
 
 //----------------------------------------------------------------------
-// Response shadow status
+// Shadow status management
 //----------------------------------------------------------------------
 class ShadowStatusHandler: public WebServerHandler{
     void recieveRequest(WebServerConnection& connection) override{
@@ -63,7 +63,25 @@ class ShadowStatusHandler: public WebServerHandler{
 	auto contentType = "text/plain";
 	auto name = nameFromUri(req->uri(), 8);
 
-	if (req->method() != HttpRequest::MethodGet){
+	auto getShadowStatus = [&](ShadowDevice* shadow){
+	    contentType = "application/json";
+	    std::stringstream out;
+	    shadow->dumpStatus(out);
+	    stringPtr msgPtr(new std::string(std::move(out.str())));
+	    resp->setBody(msgPtr);
+	};
+	auto setShadowStatus =
+	    [&](ShadowDevice* shadow, const std::string& body){
+	    std::string err;
+	    if (!shadow->setStatus(body, err)){
+		httpStatus = HttpResponse::RESP_500_InternalServerError;
+		stringPtr msgPtr(new std::string(std::move(err)));
+		resp->setBody(msgPtr);
+	    }
+	};
+
+	if (!(req->method() == HttpRequest::MethodGet ||
+	      req->method() == HttpRequest::MethodPost)){
 	    httpStatus = HttpResponse::RESP_500_InternalServerError;
 	    resp->setBody("invalid method");
 	}else if (name.length() > 0){
@@ -71,11 +89,20 @@ class ShadowStatusHandler: public WebServerHandler{
 		Config::IrrcRecieverContinuous){
 		auto shadow = findShadowDevice(name);
 		if (shadow){
-		    contentType = "application/json";
-		    std::stringstream out;
-		    shadow->dumpStatus(out);
-		    stringPtr msgPtr(new std::string(std::move(out.str())));
-		    resp->setBody(msgPtr);
+		    if (req->method() == HttpRequest::MethodGet){
+			getShadowStatus(shadow);
+		    }else{
+			if (req->header("Content-Type") == "application/json"){
+			    auto body = req->body();
+			    setShadowStatus(shadow,
+					    std::string(body.data(),
+							body.length()));
+			}else{
+			    httpStatus =
+				HttpResponse::RESP_500_InternalServerError;
+			    resp->setBody("invalid request body");
+			}
+		    }
 		}else{
 		    httpStatus = HttpResponse::RESP_404_NotFound;
 		    resp->setBody("Specified shadow does not exit.");
@@ -132,10 +159,10 @@ class ShadowDefsHandler : public WebServerHandler {
 		    resp->setBody("Specified shadow does not exit.");
 		}
 	    }else if (req->method() == HttpRequest::MethodPost &&
+		req->header("Content-Type") == "application/json"){
 		//
 		// Add shadow
 		//
-		req->header("Content-Type") == "application/json"){
 		auto body = req->body();
 		if (!addShadowDevice(name,
 				     std::string(body.data(), body.length()),

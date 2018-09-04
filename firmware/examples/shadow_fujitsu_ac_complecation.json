@@ -115,7 +115,7 @@
     ],
     "Synthesizing":{
 	"Protocol": "AEHA",
-	"PlaceHolder": "1463001010fe09300001000000002800",
+	"Placeholder": "1463001010fe09300100000000002800",
 	"Variables": [
 	    {
 		"Offset": 9,
@@ -155,19 +155,15 @@
 		    "Value": "90"
 		},
 		"RelateWithVisibilityOfAttribute": "RelativeTemperature"
-	    },
-	    {
-		"Offset": 15,
-		"Value": {
-		    "Type": "REDUNDANT",
-		    "Operator": "4BITSUB",
-		    "Seed": "7e"
-		}
 	    }
-	]
+	],
+	"Redundant": {
+	    "Operator": "4BITSUB",
+	    "Seed": "7e"
+	}
     },
     "SynthesizingToOff":{
 	"Protocol": "AEHA",
-	"PlaceHolder": "146300101002fd"
+	"Placeholder": "146300101002fd"
     }
 }

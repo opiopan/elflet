@@ -86,7 +86,7 @@
 	    "Default": 50,
 	    "Max": 70,
 	    "Min": 40,
-	    "Unit": 20,
+	    "Unit": 10,
 	    "VisibleCondition": {
 		"Type" : "COMBINATION",
 		"Operator" : "NAND",
@@ -145,7 +145,7 @@
 	    },
 	    {
 		"Offset": 8,
-		"Bias": 40,
+		"Bias": -40,
 		"DividedBy": 5,
 		"Value": {
 		    "Type": "ATTRIBUTE",

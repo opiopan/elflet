@@ -1166,9 +1166,7 @@ public:
 
     bool deserialize(const json11::Json& in, std::string& err) override;
     void serialize(std::ostream& out) override;
-    float getValue(const ShadowDevice* shadow) override {
-	return subFormula->getValue(shadow);
-    };
+    float getValue(const ShadowDevice* shadow) override;
 };
 
 bool SvMonadicOperator::deserialize(const json11::Json& in, std::string& err){
@@ -1192,6 +1190,18 @@ void SvMonadicOperator::serialize(std::ostream& out){
     subFormula->serialize(out);
     out << "}";
 }
+
+float SvMonadicOperator::getValue(const ShadowDevice* shadow){
+    double integer;
+    float decimal = modf( subFormula->getValue(shadow), &integer);
+    if (getType() == Base::INTEGER){
+	return integer;
+    }else if (getType() == Base::DECIMAL){
+	return decimal;
+    }else{
+	return std::numeric_limits<float>::quiet_NaN();
+    }
+};
 
 //----------------------------------------------------------------------
 // power status node

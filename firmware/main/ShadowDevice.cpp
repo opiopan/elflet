@@ -1701,6 +1701,7 @@ void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
     }
 
     sendIRData(protocol, bits, (uint8_t*)cmd.data());
+    shadowStat.synthesizeCount++;
 }
 
 //======================================================================

@@ -75,7 +75,7 @@ const json11::Json::object getStatisticsJson(){
     int32_t sec = rmin - min * 60;
     std::stringstream out;
     if (day){
-	out << day << " days ,";
+	out << day << " days, ";
     }
     if (day || hour){
 	out << std::setfill('0');

@@ -165,7 +165,7 @@ bool startButtonService(){
 	filterTask = new ButtonFilterTask;
 	filterTask->setStackSize(2048);
 	eventTask = new ButtonEventTask;
-	eventTask->setStackSize(2048);
+	eventTask->setStackSize(4096);
 	filterTask->start();
 	eventTask->start();
     }

@@ -25,6 +25,7 @@ static const std::string BOOTMODE_KEY = "bootmode";
 static const std::string CONFIGGEN_KEY = "configgen";
 static const std::string OTACOUNT_KEY = "otacount";
 
+static const char SPIFFS_LABEL[] = "spiffs";
 static const char SPIFFS_MP[] = "/spiffs";
 static const char VERIFICATION_KEY_PATH[] = "/spiffs/verificationkey.pem";
 static const char SHADOW_DEFS_PATH[] = "/spiffs/shadowdefs.json";
@@ -72,7 +73,7 @@ bool initConfig(){
     // mount spiffs
     esp_vfs_spiffs_conf_t conf = {
       .base_path = SPIFFS_MP,
-      .partition_label = "spiffs",
+      .partition_label = SPIFFS_LABEL,
       .max_files = 5,
       .format_if_mount_failed = false
     };
@@ -517,4 +518,15 @@ const char* Config::getShadowDefsPath() const{
 
 const char* Config::getTmpShadowDefsPath() const{
     return TMP_SHADOW_DEFS_PATH;
+}
+
+//----------------------------------------------------------------------
+// storage information
+//----------------------------------------------------------------------
+bool Config::getSpiffsInfo(size_t* total, size_t* used) const{
+    return esp_spiffs_info(SPIFFS_LABEL, total, used) == ESP_OK;
+}
+
+bool Config::getNvsInfo(nvs_stats_t *stats) const{
+    return nvs_get_stats(nullptr, stats) == ESP_OK;
 }

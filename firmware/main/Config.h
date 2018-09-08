@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <json11.hpp>
+#include <nvs_flash.h>
 #include "DeepSleep.h"
 
 class Config {
@@ -116,6 +117,9 @@ public:
     const char* getVerificationKeyPath() const;
     const char* getShadowDefsPath() const;
     const char* getTmpShadowDefsPath() const;
+
+    bool getSpiffsInfo(size_t* total, size_t* used) const;
+    bool getNvsInfo(nvs_stats_t *stats) const;
     
     bool setBootMode(BootMode mode);
 

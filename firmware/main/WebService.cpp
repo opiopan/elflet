@@ -43,7 +43,7 @@ bool startWebService(){
     registerShadowRESTHandler(webserver);
     webserver->setContentProvider(createContentProvider());
     std::stringstream name;
-    name << "elflet " << getVersionString();
+    name << "elflet/" << getVersionString();
     webserver->setServerName(stringPtr(new std::string(name.str())));
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?

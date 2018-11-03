@@ -1924,9 +1924,9 @@ void ShadowDeviceImp::dumpStatus(std::ostream& out){
 	<< (isOn() ? "true" : "false");
     if (!attributes.empty()){
 	out << ",\"" << JSON_SHADOW_ATTRIBUTES << "\":{";
+	bool needSep = false;
 	for (auto attr = attributes.begin(); attr != attributes.end(); attr++){
-	    attr->second->printKV(out, attr->first,
-				  attr != attributes.begin());
+	    needSep |= attr->second->printKV(out, attr->first, needSep);
 	}
 	out << "}";
     }

@@ -25,4 +25,10 @@ config OTA_IMAGE__VERIFICATION_KEY
 		Path to a public key file used to verify signed images recieved via OTA. This key is packed into the PDATA partition image,
 		Key file is SRA public key in PEM format.
 
+config WIFI_COUNTRY_CODE
+     string "Country code of WiFi AP"
+	default "JP"
+	help
+		This code will publish in WiFi AP mode.
+
 endmenu

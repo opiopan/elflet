@@ -100,6 +100,11 @@ bool startWifiApService(){
     ESPERR_RET(esp_wifi_set_config(WIFI_IF_AP, &ap_config),
 	       "esp_wifi_set_config");
 
+    wifi_country_t country;
+    esp_wifi_get_country(&country);
+    strncpy(country.cc,  CONFIG_WIFI_COUNTRY_CODE, sizeof(country.cc));
+    esp_wifi_set_country(&country);
+
     ESPERR_RET(esp_wifi_start(), "esp_wifi_start");
 
     //esp_wifi_set_ps(WIFI_PS_MAX_MODEM);

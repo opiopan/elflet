@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.7.0">
+<eagle version="9.2.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -59,947 +59,9 @@
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <libraries>
-<library name="raspi">
+<library name="raspi" urn="urn:adsk.eagle:library:7043363">
 <packages>
-<package name="RASPI_BOARD_B+_FULL">
-<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; drill holes</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="0" x2="6.85" y2="0" width="0.254" layer="52"/>
-<wire x1="6.85" y1="0" x2="14.35" y2="0" width="0.254" layer="52"/>
-<wire x1="14.35" y1="0" x2="50.5" y2="0" width="0.254" layer="52"/>
-<wire x1="50.5" y1="0" x2="51.5" y2="0" width="0.254" layer="52"/>
-<wire x1="51.5" y1="0" x2="55.5" y2="0" width="0.254" layer="52"/>
-<wire x1="55.5" y1="0" x2="56.5" y2="0" width="0.254" layer="52"/>
-<wire x1="56.5" y1="0" x2="82" y2="0" width="0.254" layer="52"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="3" x2="85" y2="53" width="0.254" layer="52"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="56" x2="3" y2="56" width="0.254" layer="52"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<wire x1="0" y1="53" x2="0" y2="3" width="0.254" layer="52"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<wire x1="65.25" y1="2.25" x2="86.5" y2="2.25" width="0.127" layer="52"/>
-<wire x1="86.5" y1="2.25" x2="86.5" y2="18.25" width="0.127" layer="52"/>
-<wire x1="86.5" y1="18.25" x2="65.25" y2="18.25" width="0.127" layer="52"/>
-<wire x1="65.25" y1="18.25" x2="65.25" y2="2.25" width="0.127" layer="52"/>
-<wire x1="69" y1="35.6" x2="69" y2="22.4" width="0.127" layer="52"/>
-<wire x1="69" y1="22.4" x2="86" y2="22.4" width="0.127" layer="52"/>
-<wire x1="86" y1="22.4" x2="86" y2="21.7" width="0.127" layer="52"/>
-<wire x1="86" y1="21.7" x2="86.5" y2="21.7" width="0.127" layer="52"/>
-<wire x1="86.5" y1="21.7" x2="86.5" y2="36.3" width="0.127" layer="52"/>
-<wire x1="86.5" y1="36.3" x2="86" y2="36.3" width="0.127" layer="52"/>
-<wire x1="86" y1="36.3" x2="86" y2="35.6" width="0.127" layer="52"/>
-<wire x1="86" y1="35.6" x2="69" y2="35.6" width="0.127" layer="52"/>
-<wire x1="69" y1="40.4" x2="86" y2="40.4" width="0.127" layer="52"/>
-<wire x1="86" y1="40.4" x2="86" y2="39.7" width="0.127" layer="52"/>
-<wire x1="86" y1="39.7" x2="86.5" y2="39.7" width="0.127" layer="52"/>
-<wire x1="86.5" y1="39.7" x2="86.5" y2="54.3" width="0.127" layer="52"/>
-<wire x1="86.5" y1="54.3" x2="86" y2="54.3" width="0.127" layer="52"/>
-<wire x1="86" y1="54.3" x2="86" y2="53.6" width="0.127" layer="52"/>
-<wire x1="86" y1="53.6" x2="69" y2="53.6" width="0.127" layer="52"/>
-<wire x1="69" y1="53.6" x2="69" y2="40.4" width="0.127" layer="52"/>
-<wire x1="24.5" y1="10.5" x2="24.5" y2="-1.25" width="0.127" layer="52"/>
-<wire x1="24.5" y1="-1.25" x2="39.5" y2="-1.25" width="0.127" layer="52"/>
-<wire x1="39.5" y1="-1.25" x2="39.5" y2="10.5" width="0.127" layer="52"/>
-<wire x1="39.5" y1="10.5" x2="24.5" y2="10.5" width="0.127" layer="52"/>
-<wire x1="50.5" y1="0" x2="50.5" y2="11" width="0.127" layer="52"/>
-<wire x1="50.5" y1="11" x2="56.5" y2="11" width="0.127" layer="52"/>
-<wire x1="56.5" y1="11" x2="56.5" y2="0" width="0.127" layer="52"/>
-<wire x1="51.5" y1="0" x2="51.5" y2="-2" width="0.127" layer="52"/>
-<wire x1="51.5" y1="-2" x2="55.5" y2="-2" width="0.127" layer="52"/>
-<wire x1="55.5" y1="-2" x2="55.5" y2="0" width="0.127" layer="52"/>
-<wire x1="6.85" y1="0" x2="6.85" y2="5.75" width="0.127" layer="52"/>
-<wire x1="6.85" y1="5.75" x2="14.35" y2="5.75" width="0.127" layer="52"/>
-<wire x1="14.35" y1="5.75" x2="14.35" y2="0" width="0.127" layer="52"/>
-<wire x1="6.85" y1="0" x2="6.6" y2="-0.5" width="0.127" layer="52"/>
-<wire x1="6.6" y1="-0.5" x2="14.6" y2="-0.5" width="0.127" layer="52"/>
-<wire x1="14.6" y1="-0.5" x2="14.35" y2="0" width="0.127" layer="52"/>
-<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
-</package>
-<package name="RASPI_BOARD_B+_FULL_PAD">
-<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; mounting pads</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="0" x2="6.85" y2="0" width="0.254" layer="52"/>
-<wire x1="6.85" y1="0" x2="14.35" y2="0" width="0.254" layer="52"/>
-<wire x1="14.35" y1="0" x2="50.5" y2="0" width="0.254" layer="52"/>
-<wire x1="50.5" y1="0" x2="51.5" y2="0" width="0.254" layer="52"/>
-<wire x1="51.5" y1="0" x2="55.5" y2="0" width="0.254" layer="52"/>
-<wire x1="55.5" y1="0" x2="56.5" y2="0" width="0.254" layer="52"/>
-<wire x1="56.5" y1="0" x2="82" y2="0" width="0.254" layer="52"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="3" x2="85" y2="53" width="0.254" layer="52"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="56" x2="3" y2="56" width="0.254" layer="52"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<wire x1="0" y1="53" x2="0" y2="3" width="0.254" layer="52"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<wire x1="65.25" y1="2.25" x2="86.5" y2="2.25" width="0.127" layer="52"/>
-<wire x1="86.5" y1="2.25" x2="86.5" y2="18.25" width="0.127" layer="52"/>
-<wire x1="86.5" y1="18.25" x2="65.25" y2="18.25" width="0.127" layer="52"/>
-<wire x1="65.25" y1="18.25" x2="65.25" y2="2.25" width="0.127" layer="52"/>
-<wire x1="69" y1="35.6" x2="69" y2="22.4" width="0.127" layer="52"/>
-<wire x1="69" y1="22.4" x2="86" y2="22.4" width="0.127" layer="52"/>
-<wire x1="86" y1="22.4" x2="86" y2="21.7" width="0.127" layer="52"/>
-<wire x1="86" y1="21.7" x2="86.5" y2="21.7" width="0.127" layer="52"/>
-<wire x1="86.5" y1="21.7" x2="86.5" y2="36.3" width="0.127" layer="52"/>
-<wire x1="86.5" y1="36.3" x2="86" y2="36.3" width="0.127" layer="52"/>
-<wire x1="86" y1="36.3" x2="86" y2="35.6" width="0.127" layer="52"/>
-<wire x1="86" y1="35.6" x2="69" y2="35.6" width="0.127" layer="52"/>
-<wire x1="69" y1="40.4" x2="86" y2="40.4" width="0.127" layer="52"/>
-<wire x1="86" y1="40.4" x2="86" y2="39.7" width="0.127" layer="52"/>
-<wire x1="86" y1="39.7" x2="86.5" y2="39.7" width="0.127" layer="52"/>
-<wire x1="86.5" y1="39.7" x2="86.5" y2="54.3" width="0.127" layer="52"/>
-<wire x1="86.5" y1="54.3" x2="86" y2="54.3" width="0.127" layer="52"/>
-<wire x1="86" y1="54.3" x2="86" y2="53.6" width="0.127" layer="52"/>
-<wire x1="86" y1="53.6" x2="69" y2="53.6" width="0.127" layer="52"/>
-<wire x1="69" y1="53.6" x2="69" y2="40.4" width="0.127" layer="52"/>
-<wire x1="24.5" y1="10.5" x2="24.5" y2="-1.25" width="0.127" layer="52"/>
-<wire x1="24.5" y1="-1.25" x2="39.5" y2="-1.25" width="0.127" layer="52"/>
-<wire x1="39.5" y1="-1.25" x2="39.5" y2="10.5" width="0.127" layer="52"/>
-<wire x1="39.5" y1="10.5" x2="24.5" y2="10.5" width="0.127" layer="52"/>
-<wire x1="50.5" y1="0" x2="50.5" y2="11" width="0.127" layer="52"/>
-<wire x1="50.5" y1="11" x2="56.5" y2="11" width="0.127" layer="52"/>
-<wire x1="56.5" y1="11" x2="56.5" y2="0" width="0.127" layer="52"/>
-<wire x1="51.5" y1="0" x2="51.5" y2="-2" width="0.127" layer="52"/>
-<wire x1="51.5" y1="-2" x2="55.5" y2="-2" width="0.127" layer="52"/>
-<wire x1="55.5" y1="-2" x2="55.5" y2="0" width="0.127" layer="52"/>
-<wire x1="6.85" y1="0" x2="6.85" y2="5.75" width="0.127" layer="52"/>
-<wire x1="6.85" y1="5.75" x2="14.35" y2="5.75" width="0.127" layer="52"/>
-<wire x1="14.35" y1="5.75" x2="14.35" y2="0" width="0.127" layer="52"/>
-<wire x1="6.85" y1="0" x2="6.6" y2="-0.5" width="0.127" layer="52"/>
-<wire x1="6.6" y1="-0.5" x2="14.6" y2="-0.5" width="0.127" layer="52"/>
-<wire x1="14.6" y1="-0.5" x2="14.35" y2="0" width="0.127" layer="52"/>
-<pad name="DRILL_3" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
-<pad name="DRILL_1" x="3.5" y="52.5" drill="2.75" diameter="6.2"/>
-<pad name="DRILL_2" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
-<pad name="DRILL_4" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
-</package>
-<package name="RASPI_BOARD_B+_EDGES_0DRILL">
-<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
-without any drill holes</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-</package>
-<package name="RASPI_BOARD_B+_EDGES_3DRILL">
-<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
-with 3 drill holes (top left hole is missing to allow routing of power supply lines)</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
-</package>
-<package name="RASPI_BOARD_B+_EDGES_3DRILL_PAD">
-<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
-with 3 mounting pads (top left pad is missing to allow routing of power supply lines)</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<pad name="41" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
-<pad name="42" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
-<pad name="43" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
-</package>
-<package name="RASPI_BOARD_B+_EDGES_4DRILL">
-<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
-with all 4 drill holes</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
-</package>
-<package name="RASPI_BOARD_B+_EDGES_4DRILL_PAD">
-<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
-with all 4 mounting pads</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
-<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
-<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<pad name="41" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
-<pad name="42" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
-<pad name="43" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
-<pad name="44" x="3.5" y="52.5" drill="2.75" diameter="6.2"/>
-</package>
-<package name="RASPI_BOARD_B+HAT">
-<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
-Official outline, but without cutouts for display &amp;amp; camera flex connector</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
-<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
-<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
-<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<wire x1="0" y1="3" x2="0" y2="53" width="0" layer="20"/>
-</package>
-<package name="RASPI_BOARD_B+HAT_DF">
-<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
-Official outline with cutout for display flex connector</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
-<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
-<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
-<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<wire x1="0" y1="3" x2="0" y2="17.5" width="0" layer="20"/>
-<wire x1="0" y1="17.5" x2="2" y2="19.5" width="0" layer="20" curve="-90"/>
-<wire x1="2" y1="19.5" x2="3" y2="19.5" width="0" layer="20"/>
-<wire x1="3" y1="19.5" x2="5" y2="21.5" width="0" layer="20" curve="90"/>
-<wire x1="5" y1="21.5" x2="5" y2="34.5" width="0" layer="20"/>
-<wire x1="5" y1="34.5" x2="3" y2="36.5" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="36.5" x2="2" y2="36.5" width="0" layer="20"/>
-<wire x1="2" y1="36.5" x2="0" y2="38.5" width="0" layer="20" curve="-90"/>
-<wire x1="0" y1="38.5" x2="0" y2="53" width="0" layer="20"/>
-<text x="4" y="21" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Display Flex Slot</text>
-</package>
-<package name="RASPI_BOARD_B+HAT_DF_CF">
-<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
-Official outline with cutouts for display &amp;amp; camera flex connector</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
-<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
-<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
-<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<wire x1="0" y1="3" x2="0" y2="17.5" width="0" layer="20"/>
-<wire x1="0" y1="17.5" x2="2" y2="19.5" width="0" layer="20" curve="-90"/>
-<wire x1="2" y1="19.5" x2="3" y2="19.5" width="0" layer="20"/>
-<wire x1="3" y1="19.5" x2="5" y2="21.5" width="0" layer="20" curve="90"/>
-<wire x1="5" y1="21.5" x2="5" y2="34.5" width="0" layer="20"/>
-<wire x1="5" y1="34.5" x2="3" y2="36.5" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="36.5" x2="2" y2="36.5" width="0" layer="20"/>
-<wire x1="2" y1="36.5" x2="0" y2="38.5" width="0" layer="20" curve="-90"/>
-<wire x1="0" y1="38.5" x2="0" y2="53" width="0" layer="20"/>
-<wire x1="44" y1="4" x2="45" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="45" y1="3" x2="46" y2="4" width="0" layer="20" curve="90"/>
-<wire x1="46" y1="4" x2="46" y2="19" width="0" layer="20"/>
-<wire x1="46" y1="19" x2="45" y2="20" width="0" layer="20" curve="90"/>
-<wire x1="45" y1="20" x2="44" y2="19" width="0" layer="20" curve="90"/>
-<wire x1="44" y1="19" x2="44" y2="4" width="0" layer="20"/>
-<text x="4" y="21" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Display Flex Slot</text>
-<text x="45.5" y="4.75" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Camera Flex Slot</text>
-</package>
-<package name="RASPI_BOARD_B+HAT_CF">
-<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
-Official outline with cutouts for camera flex connector</description>
-<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
-<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
-<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
-<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
-<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.75"/>
-<hole x="3.5" y="52.5" drill="2.75"/>
-<hole x="61.5" y="3.5" drill="2.75"/>
-<hole x="61.5" y="52.5" drill="2.75"/>
-<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
-<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
-<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
-<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
-<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
-<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
-<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
-<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
-<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
-<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
-<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
-<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
-<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
-<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
-<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
-<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
-<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
-<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
-<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
-<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
-<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
-<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
-<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
-<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
-<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
-<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
-<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
-<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
-<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
-<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
-<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
-<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
-<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
-<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
-<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
-<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
-<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
-<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
-<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
-<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
-<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="22"/>
-<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="22"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
-<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
-<wire x1="0" y1="3" x2="0" y2="53" width="0" layer="20"/>
-<wire x1="44" y1="4" x2="45" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="45" y1="3" x2="46" y2="4" width="0" layer="20" curve="90"/>
-<wire x1="46" y1="4" x2="46" y2="19" width="0" layer="20"/>
-<wire x1="46" y1="19" x2="45" y2="20" width="0" layer="20" curve="90"/>
-<wire x1="45" y1="20" x2="44" y2="19" width="0" layer="20" curve="90"/>
-<wire x1="44" y1="19" x2="44" y2="4" width="0" layer="20"/>
-<text x="45.5" y="4.75" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Camera Flex Slot</text>
-<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="22"/>
-<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="22"/>
-<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="22"/>
-<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="22"/>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
-<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="22"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="22"/>
-<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="22"/>
-<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="22"/>
-<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="22"/>
-<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="22"/>
-<text x="8.6875" y="48.3725" size="1.016" layer="22" font="vector" ratio="10" rot="MR0">1</text>
-<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="22"/>
-<text x="57.15" y="48.26" size="1.016" layer="22" font="vector" rot="MR0">Raspberry PI GPIO Port</text>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="41"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="41"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="41"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="41"/>
-<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="42"/>
-<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="42"/>
-<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="42"/>
-<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="42"/>
-<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
-</package>
-<package name="RASPI_BOARD_B+HAT_SMALL">
+<package name="RASPI_BOARD_B+HAT_SMALL" urn="urn:adsk.eagle:footprint:7043364/1" library_version="1" library_locally_modified="yes">
 <description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
 Official outline, but without cutouts for display &amp;amp; camera flex connector</description>
 <wire x1="0" y1="6.81" x2="3" y2="5.08" width="0" layer="20" curve="90"/>
@@ -1009,6 +71,17 @@ Official outline, but without cutouts for display &amp;amp; camera flex connecto
 <wire x1="65" y1="19.98" x2="62" y2="22.98" width="0" layer="20" curve="90"/>
 <wire x1="62" y1="22.98" x2="3" y2="22.98" width="0" layer="20"/>
 <wire x1="3" y1="22.98" x2="0" y2="19.98" width="0" layer="20" curve="90"/>
+<wire x1="7.1" y1="22.02" x2="7.1" y2="19.48" width="0.127" layer="21"/>
+<wire x1="7.1" y1="19.48" x2="7.1" y2="16.94" width="0.127" layer="21"/>
+<wire x1="7.1" y1="16.94" x2="8.0525" y2="16.94" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="16.94" x2="8.6875" y2="16.94" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="16.94" x2="9.64" y2="16.94" width="0.127" layer="21"/>
+<wire x1="9.64" y1="16.94" x2="57.9" y2="16.94" width="0.127" layer="21"/>
+<wire x1="57.9" y1="16.94" x2="57.9" y2="22.02" width="0.127" layer="21"/>
+<wire x1="57.9" y1="22.02" x2="7.1" y2="22.02" width="0.127" layer="21"/>
+<wire x1="7.1" y1="19.48" x2="9.64" y2="19.48" width="0.127" layer="21"/>
+<wire x1="9.64" y1="19.48" x2="9.64" y2="16.94" width="0.127" layer="21"/>
+<wire x1="0" y1="6.81" x2="0" y2="19.98" width="0" layer="20"/>
 <hole x="3.5" y="19.48" drill="2.75"/>
 <hole x="61.5" y="19.48" drill="2.75"/>
 <pad name="1" x="8.37" y="18.21" drill="1" diameter="1.778" shape="square"/>
@@ -1051,21 +124,1032 @@ Official outline, but without cutouts for display &amp;amp; camera flex connecto
 <pad name="38" x="54.09" y="20.75" drill="1" diameter="1.778"/>
 <pad name="39" x="56.63" y="18.21" drill="1" diameter="1.778"/>
 <pad name="40" x="56.63" y="20.75" drill="1" diameter="1.778"/>
-<wire x1="7.1" y1="22.02" x2="7.1" y2="19.48" width="0.127" layer="21"/>
-<wire x1="7.1" y1="19.48" x2="7.1" y2="16.94" width="0.127" layer="21"/>
-<wire x1="7.1" y1="16.94" x2="8.0525" y2="16.94" width="0.127" layer="21"/>
-<wire x1="8.0525" y1="16.94" x2="8.6875" y2="16.94" width="0.127" layer="21"/>
-<wire x1="8.6875" y1="16.94" x2="9.64" y2="16.94" width="0.127" layer="21"/>
-<wire x1="9.64" y1="16.94" x2="57.9" y2="16.94" width="0.127" layer="21"/>
-<wire x1="57.9" y1="16.94" x2="57.9" y2="22.02" width="0.127" layer="21"/>
-<wire x1="57.9" y1="22.02" x2="7.1" y2="22.02" width="0.127" layer="21"/>
-<wire x1="7.1" y1="19.48" x2="9.64" y2="19.48" width="0.127" layer="21"/>
-<wire x1="9.64" y1="19.48" x2="9.64" y2="16.94" width="0.127" layer="21"/>
-<wire x1="0" y1="6.81" x2="0" y2="19.98" width="0" layer="20"/>
+</package>
+<package name="RASPI_BOARD_B+_FULL" urn="urn:adsk.eagle:footprint:7043375/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; drill holes</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="0" x2="6.85" y2="0" width="0.254" layer="52"/>
+<wire x1="6.85" y1="0" x2="14.35" y2="0" width="0.254" layer="52"/>
+<wire x1="14.35" y1="0" x2="50.5" y2="0" width="0.254" layer="52"/>
+<wire x1="50.5" y1="0" x2="51.5" y2="0" width="0.254" layer="52"/>
+<wire x1="51.5" y1="0" x2="55.5" y2="0" width="0.254" layer="52"/>
+<wire x1="55.5" y1="0" x2="56.5" y2="0" width="0.254" layer="52"/>
+<wire x1="56.5" y1="0" x2="82" y2="0" width="0.254" layer="52"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="3" x2="85" y2="53" width="0.254" layer="52"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="56" x2="3" y2="56" width="0.254" layer="52"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="0" y1="53" x2="0" y2="3" width="0.254" layer="52"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="65.25" y1="2.25" x2="86.5" y2="2.25" width="0.127" layer="52"/>
+<wire x1="86.5" y1="2.25" x2="86.5" y2="18.25" width="0.127" layer="52"/>
+<wire x1="86.5" y1="18.25" x2="65.25" y2="18.25" width="0.127" layer="52"/>
+<wire x1="65.25" y1="18.25" x2="65.25" y2="2.25" width="0.127" layer="52"/>
+<wire x1="69" y1="35.6" x2="69" y2="22.4" width="0.127" layer="52"/>
+<wire x1="69" y1="22.4" x2="86" y2="22.4" width="0.127" layer="52"/>
+<wire x1="86" y1="22.4" x2="86" y2="21.7" width="0.127" layer="52"/>
+<wire x1="86" y1="21.7" x2="86.5" y2="21.7" width="0.127" layer="52"/>
+<wire x1="86.5" y1="21.7" x2="86.5" y2="36.3" width="0.127" layer="52"/>
+<wire x1="86.5" y1="36.3" x2="86" y2="36.3" width="0.127" layer="52"/>
+<wire x1="86" y1="36.3" x2="86" y2="35.6" width="0.127" layer="52"/>
+<wire x1="86" y1="35.6" x2="69" y2="35.6" width="0.127" layer="52"/>
+<wire x1="69" y1="40.4" x2="86" y2="40.4" width="0.127" layer="52"/>
+<wire x1="86" y1="40.4" x2="86" y2="39.7" width="0.127" layer="52"/>
+<wire x1="86" y1="39.7" x2="86.5" y2="39.7" width="0.127" layer="52"/>
+<wire x1="86.5" y1="39.7" x2="86.5" y2="54.3" width="0.127" layer="52"/>
+<wire x1="86.5" y1="54.3" x2="86" y2="54.3" width="0.127" layer="52"/>
+<wire x1="86" y1="54.3" x2="86" y2="53.6" width="0.127" layer="52"/>
+<wire x1="86" y1="53.6" x2="69" y2="53.6" width="0.127" layer="52"/>
+<wire x1="69" y1="53.6" x2="69" y2="40.4" width="0.127" layer="52"/>
+<wire x1="24.5" y1="10.5" x2="24.5" y2="-1.25" width="0.127" layer="52"/>
+<wire x1="24.5" y1="-1.25" x2="39.5" y2="-1.25" width="0.127" layer="52"/>
+<wire x1="39.5" y1="-1.25" x2="39.5" y2="10.5" width="0.127" layer="52"/>
+<wire x1="39.5" y1="10.5" x2="24.5" y2="10.5" width="0.127" layer="52"/>
+<wire x1="50.5" y1="0" x2="50.5" y2="11" width="0.127" layer="52"/>
+<wire x1="50.5" y1="11" x2="56.5" y2="11" width="0.127" layer="52"/>
+<wire x1="56.5" y1="11" x2="56.5" y2="0" width="0.127" layer="52"/>
+<wire x1="51.5" y1="0" x2="51.5" y2="-2" width="0.127" layer="52"/>
+<wire x1="51.5" y1="-2" x2="55.5" y2="-2" width="0.127" layer="52"/>
+<wire x1="55.5" y1="-2" x2="55.5" y2="0" width="0.127" layer="52"/>
+<wire x1="6.85" y1="0" x2="6.85" y2="5.75" width="0.127" layer="52"/>
+<wire x1="6.85" y1="5.75" x2="14.35" y2="5.75" width="0.127" layer="52"/>
+<wire x1="14.35" y1="5.75" x2="14.35" y2="0" width="0.127" layer="52"/>
+<wire x1="6.85" y1="0" x2="6.6" y2="-0.5" width="0.127" layer="52"/>
+<wire x1="6.6" y1="-0.5" x2="14.6" y2="-0.5" width="0.127" layer="52"/>
+<wire x1="14.6" y1="-0.5" x2="14.35" y2="0" width="0.127" layer="52"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
+</package>
+<package name="RASPI_BOARD_B+_FULL_PAD" urn="urn:adsk.eagle:footprint:7043374/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; mounting pads</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="0" x2="6.85" y2="0" width="0.254" layer="52"/>
+<wire x1="6.85" y1="0" x2="14.35" y2="0" width="0.254" layer="52"/>
+<wire x1="14.35" y1="0" x2="50.5" y2="0" width="0.254" layer="52"/>
+<wire x1="50.5" y1="0" x2="51.5" y2="0" width="0.254" layer="52"/>
+<wire x1="51.5" y1="0" x2="55.5" y2="0" width="0.254" layer="52"/>
+<wire x1="55.5" y1="0" x2="56.5" y2="0" width="0.254" layer="52"/>
+<wire x1="56.5" y1="0" x2="82" y2="0" width="0.254" layer="52"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="3" x2="85" y2="53" width="0.254" layer="52"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="56" x2="3" y2="56" width="0.254" layer="52"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="0" y1="53" x2="0" y2="3" width="0.254" layer="52"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="65.25" y1="2.25" x2="86.5" y2="2.25" width="0.127" layer="52"/>
+<wire x1="86.5" y1="2.25" x2="86.5" y2="18.25" width="0.127" layer="52"/>
+<wire x1="86.5" y1="18.25" x2="65.25" y2="18.25" width="0.127" layer="52"/>
+<wire x1="65.25" y1="18.25" x2="65.25" y2="2.25" width="0.127" layer="52"/>
+<wire x1="69" y1="35.6" x2="69" y2="22.4" width="0.127" layer="52"/>
+<wire x1="69" y1="22.4" x2="86" y2="22.4" width="0.127" layer="52"/>
+<wire x1="86" y1="22.4" x2="86" y2="21.7" width="0.127" layer="52"/>
+<wire x1="86" y1="21.7" x2="86.5" y2="21.7" width="0.127" layer="52"/>
+<wire x1="86.5" y1="21.7" x2="86.5" y2="36.3" width="0.127" layer="52"/>
+<wire x1="86.5" y1="36.3" x2="86" y2="36.3" width="0.127" layer="52"/>
+<wire x1="86" y1="36.3" x2="86" y2="35.6" width="0.127" layer="52"/>
+<wire x1="86" y1="35.6" x2="69" y2="35.6" width="0.127" layer="52"/>
+<wire x1="69" y1="40.4" x2="86" y2="40.4" width="0.127" layer="52"/>
+<wire x1="86" y1="40.4" x2="86" y2="39.7" width="0.127" layer="52"/>
+<wire x1="86" y1="39.7" x2="86.5" y2="39.7" width="0.127" layer="52"/>
+<wire x1="86.5" y1="39.7" x2="86.5" y2="54.3" width="0.127" layer="52"/>
+<wire x1="86.5" y1="54.3" x2="86" y2="54.3" width="0.127" layer="52"/>
+<wire x1="86" y1="54.3" x2="86" y2="53.6" width="0.127" layer="52"/>
+<wire x1="86" y1="53.6" x2="69" y2="53.6" width="0.127" layer="52"/>
+<wire x1="69" y1="53.6" x2="69" y2="40.4" width="0.127" layer="52"/>
+<wire x1="24.5" y1="10.5" x2="24.5" y2="-1.25" width="0.127" layer="52"/>
+<wire x1="24.5" y1="-1.25" x2="39.5" y2="-1.25" width="0.127" layer="52"/>
+<wire x1="39.5" y1="-1.25" x2="39.5" y2="10.5" width="0.127" layer="52"/>
+<wire x1="39.5" y1="10.5" x2="24.5" y2="10.5" width="0.127" layer="52"/>
+<wire x1="50.5" y1="0" x2="50.5" y2="11" width="0.127" layer="52"/>
+<wire x1="50.5" y1="11" x2="56.5" y2="11" width="0.127" layer="52"/>
+<wire x1="56.5" y1="11" x2="56.5" y2="0" width="0.127" layer="52"/>
+<wire x1="51.5" y1="0" x2="51.5" y2="-2" width="0.127" layer="52"/>
+<wire x1="51.5" y1="-2" x2="55.5" y2="-2" width="0.127" layer="52"/>
+<wire x1="55.5" y1="-2" x2="55.5" y2="0" width="0.127" layer="52"/>
+<wire x1="6.85" y1="0" x2="6.85" y2="5.75" width="0.127" layer="52"/>
+<wire x1="6.85" y1="5.75" x2="14.35" y2="5.75" width="0.127" layer="52"/>
+<wire x1="14.35" y1="5.75" x2="14.35" y2="0" width="0.127" layer="52"/>
+<wire x1="6.85" y1="0" x2="6.6" y2="-0.5" width="0.127" layer="52"/>
+<wire x1="6.6" y1="-0.5" x2="14.6" y2="-0.5" width="0.127" layer="52"/>
+<wire x1="14.6" y1="-0.5" x2="14.35" y2="0" width="0.127" layer="52"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<pad name="DRILL_3" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
+<pad name="DRILL_1" x="3.5" y="52.5" drill="2.75" diameter="6.2"/>
+<pad name="DRILL_2" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
+<pad name="DRILL_4" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+</package>
+<package name="RASPI_BOARD_B+_EDGES_0DRILL" urn="urn:adsk.eagle:footprint:7043373/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+without any drill holes</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+</package>
+<package name="RASPI_BOARD_B+_EDGES_3DRILL" urn="urn:adsk.eagle:footprint:7043372/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+with 3 drill holes (top left hole is missing to allow routing of power supply lines)</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
+</package>
+<package name="RASPI_BOARD_B+_EDGES_3DRILL_PAD" urn="urn:adsk.eagle:footprint:7043371/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+with 3 mounting pads (top left pad is missing to allow routing of power supply lines)</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<pad name="41" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
+<pad name="42" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
+<pad name="43" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+</package>
+<package name="RASPI_BOARD_B+_EDGES_4DRILL" urn="urn:adsk.eagle:footprint:7043370/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
+with all 4 drill holes</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<circle x="3.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.1" width="0.127" layer="52"/>
+</package>
+<package name="RASPI_BOARD_B+_EDGES_4DRILL_PAD" urn="urn:adsk.eagle:footprint:7043369/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
+with all 4 mounting pads</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0.254" layer="52" curve="90"/>
+<wire x1="82" y1="0" x2="85" y2="3" width="0.254" layer="52" curve="90"/>
+<wire x1="85" y1="53" x2="82" y2="56" width="0.254" layer="52" curve="90"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0.254" layer="52" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<pad name="41" x="3.5" y="3.5" drill="2.75" diameter="6.2"/>
+<pad name="42" x="61.5" y="3.5" drill="2.75" diameter="6.2"/>
+<pad name="43" x="61.5" y="52.5" drill="2.75" diameter="6.2"/>
+<pad name="44" x="3.5" y="52.5" drill="2.75" diameter="6.2"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+</package>
+<package name="RASPI_BOARD_B+HAT" urn="urn:adsk.eagle:footprint:7043368/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline, but without cutouts for display &amp;amp; camera flex connector</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
+<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
+<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
+<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="0" y1="3" x2="0" y2="53" width="0" layer="20"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
+</package>
+<package name="RASPI_BOARD_B+HAT_DF" urn="urn:adsk.eagle:footprint:7043367/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutout for display flex connector</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
+<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
+<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
+<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="0" y1="3" x2="0" y2="17.5" width="0" layer="20"/>
+<wire x1="0" y1="17.5" x2="2" y2="19.5" width="0" layer="20" curve="-90"/>
+<wire x1="2" y1="19.5" x2="3" y2="19.5" width="0" layer="20"/>
+<wire x1="3" y1="19.5" x2="5" y2="21.5" width="0" layer="20" curve="90"/>
+<wire x1="5" y1="21.5" x2="5" y2="34.5" width="0" layer="20"/>
+<wire x1="5" y1="34.5" x2="3" y2="36.5" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="36.5" x2="2" y2="36.5" width="0" layer="20"/>
+<wire x1="2" y1="36.5" x2="0" y2="38.5" width="0" layer="20" curve="-90"/>
+<wire x1="0" y1="38.5" x2="0" y2="53" width="0" layer="20"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<text x="4" y="21" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Display Flex Slot</text>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
+</package>
+<package name="RASPI_BOARD_B+HAT_DF_CF" urn="urn:adsk.eagle:footprint:7043366/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutouts for display &amp;amp; camera flex connector</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
+<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
+<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
+<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="21"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="0" y1="3" x2="0" y2="17.5" width="0" layer="20"/>
+<wire x1="0" y1="17.5" x2="2" y2="19.5" width="0" layer="20" curve="-90"/>
+<wire x1="2" y1="19.5" x2="3" y2="19.5" width="0" layer="20"/>
+<wire x1="3" y1="19.5" x2="5" y2="21.5" width="0" layer="20" curve="90"/>
+<wire x1="5" y1="21.5" x2="5" y2="34.5" width="0" layer="20"/>
+<wire x1="5" y1="34.5" x2="3" y2="36.5" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="36.5" x2="2" y2="36.5" width="0" layer="20"/>
+<wire x1="2" y1="36.5" x2="0" y2="38.5" width="0" layer="20" curve="-90"/>
+<wire x1="0" y1="38.5" x2="0" y2="53" width="0" layer="20"/>
+<wire x1="44" y1="4" x2="45" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="45" y1="3" x2="46" y2="4" width="0" layer="20" curve="90"/>
+<wire x1="46" y1="4" x2="46" y2="19" width="0" layer="20"/>
+<wire x1="46" y1="19" x2="45" y2="20" width="0" layer="20" curve="90"/>
+<wire x1="45" y1="20" x2="44" y2="19" width="0" layer="20" curve="90"/>
+<wire x1="44" y1="19" x2="44" y2="4" width="0" layer="20"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<text x="4" y="21" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Display Flex Slot</text>
+<text x="45.5" y="4.75" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Camera Flex Slot</text>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
+</package>
+<package name="RASPI_BOARD_B+HAT_CF" urn="urn:adsk.eagle:footprint:7043365/1" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutouts for camera flex connector</description>
+<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
+<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
+<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="65" y1="3" x2="65" y2="53" width="0" layer="20"/>
+<wire x1="65" y1="53" x2="62" y2="56" width="0" layer="20" curve="90"/>
+<wire x1="62" y1="56" x2="3" y2="56" width="0" layer="20"/>
+<wire x1="3" y1="56" x2="0" y2="53" width="0" layer="20" curve="90"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="21"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="21"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="21"/>
+<wire x1="7.1" y1="52.5" x2="9.64" y2="52.5" width="0.127" layer="22"/>
+<wire x1="9.64" y1="52.5" x2="9.64" y2="49.96" width="0.127" layer="22"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="21"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="21"/>
+<wire x1="0" y1="3" x2="0" y2="53" width="0" layer="20"/>
+<wire x1="44" y1="4" x2="45" y2="3" width="0" layer="20" curve="90"/>
+<wire x1="45" y1="3" x2="46" y2="4" width="0" layer="20" curve="90"/>
+<wire x1="46" y1="4" x2="46" y2="19" width="0" layer="20"/>
+<wire x1="46" y1="19" x2="45" y2="20" width="0" layer="20" curve="90"/>
+<wire x1="45" y1="20" x2="44" y2="19" width="0" layer="20" curve="90"/>
+<wire x1="44" y1="19" x2="44" y2="4" width="0" layer="20"/>
+<wire x1="7.1" y1="55.04" x2="7.1" y2="52.5" width="0.127" layer="22"/>
+<wire x1="7.1" y1="52.5" x2="7.1" y2="49.96" width="0.127" layer="22"/>
+<wire x1="7.1" y1="49.96" x2="8.0525" y2="49.96" width="0.127" layer="22"/>
+<wire x1="8.0525" y1="49.96" x2="8.6875" y2="49.96" width="0.127" layer="22"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="21"/>
+<wire x1="9.64" y1="49.96" x2="57.9" y2="49.96" width="0.127" layer="22"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="22"/>
+<wire x1="57.9" y1="55.04" x2="7.1" y2="55.04" width="0.127" layer="22"/>
+<wire x1="8.0525" y1="49.96" x2="8.0525" y2="49.6425" width="0.127" layer="22"/>
+<wire x1="8.0525" y1="49.6425" x2="8.6875" y2="49.6425" width="0.127" layer="22"/>
+<wire x1="8.6875" y1="49.6425" x2="8.6875" y2="49.96" width="0.127" layer="22"/>
+<wire x1="8.6875" y1="49.96" x2="9.64" y2="49.96" width="0.127" layer="22"/>
+<wire x1="57.9" y1="49.96" x2="57.9" y2="55.04" width="0.127" layer="21"/>
+<hole x="3.5" y="3.5" drill="2.75"/>
+<hole x="3.5" y="52.5" drill="2.75"/>
+<hole x="61.5" y="3.5" drill="2.75"/>
+<hole x="61.5" y="52.5" drill="2.75"/>
+<pad name="1" x="8.37" y="51.23" drill="1" diameter="1.778" shape="square"/>
+<pad name="2" x="8.37" y="53.77" drill="1" diameter="1.778"/>
+<pad name="3" x="10.91" y="51.23" drill="1" diameter="1.778"/>
+<pad name="4" x="10.91" y="53.77" drill="1" diameter="1.778"/>
+<pad name="5" x="13.45" y="51.23" drill="1" diameter="1.778"/>
+<pad name="6" x="13.45" y="53.77" drill="1" diameter="1.778"/>
+<pad name="7" x="15.99" y="51.23" drill="1" diameter="1.778"/>
+<pad name="8" x="15.99" y="53.77" drill="1" diameter="1.778"/>
+<pad name="9" x="18.53" y="51.23" drill="1" diameter="1.778"/>
+<pad name="10" x="18.53" y="53.77" drill="1" diameter="1.778"/>
+<pad name="11" x="21.07" y="51.23" drill="1" diameter="1.778"/>
+<pad name="12" x="21.07" y="53.77" drill="1" diameter="1.778"/>
+<pad name="13" x="23.61" y="51.23" drill="1" diameter="1.778"/>
+<pad name="14" x="23.61" y="53.77" drill="1" diameter="1.778"/>
+<pad name="15" x="26.15" y="51.23" drill="1" diameter="1.778"/>
+<pad name="16" x="26.15" y="53.77" drill="1" diameter="1.778"/>
+<pad name="17" x="28.69" y="51.23" drill="1" diameter="1.778"/>
+<pad name="18" x="28.69" y="53.77" drill="1" diameter="1.778"/>
+<pad name="19" x="31.23" y="51.23" drill="1" diameter="1.778"/>
+<pad name="20" x="31.23" y="53.77" drill="1" diameter="1.778"/>
+<pad name="21" x="33.77" y="51.23" drill="1" diameter="1.778"/>
+<pad name="22" x="33.77" y="53.77" drill="1" diameter="1.778"/>
+<pad name="23" x="36.31" y="51.23" drill="1" diameter="1.778"/>
+<pad name="24" x="36.31" y="53.77" drill="1" diameter="1.778"/>
+<pad name="25" x="38.85" y="51.23" drill="1" diameter="1.778"/>
+<pad name="26" x="38.85" y="53.77" drill="1" diameter="1.778"/>
+<pad name="27" x="41.39" y="51.23" drill="1" diameter="1.778"/>
+<pad name="28" x="41.39" y="53.77" drill="1" diameter="1.778"/>
+<pad name="29" x="43.93" y="51.23" drill="1" diameter="1.778"/>
+<pad name="30" x="43.93" y="53.77" drill="1" diameter="1.778"/>
+<pad name="31" x="46.47" y="51.23" drill="1" diameter="1.778"/>
+<pad name="32" x="46.47" y="53.77" drill="1" diameter="1.778"/>
+<pad name="33" x="49.01" y="51.23" drill="1" diameter="1.778"/>
+<pad name="34" x="49.01" y="53.77" drill="1" diameter="1.778"/>
+<pad name="35" x="51.55" y="51.23" drill="1" diameter="1.778"/>
+<pad name="36" x="51.55" y="53.77" drill="1" diameter="1.778"/>
+<pad name="37" x="54.09" y="51.23" drill="1" diameter="1.778"/>
+<pad name="38" x="54.09" y="53.77" drill="1" diameter="1.778"/>
+<pad name="39" x="56.63" y="51.23" drill="1" diameter="1.778"/>
+<pad name="40" x="56.63" y="53.77" drill="1" diameter="1.778"/>
+<text x="8.0525" y="48.3725" size="1.016" layer="21" font="vector" ratio="10">1</text>
+<text x="45.5" y="4.75" size="1.016" layer="51" font="vector" ratio="10" rot="R90">Camera Flex Slot</text>
+<text x="8.6875" y="48.3725" size="1.016" layer="22" font="vector" ratio="10" rot="MR0">1</text>
+<text x="57.15" y="48.26" size="1.016" layer="22" font="vector" rot="MR0">Raspberry PI GPIO Port</text>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="52"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="29"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0" layer="30"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0" layer="30"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0" layer="30"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="41"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="41"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="41"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="41"/>
+<circle x="3.5" y="52.5" radius="3.2" width="0.127" layer="42"/>
+<circle x="61.5" y="52.5" radius="3.2" width="0.127" layer="42"/>
+<circle x="61.5" y="3.5" radius="3.2" width="0.127" layer="42"/>
+<circle x="3.5" y="3.5" radius="3.2" width="0.127" layer="42"/>
 </package>
 </packages>
+<packages3d>
+<package3d name="RASPI_BOARD_B+HAT_SMALL" urn="urn:adsk.eagle:package:7043377/2" type="model" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline, but without cutouts for display &amp;amp; camera flex connector</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+HAT_SMALL"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_FULL" urn="urn:adsk.eagle:package:7043388/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; drill holes</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_FULL"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_FULL_PAD" urn="urn:adsk.eagle:package:7043387/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, full outline with position of big connectors &amp;amp; mounting pads</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_FULL_PAD"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_EDGES_0DRILL" urn="urn:adsk.eagle:package:7043386/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+without any drill holes</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_EDGES_0DRILL"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_EDGES_3DRILL" urn="urn:adsk.eagle:package:7043385/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+with 3 drill holes (top left hole is missing to allow routing of power supply lines)</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_EDGES_3DRILL"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_EDGES_3DRILL_PAD" urn="urn:adsk.eagle:package:7043384/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br&gt;
+with 3 mounting pads (top left pad is missing to allow routing of power supply lines)</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_EDGES_3DRILL_PAD"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_EDGES_4DRILL" urn="urn:adsk.eagle:package:7043383/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
+with all 4 drill holes</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_EDGES_4DRILL"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+_EDGES_4DRILL_PAD" urn="urn:adsk.eagle:package:7043382/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+, outline is only marked by its edges&lt;br/&gt;
+with all 4 mounting pads</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+_EDGES_4DRILL_PAD"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+HAT" urn="urn:adsk.eagle:package:7043381/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline, but without cutouts for display &amp;amp; camera flex connector</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+HAT"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+HAT_DF" urn="urn:adsk.eagle:package:7043380/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutout for display flex connector</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+HAT_DF"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+HAT_DF_CF" urn="urn:adsk.eagle:package:7043379/1" type="box" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutouts for display &amp;amp; camera flex connector</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+HAT_DF_CF"/>
+</packageinstances>
+</package3d>
+<package3d name="RASPI_BOARD_B+HAT_CF" urn="urn:adsk.eagle:package:7043378/2" type="model" library_version="1" library_locally_modified="yes">
+<description>Raspberry Pi board model B+ HAT board&lt;br/&gt;
+Official outline with cutouts for camera flex connector</description>
+<packageinstances>
+<packageinstance name="RASPI_BOARD_B+HAT_CF"/>
+</packageinstances>
+</package3d>
+</packages3d>
 <symbols>
-<symbol name="RASPI_GPIO_B+#">
+<symbol name="RASPI_GPIO_B+#" urn="urn:adsk.eagle:symbol:7043376/1" library_version="1" library_locally_modified="yes">
 <description>Generic schematic symbol for the Raspberry Pi GPIO connector&lt;br/&gt;
 Model B+ &amp;nbsp; all pins connected</description>
 <wire x1="-12.7" y1="25.4" x2="12.7" y2="25.4" width="0.254" layer="94"/>
@@ -1074,6 +1158,7 @@ Model B+ &amp;nbsp; all pins connected</description>
 <wire x1="-12.7" y1="-38.1" x2="-12.7" y2="25.4" width="0.254" layer="94"/>
 <text x="13.97" y="22.86" size="1.778" layer="97" ratio="10">Raspberry Pi</text>
 <text x="13.97" y="20.32" size="1.778" layer="97" ratio="10">GPIO Port</text>
+<text x="13.97" y="17.78" size="1.778" layer="97" ratio="10">Model B+</text>
 <pin name="5V0A" x="-7.62" y="27.94" length="short" direction="pwr" rot="R270"/>
 <pin name="3V3A" x="5.08" y="27.94" length="short" direction="pwr" rot="R270"/>
 <pin name="GND_A" x="15.24" y="-7.62" length="short" direction="pwr" rot="R180"/>
@@ -1100,7 +1185,6 @@ Model B+ &amp;nbsp; all pins connected</description>
 <pin name="GND_C" x="15.24" y="-12.7" length="short" direction="pwr" rot="R180"/>
 <pin name="GND_D" x="15.24" y="-15.24" length="short" direction="pwr" rot="R180"/>
 <pin name="GND_E" x="15.24" y="-17.78" length="short" direction="pwr" rot="R180"/>
-<text x="13.97" y="17.78" size="1.778" layer="97" ratio="10">Model B+</text>
 <pin name="ID_SC" x="15.24" y="-33.02" length="short" direction="nc" rot="R180"/>
 <pin name="ID_SD" x="15.24" y="-35.56" length="short" direction="nc" rot="R180"/>
 <pin name="GPIO05" x="-15.24" y="-7.62" length="short" direction="nc"/>
@@ -1118,7 +1202,7 @@ Model B+ &amp;nbsp; all pins connected</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="RASPI_BOARD_B+#" prefix="X">
+<deviceset name="RASPI_BOARD_B+#" urn="urn:adsk.eagle:component:7043389/1" locally_modified="yes" prefix="X" library_version="1" library_locally_modified="yes">
 <description>Raspberry Pi GPIO connector with markings for the outer dimensions of the Raspberry Pi board model B+&lt;br&gt;
 with different sets of drill holes or mounting pads&lt;br/&gt;
 All pins connected</description>
@@ -1169,6 +1253,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043388/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1216,6 +1303,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043387/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1263,6 +1353,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043386/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1310,6 +1403,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043385/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1357,6 +1453,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043384/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1404,6 +1503,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043383/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1451,6 +1553,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043382/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1498,6 +1603,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043381/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1545,6 +1653,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043380/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1592,6 +1703,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043379/1"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1639,6 +1753,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043378/2"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1686,6 +1803,9 @@ All pins connected</description>
 <connect gate="G$1" pin="SPI_SCLK" pad="23"/>
 <connect gate="G$1" pin="TXD" pad="8"/>
 </connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:7043377/2"/>
+</package3dinstances>
 <technologies>
 <technology name=""/>
 </technologies>
@@ -1827,7 +1947,7 @@ All pins connected</description>
 </class>
 </classes>
 <parts>
-<part name="X1" library="raspi" deviceset="RASPI_BOARD_B+#" device=""/>
+<part name="X1" library="raspi" library_urn="urn:adsk.eagle:library:7043363" deviceset="RASPI_BOARD_B+#" device="" package3d_urn="urn:adsk.eagle:package:7043377/2"/>
 <part name="J1" library="connector" deviceset="STD-PINHD-1X10" device=""/>
 <part name="P+1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="GND1" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
@@ -1839,12 +1959,23 @@ All pins connected</description>
 <plain>
 </plain>
 <instances>
-<instance part="X1" gate="G$1" x="27.94" y="38.1"/>
-<instance part="J1" gate="G$1" x="134.62" y="38.1"/>
-<instance part="P+1" gate="1" x="20.32" y="73.66"/>
-<instance part="GND1" gate="1" x="53.34" y="5.08"/>
-<instance part="P+2" gate="1" x="114.3" y="66.04"/>
-<instance part="GND2" gate="1" x="111.76" y="50.8"/>
+<instance part="X1" gate="G$1" x="27.94" y="38.1" smashed="yes"/>
+<instance part="J1" gate="G$1" x="134.62" y="38.1" smashed="yes">
+<attribute name="NAME" x="129.54" y="48.895" size="1.778" layer="95" align="bottom-center"/>
+<attribute name="VALUE" x="129.54" y="17.78" size="1.778" layer="96" align="bottom-center"/>
+</instance>
+<instance part="P+1" gate="1" x="20.32" y="73.66" smashed="yes">
+<attribute name="VALUE" x="17.78" y="68.58" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="GND1" gate="1" x="53.34" y="5.08" smashed="yes">
+<attribute name="VALUE" x="50.8" y="2.54" size="1.778" layer="96"/>
+</instance>
+<instance part="P+2" gate="1" x="114.3" y="66.04" smashed="yes">
+<attribute name="VALUE" x="111.76" y="60.96" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="GND2" gate="1" x="111.76" y="50.8" smashed="yes">
+<attribute name="VALUE" x="109.22" y="48.26" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -2006,6 +2137,11 @@ with this version.
 Since Version 8.3, EAGLE supports URNs for individual library
 assets (packages, symbols, and devices). The URNs of those assets
 will not be understood (or retained) with this version.
+</note>
+<note version="8.3" severity="warning">
+Since Version 8.3, EAGLE supports the association of 3D packages
+with devices in libraries, schematics, and board files. Those 3D
+packages will not be understood (or retained) with this version.
 </note>
 </compatibility>
 </eagle>

@@ -33,3 +33,13 @@ CONFIG_CXX_EXCEPTIONS=y
 # SPIFFS Configuration
 #
 CONFIG_SPIFFS_META_LENGTH=0
+
+#
+# WiFi configuration
+#
+CONFIG_SW_COEXIST_ENABLE=n
+
+#
+# Bluetooth configuration
+#
+CONFIG_BT_ENABLED=y

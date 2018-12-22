@@ -97,7 +97,8 @@ Config::Config(WakeupCause cause) :
     wakeupCause(cause),
     configVersion(0),
     functionMode(FullSpec), sensorFrequency(0), 
-    pubSubSessionType(SessionTCP), irrcRecieverMode(IrrcRecieverOnDemand){
+    pubSubSessionType(SessionTCP), irrcRecieverMode(IrrcRecieverOnDemand),
+    bleHid(false){
 }
 
 Config::~Config(){
@@ -134,6 +135,7 @@ Config& Config::operator = (const Config& src){
     downloadFirmwareTopic = src.downloadFirmwareTopic;
     shadowTopic = src.shadowTopic;
     irrcRecieverMode = src.irrcRecieverMode;
+    bleHid = src.bleHid;
 
     return *this;
 }
@@ -217,6 +219,7 @@ bool Config::load(){
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
     applyValue(config, JSON_SHADOWTOPIC, shadowTopic);
     applyValue(config, JSON_IRRCRECIEVERMODE, irrcRecieverMode);
+    applyValue(config, JSON_BLEHID, bleHid);
 
     isDirty = false;
     isDirtyBootMode = false;
@@ -278,6 +281,7 @@ bool Config::commit(){
 		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
 		{JSON_SHADOWTOPIC, shadowTopic},
 		{JSON_IRRCRECIEVERMODE, (int32_t)irrcRecieverMode},
+		{JSON_BLEHID, bleHid},
 	    });
 	
 	fileGeneration = (fileGeneration & 1) + 1;
@@ -487,6 +491,12 @@ bool Config::setShadowTopic(const std::string& topic){
 
 bool Config::setIrrcRecieverMode(IrrcRecieverMode mode){
     irrcRecieverMode = mode;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setBleHid(bool enabled){
+    bleHid = enabled;
     isDirty = true;
     return true;
 }

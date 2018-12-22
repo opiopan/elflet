@@ -11,14 +11,21 @@
 #include "WebService.h"
 #include "REST.h"
 #include "WebContents.h"
+#include "BleHidService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
 
 static const char tag[] = "WebService";
 
-static std::function<void()> completeOtaHandler = [](){
-    elfletConfig->incrementOtaCount();
+static std::function<void(OTAPHASE)> otaHandler = [](OTAPHASE phase){
+    if (phase == OTA_BEGIN){
+	stopBleHidService();
+    }else if (phase == OTA_END){
+	elfletConfig->incrementOtaCount();
+    }else if (phase == OTA_ERROR){
+	startBleHidService();
+    }
 };
 
 static WebServer* webserver;
@@ -34,7 +41,7 @@ bool startWebService(){
     webserver->setHtdigest(htdigestfs_fp(), domain);
     webserver->setHandler(
 	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true,
-			 &completeOtaHandler),
+			 &otaHandler),
 	"/manage/otaupdate");
     registerConfigRESTHandler(webserver);
     registerStatusRESTHandler(webserver);

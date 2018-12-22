@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
-#include <apps/sntp/sntp.h>
+#include <lwip/apps/sntp.h>
 #include <string>
 #include "TimeObj.h"
 #include "NameResolver.h"

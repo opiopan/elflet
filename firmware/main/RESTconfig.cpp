@@ -45,16 +45,14 @@ static bool ApplyValue(const json11::Json& json, const std::string& key,
     return true;
 }
 
-/*
-static bool ApplyValue(const json11::Json& json, const std::string& key,
-		       std::function<bool(bool)> apply){
+static bool ApplyBoolValue(const json11::Json& json, const std::string& key,
+			   std::function<bool(bool)> apply){
     auto obj = json[key];
     if (obj.is_bool()){
 	return apply(obj.bool_value());
     }
     return true;
 }
-*/
 
 enum ApplyResult {AR_ERROR, AR_OK, AR_NEEDCOMMIT};
 
@@ -72,6 +70,7 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
 	    {JSON_IRRCRECIEVERMODE,
 		    irrcRecieverModeStr[conf->getIrrcRecieverMode()]},
+	    {JSON_BLEHID, conf->getBleHid()},
 	});
     auto pubsub = json11::Json::object({
 	    {JSON_PUBSUBSERVERADDR, conf->getPubSubServerAddr()},
@@ -256,6 +255,10 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 		return false;
 	    }
 	});
+
+    ApplyBoolValue(input, JSON_BLEHID,
+	       [](const bool v) -> bool{
+		   return elfletConfig->setBleHid(v);});
     
     bool commit =
 	input[JSON_COMMIT].is_bool() && input[JSON_COMMIT].bool_value();

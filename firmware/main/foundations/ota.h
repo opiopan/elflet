@@ -25,6 +25,13 @@ public:
 OTARESULT startOTA(const char* pubkey_path, size_t imageSize, OTA** outp);
 OTARESULT endOTA(const OTA* handle, bool needCommit);
 
+enum OTAPHASE {
+    OTA_BEGIN,
+    OTA_END,
+    OTA_ERROR
+};
+
 class WebServerHandler;
 WebServerHandler* getOTAWebHandler(const char* vkyepath, bool needDigestAuth,
-				   std::function<void()>* complete = nullptr);
+				   std::function<void(OTAPHASE)>* complete
+				   = nullptr);

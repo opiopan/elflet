@@ -34,6 +34,7 @@ const char JSON_DOWNLOADFIRMWARETOPIC[] = "DownloadFirmwareTopic";
 const char JSON_SHADOWTOPIC[] = "ShadowTopic";
 
 const char JSON_IRRCRECIEVERMODE[] = "IrrcRecieverMode";
+const char JSON_BLEHID[] = "EnableBLEHID";
 
 const char JSON_DATE[] = "date";
 const char JSON_TEMP_UNIT[] = "temperatureUnit";

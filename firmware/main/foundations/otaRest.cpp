@@ -31,11 +31,11 @@ protected:
     };
     const char* vkeypath;
     bool needDigestAuth;
-    std::function<void()>* complete;
+    std::function<void(OTAPHASE)>* handler;
 
 public:
     OTAWebHandler(const char* vkey, bool auth,
-		  std::function<void()>* complete);
+		  std::function<void(OTAPHASE)>* complete);
     virtual ~OTAWebHandler();
 
     virtual bool needDigestAuthentication(HttpRequest& req) override;
@@ -61,8 +61,8 @@ static void buildInvalidResp(HttpResponse* resp){
 }
 
 OTAWebHandler::OTAWebHandler(const char* vkey, bool auth,
-			     std::function<void()>* complete) :
-    vkeypath(vkey), needDigestAuth(auth), complete(complete){
+			     std::function<void(OTAPHASE)>* handler) :
+    vkeypath(vkey), needDigestAuth(auth),handler(handler){
 }
 
 OTAWebHandler::~OTAWebHandler(){
@@ -90,6 +90,10 @@ void OTAWebHandler::beginMultipart(WebServerConnection& connection){
     auto imageSize =
 	req->header().at(WebString("X-OTA-Image-Size")).intvalue();
     ESP_LOGI(tag, "image size: %d", imageSize);
+    
+    if (handler){
+	(*handler)(OTA_BEGIN);
+    }
 
     OTA* ota = NULL;
     if (startOTA(vkeypath, imageSize, &ota) != OTA_SUCCEED){
@@ -99,6 +103,7 @@ void OTAWebHandler::beginMultipart(WebServerConnection& connection){
 	resp->setBody("firmware downloading is proceeding in parallel");
 	resp->close();
 	delete ctx;
+
 	return;
     }
     ctx->start(ota);
@@ -161,8 +166,8 @@ void OTAWebHandler::endMultipartData(WebServerConnection& connection){
 	    resp->addHeader(WebString("Content-Type"),
 			    WebString("text/plain"));
 	    resp->setBody("firmware updating finished");
-	    if (complete){
-		(*complete)();
+	    if (handler){
+		(*handler)(OTA_END);
 	    }
 	    rebootIn(2000);
 	}else{
@@ -171,6 +176,9 @@ void OTAWebHandler::endMultipartData(WebServerConnection& connection){
 	    resp->addHeader(WebString("Content-Type"),
 			    WebString("text/plain"));
 	    resp->setBody("update data failed");
+	    if (handler){
+		(*handler)(OTA_ERROR);
+	    }
 	}
 	resp->close();
 	ctx->reply = true;
@@ -179,6 +187,6 @@ void OTAWebHandler::endMultipartData(WebServerConnection& connection){
 
 WebServerHandler* getOTAWebHandler(const char* vkeypath,
 				   bool needDigestAuth,
-				   std::function<void()>* complete){
-    return new OTAWebHandler(vkeypath, needDigestAuth, complete);
+				   std::function<void(OTAPHASE)>* handler){
+    return new OTAWebHandler(vkeypath, needDigestAuth, handler);
 }

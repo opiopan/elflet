@@ -1,5 +1,6 @@
 #include <esp_log.h>
 #include <Task.h>
+#include <esp_bt.h>
 #include "Config.h"
 #include "mdnsService.h"
 #include "WifiService.h"
@@ -13,6 +14,7 @@
 #include "TimeService.h"
 #include "PubSubService.h"
 #include "Stat.h"
+#include "BleHidService.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -63,6 +65,22 @@ void MainTask::run(void *data){
     }
     auto isSensorOnly =
 	(elfletConfig->getFunctionMode() == Config::SensorOnly);
+    auto enableBLE = 
+	(wakeupCause == WC_NOTSLEEP && mode == Config::Normal &&
+	 elfletConfig->getBleHid());
+
+    //--------------------------------------------------------------
+    // release memory for Bluetooth if it's possible
+    //--------------------------------------------------------------
+    if (!enableBLE){
+	ESP_LOGI(tag, "release memory for Bluetooth");
+	esp_bt_mem_release(ESP_BT_MODE_BTDM);
+	auto heapSize = xPortGetFreeHeapSize();
+	if (initialHeapSize < heapSize){
+	    initialHeapSize = heapSize;
+	    ESP_LOGI(tag, "initial heap size increase to %d bytes", heapSize);
+	}
+    }
 
     //--------------------------------------------------------------
     // start peripheral services
@@ -106,6 +124,10 @@ void MainTask::run(void *data){
 	}
 	if (!isSensorOnly){
 	    startIRServer();
+	}
+	if (enableBLE){
+	    initBleHidService(elfletConfig->getNodeName().c_str());
+	    startBleHidService();
 	}
     }
 }

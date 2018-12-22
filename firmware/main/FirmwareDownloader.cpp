@@ -11,6 +11,7 @@
 #include "ota.h"
 #include "Config.h"
 #include "NameResolver.h"
+#include "BleHidService.h"
 #include "FirmwareDownloader.h"
 
 #include "boardconfig.h"
@@ -95,6 +96,7 @@ void DownloadFirmware::run(void *data){
 	    //
 	    // establish HTTP connection & issue request
 	    //
+	    stopBleHidService();
 	    esp_http_client_config_t config;
 	    memset(&config, 0, sizeof(config));
 	    config.url = uri.c_str();
@@ -167,6 +169,8 @@ void DownloadFirmware::run(void *data){
 
 	if (needCommit){
 	    invokeCallback(finalResult);
+	}else{
+	    startBleHidService();
 	}
 
 	{

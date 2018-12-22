@@ -26,7 +26,7 @@ echo "erasing flash... (it may need a couple of seconds)"
 
 curl -F"image=@${IMAGE};type=application/octet-stream" \
      -H "X-OTA-Image-Size: $IMAGESIZE" \
-     --expect100-timeout 10 \
+     --expect100-timeout 30 \
      --anyauth --user "${USER}:${PASS}" \
      --dump-header ${HEADER} --progress-bar -o ${OUT}\
      "http://${ADDR}/manage/otaupdate" || exit 1

@@ -61,6 +61,8 @@ protected:
     std::string shadowTopic;
 
     int32_t irrcRecieverMode;
+
+    bool bleHid;
     
 public:
     Config(WakeupCause cause);
@@ -113,6 +115,7 @@ public:
     IrrcRecieverMode getIrrcRecieverMode() const{
 	return (IrrcRecieverMode)irrcRecieverMode;
     };
+    bool getBleHid()const {return bleHid;};
     
     const char* getVerificationKeyPath() const;
     const char* getShadowDefsPath() const;
@@ -151,6 +154,8 @@ public:
     bool setShadowTopic(const std::string& topic);
 
     bool setIrrcRecieverMode(IrrcRecieverMode mode);
+
+    bool setBleHid(bool enabled);
 
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
@@ -202,6 +207,7 @@ extern const char JSON_DOWNLOADFIRMWARETOPIC[];
 extern const char JSON_SHADOWTOPIC[];
 
 extern const char JSON_IRRCRECIEVERMODE[];
+extern const char JSON_BLEHID[];
 
 extern const char JSON_DATE[];
 extern const char JSON_TEMP_UNIT[];

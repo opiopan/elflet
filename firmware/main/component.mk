@@ -27,6 +27,8 @@ update_version:
 	echo GEN main/version.string
 	echo 'static const char verstr[] = "'`../../tools/version`'";' > \
 	    ../../main/version.string
+	rm -f $(BUILD_DIR_BASE)/elflet.bin
+	rm -f $(BUILD_DIR_BASE)/elflet.sbin
 
 extra-clean:
 	rm -f $(COMPONENT_EXTRA_CLEAN)

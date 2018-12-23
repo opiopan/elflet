@@ -105,7 +105,7 @@ class ShadowStatusHandler: public WebServerHandler{
 		    }
 		}else{
 		    httpStatus = HttpResponse::RESP_404_NotFound;
-		    resp->setBody("Specified shadow does not exit.");
+		    resp->setBody("Specified shadow does not exist.");
 		}
 	    }else{
 		httpStatus = HttpResponse::RESP_500_InternalServerError;
@@ -156,7 +156,7 @@ class ShadowDefsHandler : public WebServerHandler {
 		    resp->setBody(msgPtr);
 		}else{
 		    httpStatus = HttpResponse::RESP_404_NotFound;
-		    resp->setBody("Specified shadow does not exit.");
+		    resp->setBody("Specified shadow does not exist.");
 		}
 	    }else if (req->method() == HttpRequest::MethodPost &&
 		req->header("Content-Type") == "application/json"){
@@ -177,7 +177,7 @@ class ShadowDefsHandler : public WebServerHandler {
 		//
 		if (!deleteShadowDevice(name)){
 		    httpStatus = HttpResponse::RESP_404_NotFound;
-		    resp->setBody("Specified shadow does not exit.");
+		    resp->setBody("Specified shadow does not exist.");
 		}
 	    }else{
 		httpStatus = HttpResponse::RESP_500_InternalServerError;

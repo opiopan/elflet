@@ -44,9 +44,10 @@ static void sendData(const WebString& data){
 		i++;
 	    }
 	    if (i > 0){
-		ESP_LOGI(tag, "accept %d bytes key value", i);
 		auto dvalue =
 		    duration.is_number() ? duration.int_value() & 0xff : 100;
+		ESP_LOGI(tag, "accept %d bytes key value : duration [%d]",
+			 i, dvalue);
 		bleHidSendKeyValue(
 		    special.is_number() ? special.int_value() & 0xff : 0,
 		    buf, i, dvalue);

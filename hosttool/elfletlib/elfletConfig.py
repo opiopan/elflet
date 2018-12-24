@@ -229,6 +229,8 @@ def printConfig(rdata):
     print SUBHEADER + '    Subscribed Topic:' + ENDC
     print '        Start IR recieving: {0}'.format(pdata['IrrcRecieveTopic'])
     print '        Send IR data:       {0}'.format(pdata['IrrcSendTopic'])
+    print '        Download Firmware:  {0}'.\
+        format(pdata['DownloadFirmwareTopic'])
     
 def getInformation(options, host):
     raw = (options.stat or options.rawOutput)

@@ -201,7 +201,7 @@ def printConfig(rdata):
     print '    MQTT Function:          {0}'.format('Enable'
                                                    if pdata['PubSubServerAddr']
                                                    else 'Disable')
-    print '    BLE Keyboard Emuration: {0}'.format('Enable'
+    print '    BLE Keyboard Emulation: {0}'.format('Enable'
                                                    if 'EnableBLEHID'
                                                    in rdata and
                                                    rdata['EnableBLEHID']

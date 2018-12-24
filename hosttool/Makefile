@@ -2,7 +2,7 @@ DEBUGFLAGS	= -g
 CFLAGS		= -I../firmware/main $(DEBUGFLAGS) -std=c99
 INSTALLDIR	= /usr/local/bin
 PLIBDIR     	= elfletlib
-TARGETS 	= irtx elflet-config
+TARGETS 	= irtx elflet-config elflet-shadow
 OBJS		= irtx.o irslib.o
 
 all: $(TARGETS)

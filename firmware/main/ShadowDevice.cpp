@@ -2032,7 +2032,7 @@ bool ShadowDeviceImp::setStatus(const std::string& json, std::string& err){
     }
 
     commiter.commit();
-    return false;
+    return true;
 }
 
 //======================================================================

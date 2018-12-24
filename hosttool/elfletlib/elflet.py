@@ -31,7 +31,8 @@ def request(host, path, method = GET, data = None, password = None):
 
     try:
         code, rdata = doreq()
-        if code == 401 and sys.stdout.isatty() and sys.stdin.isatty():
+        if code == 401 and sys.stdout.isatty() and sys.stdin.isatty() \
+           and not password:
             password = getpass('password: ')
             code, rdata = doreq()
             

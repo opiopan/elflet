@@ -1,0 +1,6 @@
+#!/usr/bin/env python2.7
+
+from elfletlib import elfletShadow
+
+if __name__ == '__main__':
+    elfletShadow.main()

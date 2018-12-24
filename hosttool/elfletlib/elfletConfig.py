@@ -198,14 +198,14 @@ def printConfig(rdata):
                                                          rdata['Timezone'])
     print '    Function Mode:          {0}'.format(rdata['FunctionMode'])
     print '    IR Reciever Mode:       {0}'.format(rdata['IrrcRecieverMode'])
-    print '    MQTT Function:          {0}'.format('Enable'
+    print '    MQTT Function:          {0}'.format('Enabled'
                                                    if pdata['PubSubServerAddr']
-                                                   else 'Disable')
-    print '    BLE Keyboard Emulation: {0}'.format('Enable'
+                                                   else 'Disabled')
+    print '    BLE Keyboard Emulation: {0}'.format('Enabled'
                                                    if 'EnableBLEHID'
                                                    in rdata and
                                                    rdata['EnableBLEHID']
-                                                   else 'Disable')
+                                                   else 'Disabled')
 
     if not pdata['PubSubServerAddr']:
         return

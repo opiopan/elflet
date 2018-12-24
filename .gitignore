@@ -26,3 +26,4 @@ hosttool/irtx
 *.htmlz
 *.jsz
 *.cssz
+*.pyc

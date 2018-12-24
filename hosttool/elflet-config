@@ -1,0 +1,7 @@
+#!/usr/bin/env python2.7
+
+from elfletlib import elfletConfig
+
+if __name__ == '__main__':
+    elfletConfig.main()
+

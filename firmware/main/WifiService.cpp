@@ -15,6 +15,7 @@
 #include "reboot.h"
 #include "PubSubService.h"
 #include "IRService.h"
+#include "DeepSleep.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -63,6 +64,10 @@ protected:
 	    }
 	    return;
 	}else{
+	    if (elfletConfig->getWakeupCause() == WC_BUTTON){
+		enterDeepSleep(0);
+	    }
+	    
 	    // fall back to configuration mode
 	    elfletConfig->setBootMode(Config::Configuration);
 	    elfletConfig->commit();

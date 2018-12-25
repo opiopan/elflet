@@ -1,0 +1,1 @@
+COMPONENT_CONFIG_ONLY = true

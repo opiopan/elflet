@@ -7,3 +7,6 @@
 [submodule "firmware/components/espmqtt"]
 	path = firmware/components/espmqtt
 	url = https://github.com/tuanpmt/espmqtt.git
+[submodule "firmware/components/esp32-snippets/src"]
+	path = firmware/components/esp32-snippets/src
+	url = https://github.com/nkolban/esp32-snippets.git

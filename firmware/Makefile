@@ -4,42 +4,30 @@
 #
 
 PROJECT_NAME 		:= elflet
-OCOMPO_DIR		:= components
-#EXTRA_COMPONENT_DIRS	:= $(OCOMPO_DIR)
 EXCLUDE_COMPONENTS	:= asio aws_iot coap \
 			   esp_adc_cal esp_http_server esp_https_ota \
 			   esp_https_server espmqtt expat freemodbus \
 			   jsmn libsodium openssl \
 			   protocomm
-NKOLBAN_LIB 		:= cpp_utils
-OUTERCOMPONENTS		:= $(OCOMPO_DIR)/$(NKOLBAN_LIB) $(OCOMPO_DIR)/posix
 SIGNEDIMAGE		:= build/$(PROJECT_NAME).sbin
 
-myall: all $(SIGNEDIMAGE)
+myall : all $(SIGNEDIMAGE)
+
+all: update_version
 
 include $(IDF_PATH)/make/project.mk
 
-menuconfig defconfig: $(OUTERCOMPONENTS)
-
-#
-# Rules to prepare components from outer repositories
-#
-$(OCOMPO_DIR)/$(NKOLBAN_LIB): $(OCOMPO_DIR)
-	if [ "$(NKOLBAN_ESP32_PATH)" = "" ]; then \
-	    echo "NKOLBAN_ESP32_PATH environment variable is need to"\
-	         "indicate a directory install nkolban's esp32 snipets." >&2;\
-            exit 1;\
+update_version:
+	OLD=`if [ build/.version ];then cat build/.version;fi`;\
+	NEW=`tools/version`;\
+	if ! [ "$$NEW" = "$$OLD" ];then\
+	    echo GEN main/version.string;\
+	    echo 'static const char verstr[] = "'`tools/version`'";' > \
+	        main/version.string;\
+	    echo "$$NEW" > build/.version;\
+	    rm -f build/elflet.bin;\
+	    rm -f build/elflet.sbin;\
 	fi
-	rm -f $@
-	ln -s $(NKOLBAN_ESP32_PATH)/$(NKOLBAN_LIB) $(OCOMPO_DIR)/
-
-$(OCOMPO_DIR)/posix: $(OCOMPO_DIR)
-	echo BUILDING $@ target
-	cp -R $(NKOLBAN_ESP32_PATH)/posix $@
-	touch $@/component.mk
-
-$(OCOMPO_DIR):
-	mkdir $@
 
 #
 # Rules regarding OTA update
@@ -65,7 +53,6 @@ otaflash: $(SIGNEDIMAGE)
 #
 complete-clean: clean
 	rm -rf build
-	rm -rf $(OUTERCOMPONENTS)
 	rm -rf sdkconfig sdkconfig.old
 	make -C main -f component.mk extra-clean
 

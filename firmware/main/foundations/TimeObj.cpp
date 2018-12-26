@@ -17,14 +17,15 @@
 //----------------------------------------------------------------------
 RTC_DATA_ATTR static time_t lastAdjustTime = 0;
 
-bool Time::shouldAdjust(){
+bool Time::shouldAdjust(bool inDeepSleepCycle){
     time_t now;
     ::time(&now);
     if (now < 30 * 365 * 24 * 60){
 	return true;
     }
 
-    if (now - lastAdjustTime > 24 * 60 * 60){
+    auto period = inDeepSleepCycle ? 30 * 60 : 24 * 60 * 60;
+    if (now - lastAdjustTime > period){
 	return true;
     }
 

@@ -7,7 +7,7 @@ class Time {
     char   buf[32];
     
 public:
-    static bool shouldAdjust();
+    static bool shouldAdjust(bool inDeepSleepCycle = false);
     static void startSNTP(const char* server = NULL);
     static bool waitForFinishAdjustment(time_t timeout = 0);
 

@@ -31,4 +31,10 @@ config WIFI_COUNTRY_CODE
 	help
 		This code will publish in WiFi AP mode.
 
+config FIRMWARE_DOWNLOAD_URI
+     string "URI to download firmware"
+	default "http://mserver.loal:8080/firmware/elflet.sbin"
+	help
+		URI to download firmware when reques will be issued via MQTT.
+
 endmenu

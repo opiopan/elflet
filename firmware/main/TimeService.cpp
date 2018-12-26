@@ -59,7 +59,7 @@ void TimeTask::run(void *data){
     
     bool first = true;
     while (true){
-	if (Time::shouldAdjust()){
+	if (Time::shouldAdjust(elfletConfig->getWakeupCause() != WC_NOTSLEEP)){
 	    ESP_LOGI(tag, "start SNTP & wait for finish adjustment");
 	    Time::startSNTP();
 	    if (!Time::waitForFinishAdjustment(3)){

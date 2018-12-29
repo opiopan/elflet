@@ -88,7 +88,9 @@ void MainTask::run(void *data){
     startTimeService();
     startButtonService();
     if (wakeupCause != WC_BUTTON){
-	startIRService();
+	if (!isSensorOnly){
+	    startIRService();
+	}
 	startSensorService();
 	if (wakeupCause == WC_TIMER){
 	    enableSensorCapturing();

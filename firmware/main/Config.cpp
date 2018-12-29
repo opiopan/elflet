@@ -30,6 +30,7 @@ static const char SPIFFS_MP[] = "/spiffs";
 static const char VERIFICATION_KEY_PATH[] = "/spiffs/verificationkey.pem";
 static const char SHADOW_DEFS_PATH[] = "/spiffs/shadowdefs.json";
 static const char TMP_SHADOW_DEFS_PATH[] = "/spiffs/shadowdefs_tmp.json";
+static const char SHADOW_STATUS_PATH[] = "/spiffs/shadowstat.json";
 static const char* CONFIGPATH[] = {
     "/spiffs/pdata.json",
     "/spiffs/config01.json",
@@ -529,6 +530,11 @@ const char* Config::getShadowDefsPath() const{
 const char* Config::getTmpShadowDefsPath() const{
     return TMP_SHADOW_DEFS_PATH;
 }
+
+const char* Config::getShadowStatusPath() const{
+    return SHADOW_STATUS_PATH;
+}
+
 
 //----------------------------------------------------------------------
 // storage information

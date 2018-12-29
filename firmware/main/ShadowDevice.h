@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <json11.hpp>
 #include "irrc.h"
 
 class ShadowDevice {
@@ -14,12 +15,15 @@ public:
 	virtual bool printKV(std::ostream& out,
 			     const std::string& name, bool needSep)const = 0;
     };
+    virtual bool isDirty()const = 0;
+    virtual void resetDirtyFlag() = 0;
     virtual bool isOn()const = 0;
     virtual void setPowerStatus(bool isOn) = 0;
     virtual void serialize(std::ostream& out) = 0;
     virtual void dumpStatus(std::ostream& out) = 0;
     virtual const Attribute* getAttribute(const std::string& name)const = 0;
-    virtual bool setStatus(const std::string& json, std::string& err) = 0;
+    virtual bool setStatus(const json11::Json& json, std::string& err,
+			   bool ignorePower = false) = 0;
 };
 
 struct IRCommand {
@@ -35,4 +39,5 @@ bool addShadowDevice(
 bool deleteShadowDevice(const std::string& name);
 ShadowDevice* findShadowDevice(const std::string& name);
 bool dumpShadowDeviceNames(std::ostream& out);
-bool applyIRCommand(const IRCommand* cmd);
+bool applyIRCommandToShadow(const IRCommand* cmd);
+bool saveShadowStatuses();

@@ -120,6 +120,7 @@ public:
     const char* getVerificationKeyPath() const;
     const char* getShadowDefsPath() const;
     const char* getTmpShadowDefsPath() const;
+    const char* getShadowStatusPath() const;
 
     bool getSpiffsInfo(size_t* total, size_t* used) const;
     bool getNvsInfo(nvs_stats_t *stats) const;

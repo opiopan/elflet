@@ -73,7 +73,12 @@ class ShadowStatusHandler: public WebServerHandler{
 	auto setShadowStatus =
 	    [&](ShadowDevice* shadow, const std::string& body){
 	    std::string err;
-	    if (!shadow->setStatus(body, err)){
+	    auto status = json11::Json::parse(body, err);
+	    if (!status.is_object()){
+		httpStatus = HttpResponse::RESP_500_InternalServerError;
+		resp->setBody(WebString("Shadow status must "
+					"be specified as Json object."));
+	    }else if (!shadow->setStatus(status, err)){
 		httpStatus = HttpResponse::RESP_500_InternalServerError;
 		stringPtr msgPtr(new std::string(std::move(err)));
 		resp->setBody(msgPtr);

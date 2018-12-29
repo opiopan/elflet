@@ -286,7 +286,7 @@ void RecieverTask::run(void *data){
 		    cmd.protocol = rcvProtocol;
 		    cmd.bits = rcvBits;
 		    cmd.data = rcvBuf;
-		    applyIRCommand(&cmd);
+		    applyIRCommandToShadow(&cmd);
 		}
 	    }
 	    //ESP_LOG_BUFFER_HEX(tag, rcvBuf, (rcvBits + 7) / 8);

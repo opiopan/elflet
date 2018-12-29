@@ -191,6 +191,26 @@ def printConfig(rdata):
     print '    Hardware:               {0} ver. {1}'.\
         format(rdata['BoardType'], rdata['BoardVersion'])
     print '    Firmware Version:       {0}'.format(rdata['FirmwareVersion'])
+
+    print '\n' + HEADER + 'Function Avalability:' + ENDC
+    sensorOnly = rdata['FunctionMode'] == 'SensorOnly'
+    print '    IR Remote Controller:   {0}'.format('Enabled'
+                                                   if not sensorOnly
+                                                   else 'Disabled')
+    print '    MQTT PubSub Function:   {0}'.format('Enabled'
+                                                   if pdata['PubSubServerAddr']
+                                                   else 'Disabled')
+    shadowEnabled = (rdata['IrrcRecieverMode'] == 'Continuous' and
+                     not sensorOnly)
+    print '    Device Shadow Funciton: {0}'.format('Enabled'
+                                                   if shadowEnabled
+                                                   else 'Disabled')
+    bleEnabled = ('EnableBLEHID' in rdata and rdata['EnableBLEHID'] and
+                  not sensorOnly)
+    print '    BLE Keyboard Emulation: {0}'.format('Enabled'
+                                                   if bleEnabled
+                                                   else 'Disabled')
+
     print '\n' + HEADER + 'Basic Configuration:' + ENDC
     print '    Node Name:              {0}'.format(rdata['NodeName'])
     print '    Connecting WiFi:        {0}'.format(rdata['SSID'])
@@ -198,14 +218,8 @@ def printConfig(rdata):
                                                          rdata['Timezone'])
     print '    Function Mode:          {0}'.format(rdata['FunctionMode'])
     print '    IR Reciever Mode:       {0}'.format(rdata['IrrcRecieverMode'])
-    print '    MQTT Function:          {0}'.format('Enabled'
-                                                   if pdata['PubSubServerAddr']
-                                                   else 'Disabled')
-    print '    BLE Keyboard Emulation: {0}'.format('Enabled'
-                                                   if 'EnableBLEHID'
-                                                   in rdata and
-                                                   rdata['EnableBLEHID']
-                                                   else 'Disabled')
+    print '    Sensor Interval:        {0} sec'.format(
+        rdata['SensorFrequency'])
 
     if not pdata['PubSubServerAddr']:
         return

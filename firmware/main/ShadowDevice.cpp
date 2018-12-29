@@ -810,6 +810,8 @@ protected:
     using Base = ShadowDevice::Attribute;
     const ShadowDevice* shadow;
 
+    bool dirtyFlag;
+    
     float numericValue;
     std::string* stringValue;
     float numericValueBkup;
@@ -829,7 +831,7 @@ public:
     using Ptr = SmartPtr<AttributeImp>;
 
     AttributeImp(const ShadowDevice* dev):
-	shadow(dev),
+	shadow(dev), dirtyFlag(false),
 	numericValue(0), stringValue(NULL),
 	numericValueBkup(0), stringValueBkup(NULL),
 	notApplyInOff(false),
@@ -838,6 +840,10 @@ public:
 	valueMin(std::numeric_limits<float>::quiet_NaN()),
 	valueUnit(std::numeric_limits<float>::quiet_NaN()){};
     virtual ~AttributeImp(){};
+
+    bool isDirty()const {return dirtyFlag;};
+    void resetDirtyFlag(){dirtyFlag = false;};
+    
     bool deserialize(const json11::Json& in, std::string& err);
     void serialize(std::ostream& out, const std::string& name);
     bool applyIRCommand(const IRCommand* cmd);
@@ -1053,6 +1059,7 @@ bool AttributeImp::applyIRCommand(const IRCommand* cmd){
 	ESP_LOGD(tag, "false: value is NaN");
 	return false;
     }
+    auto oldValue = numericValue;
     if (dict.empty()){
 	numericValue = value;
     }else{
@@ -1063,6 +1070,9 @@ bool AttributeImp::applyIRCommand(const IRCommand* cmd){
 	}
 	numericValue = value;
 	stringValue = &(i->second);
+    }
+    if (oldValue != numericValue){
+	dirtyFlag = true;
     }
 
     ESP_LOGD(tag, "true: applied");
@@ -1726,6 +1736,19 @@ public:
 				      powerStatusBkup(false){};
     virtual ~ShadowDeviceImp(){};
 
+    bool isDirty() const override{
+	auto rc = false;
+	for (auto i =  attributes.begin(); i != attributes.end(); i++){
+	    rc = (rc || i->second->isDirty());
+	}
+	return rc;
+    };
+    void resetDirtyFlag() override{
+	for (auto i =  attributes.begin(); i != attributes.end(); i++){
+	    i->second->resetDirtyFlag();
+	}
+    };
+
     const std::string& getName() const{return name;};
 
     bool deserialize(const json11::Json& in, std::string& err);
@@ -1736,7 +1759,8 @@ public:
     void setPowerStatus(bool isOn) override;
     void dumpStatus(std::ostream& out) override;
     const Attribute* getAttribute(const std::string& name)const override;
-    bool setStatus(const std::string& json, std::string& err) override;
+    bool setStatus(const json11::Json& json, std::string& err,
+		   bool ignorePower = false) override;
     
 protected:
     void backup();
@@ -1957,15 +1981,8 @@ void ShadowDeviceImp::restore(){
     }
 }
 
-bool ShadowDeviceImp::setStatus(const std::string& json, std::string& err){
-    auto status = json11::Json::parse(json, err);
-    if (!status.is_object()){
-	if (err.length() == 0){
-	    err = "Shadow status must be specified as Json object.";
-	}
-	return false;
-    }
-
+bool ShadowDeviceImp::setStatus(const json11::Json& status, std::string& err,
+				bool ignorePower){
     class ValueCommiter{
     protected:
 	ShadowDeviceImp* shadow;
@@ -1982,14 +1999,18 @@ bool ShadowDeviceImp::setStatus(const std::string& json, std::string& err){
 	void commit(){commited = true;}
     };
     ValueCommiter commiter(this);
+
+    ESP_LOGI(tag, "changing shadow '%s' status", name.c_str());
     
     //
     // apply power status
     //
-    ApplyBoolValue(status, JSON_SHADOW_ISON, true, [&](bool v){
-	    this->powerStatus = v;
-	    return true;
-	});
+    if (!ignorePower){
+	ApplyBoolValue(status, JSON_SHADOW_ISON, true, [&](bool v){
+		this->powerStatus = v;
+		return true;
+	    });
+    }
     
     //
     // apply attribute value
@@ -2025,10 +2046,12 @@ bool ShadowDeviceImp::setStatus(const std::string& json, std::string& err){
     //
     // synthesize IR command and issue IR command
     //
-    if (!powerStatus && !synthesizerToOff.isNull()){
-	synthesizerToOff->issueIRCommand(this);
-    }else if (!synthesizer.isNull()){
-	synthesizer->issueIRCommand(this);
+    if (!ignorePower){
+	if (!powerStatus && !synthesizerToOff.isNull()){
+	    synthesizerToOff->issueIRCommand(this);
+	}else if (!synthesizer.isNull()){
+	    synthesizer->issueIRCommand(this);
+	}
     }
 
     commiter.commit();
@@ -2077,7 +2100,6 @@ static bool loadShadowDevicePool(){
 	    auto name = object[JSON_SHADOW_NAME].string_value();
 	    if (name.length() > 0){
 		ShadowDevicePtr shadow(new ShadowDeviceImp(name.c_str()));
-		std::string err;
 		if (shadow->deserialize(object, err)){
 		    shadows.push_back(shadow);
 		}else{
@@ -2092,6 +2114,40 @@ static bool loadShadowDevicePool(){
     }
 
     ESP_LOGI(tag, "%d shadow definitions has been loaded", shadows.size());
+
+    auto apath = elfletConfig->getShadowStatusPath();
+    rc = stat(apath, &sbuf);
+    if (rc != 0){
+	return true;
+    }
+    length = sbuf.st_size;
+    buf = new char[length];
+    fp = fopen(apath, "r");
+    rc = fread(buf, length, 1, fp);
+    if (rc != 1){
+	ESP_LOGE(tag, "cannot read shadow status file: %s", apath);
+	fclose(fp);
+	delete buf;
+	return false;
+    }
+    fclose(fp);
+    std::string scontents(buf, length);
+    delete buf;
+    auto statuses = json11::Json::parse(scontents, err);
+    if (!statuses.is_array()){
+	ESP_LOGE(tag, "shadow status file corrupted: %s", apath);
+	return true;
+    }
+    int num = 0;
+    for (auto &status : statuses.array_items()){
+	auto shadow =
+	    findShadowDevice(status[JSON_SHADOW_NAME].string_value());
+	if (shadow == NULL){
+	    continue;
+	}
+	shadow->setStatus(status, err, true);
+	num++;
+    }
     
     return true;
 }
@@ -2124,7 +2180,10 @@ bool resetShadowDevicePool(){
     if (remove(elfletConfig->getShadowDefsPath()) != 0){
 	ESP_LOGE(tag, "fail to remove shadow definition file");
     }
-    return false;
+    if (remove(elfletConfig->getShadowStatusPath()) != 0){
+	ESP_LOGE(tag, "fail to remove shadow status file");
+    }
+    return true;
 }
 
 bool addShadowDevice(
@@ -2196,7 +2255,7 @@ bool dumpShadowDeviceNames(std::ostream& out){
     return true;
 }
 
-bool applyIRCommand(const IRCommand* cmd){
+bool applyIRCommandToShadow(const IRCommand* cmd){
     for (auto i = shadows.begin(); i != shadows.end(); i++){
 	if ((*i)->applyIRCommand(cmd)){
 	    if (elfletConfig->getShadowTopic().length() > 0){
@@ -2204,8 +2263,30 @@ bool applyIRCommand(const IRCommand* cmd){
 	    }
 	    ESP_LOGI(tag, "shadow '%s' turned %s",
 		     (*i)->getName().c_str(), (*i)->isOn() ? "on" : "off");
+	    if ((*i)->isDirty()){
+		saveShadowStatuses();
+		(*i)->resetDirtyFlag();
+		ESP_LOGI(tag,
+			 "shadow '%s' attributes has been changed, "
+			 "saved attributes", (*i)->getName().c_str());
+	    }
 	    return true;
 	}
     }
     return false;
+}
+
+bool saveShadowStatuses(){
+    auto path = elfletConfig->getShadowStatusPath();
+    auto out = std::ofstream(path);
+    out << '[';
+    for (auto i = shadows.begin(); i != shadows.end(); i++){
+	if (i != shadows.begin()){
+	    out << ',';
+	}
+	(*i)->dumpStatus(out);
+    }
+    out << ']';
+    out.close();
+    return true;
 }

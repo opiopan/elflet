@@ -1497,7 +1497,7 @@ bool SynVariable::deserialize(const json11::Json& in, std::string& err){
 		this->mask = v[0];
 		return true;
 	    })){
-	err = "Maks in synthesizer variable must be "
+	err = "Mask in synthesizer variable must be "
 	      "one byte hex data as string.";
 	return false;
     }

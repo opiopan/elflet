@@ -120,15 +120,16 @@ def showStatus(options, host, shadow):
             print 'Shadow Name:  {0}'.format(data['ShadowName'])
             print 'Power Status: {0}'.format('ON' if data['IsOn'] else 'OFF')
 
-            attrs = data['Attributes']
-            if len(attrs) > 0:
-                print 'Atrributes:'
-                maxkeylen = 0
-                for key in attrs:
-                    maxkeylen = max(maxkeylen, len(key))
-                    fstr = '    {0:' + str(maxkeylen + 1) + 's}: {1}'
-                for key in attrs:
-                    print fstr.format(key, attrs[key])
+            if 'Attributes' in data:
+                attrs = data['Attributes']
+                if len(attrs) > 0:
+                    print 'Atrributes:'
+                    maxkeylen = 0
+                    for key in attrs:
+                        maxkeylen = max(maxkeylen, len(key))
+                        fstr = '    {0:' + str(maxkeylen + 1) + 's}: {1}'
+                    for key in attrs:
+                        print fstr.format(key, attrs[key])
                 
     return result, data
     

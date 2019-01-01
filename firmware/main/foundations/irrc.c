@@ -7,7 +7,7 @@
 
 static const char tag[] = "irrc";
 
-#define CMDBUFFLEN 1024
+#define CMDBUFFLEN 2048
 
 #define RMT_RX_CHANNEL RMT_CHANNEL_0
 #define RMT_TX_CHANNEL RMT_CHANNEL_4
@@ -205,7 +205,7 @@ static void initRx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
 	.rmt_mode = RMT_MODE_RX,
 	.channel = RMT_RX_CHANNEL,
 	.gpio_num = gpio,
-	.mem_block_num = 4,
+	.mem_block_num = 8,
 	.clk_div = RMT_CLK_DIV,
 	.rx_config = {
 	    .filter_en = false,
@@ -214,7 +214,7 @@ static void initRx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
     };
     
     rmt_config(&ctx->rmt);
-    rmt_driver_install(ctx->rmt.channel, 2048, 0);
+    rmt_driver_install(ctx->rmt.channel, 4096, 0);
     rmt_get_ringbuf_handle(ctx->rmt.channel, &(ctx->rb));
 }
 

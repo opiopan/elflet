@@ -35,7 +35,7 @@ update_version:
 $(SIGNEDIMAGE): build/$(PROJECT_NAME).bin
 	tools/signimage $(CONFIG_OTA_IMAGE_SIGNING_KEY) \
 	                build/$(PROJECT_NAME).bin
-	echo -n '{"FirmwareVersion":"'`cat build/.version`'",'\
+	echo '{"FirmwareVersion":"'`cat build/.version`'",'\
 	     '"FirmwareUri":"'$(CONFIG_FIRMWARE_DOWNLOAD_URI)'"}' > \
 	    build/$(PROJECT_NAME).json
 

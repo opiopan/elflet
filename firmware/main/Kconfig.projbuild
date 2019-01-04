@@ -8,6 +8,19 @@ config HW_VERSION
 		You can also make persinalized spiffs image for each board.
 		This variable is used for just default spiffs image when "make all" is invoked.
 
+config ELFLET_NODE_NAME
+     string "Initial node name"
+	default "elflet-000000"
+	help
+		Initial node name. This name can be modified through setup
+		wizard.
+
+config ELFLET_ADMIN_PASSWORD
+     string "Administorator password"
+	default "elflet00"
+	help
+		Administorator password. This is also used as WiFI passphrase.
+
 config OTA_IMAGE_SIGNING_KEY
      string "Private signing key for OTA firmware image"
 	default "$(HOME)/esp/deploy/signingkey.pem"
@@ -33,7 +46,7 @@ config WIFI_COUNTRY_CODE
 
 config FIRMWARE_DOWNLOAD_URI
      string "URI to download firmware"
-	default "http://mserver.loal:8080/firmware/elflet.sbin"
+	default "http://mserver.local:8080/firmware/elflet.sbin"
 	help
 		URI to download firmware when reques will be issued via MQTT.
 

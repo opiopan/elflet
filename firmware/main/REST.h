@@ -6,3 +6,4 @@ void registerStatusRESTHandler(WebServer* server);
 void registerIrRESTHandler(WebServer* server);
 void registerSensorRESTHandler(WebServer* server);
 void registerShadowRESTHandler(WebServer* server);
+void registerBleHidRESTHandler(WebServer* server);

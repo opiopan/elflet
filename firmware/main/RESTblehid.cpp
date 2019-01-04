@@ -82,6 +82,6 @@ class BleHidHandler : public WebServerHandler {
     };
 };
 
-void registerIrRESTHandler(WebServer* server){
+void registerBleHidRESTHandler(WebServer* server){
     server->setHandler(new BleHidHandler, "/blehid");
 }

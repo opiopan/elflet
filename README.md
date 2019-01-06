@@ -7,7 +7,7 @@ You are free to use any outcome of this project. And you are also free to modify
 elflet will join your home net work with WiFi.
 Then elflet can controll home electronic devices through IR remote controll or Bluetooth LE. 
 And this device can be behave as sensor node such as temperature sensor.<br>
-Unlike other similar products, elflet highly abstructs IR remote controll protocol. Therefore host-side software to collaborate with elflet is very easy to implement.
+Unlike other similar products, elflet highly abstructs IR remote controll protocol. Therefore host-side software to collaborate with elflet is very easy to implement.
 
 <p align="center">
 <img alt="description" src="https://raw.githubusercontent.com/wiki/opiopan/elflet/images/elflet_description.jpg" width=750>
@@ -39,7 +39,7 @@ Regarding this binary protocol, please refer
 
 * **Device Shadow**<br>
 Device shadow is designed to help complecated IR command device management such as air conditioner.<br>
-elflet analize IR command code pattern according to registered shadow definition, then reflect device status to shadow representation managed in elflet. Following JSON data is a example of shadow status representation.
+elflet analize IR command code pattern according to registered shadow definition, then reflect device status to shadow representation managed in elflet. Following JSON data is a example of shadow status representation.
     ```json
     {
         "NodeName": "elflet-living", 

@@ -32,7 +32,7 @@ Recievd IR remote controller signal is analized such as following abstracted pro
 
 * **IR transmitter**<br> 
 You can transmit IR remote controller signal by specifying the above level abstracted represatation.<br>
-elflet supports two protocols for IR transmitter, 
+elflet supports two protocols for IR transmitter, 
 The first one is 
 [REST](https://github.com/opiopan/elflet/blob/master/docs/REST.md)
 , and the other one is original binary protocol.

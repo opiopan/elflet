@@ -96,6 +96,15 @@ To build firmware binary, please refer
 
 ## Inital Firmware Downloading
 Once elflet firmware runs on elflet board, you can download firmware binary via WiFi (OTA updating). However, you need to download firmware via UART at first time since OTA updating function does not work yet.<br>
+Folowing four binary files must be download at correct address in ESP-WROOM-32's SPI flash.
+
+|file to download                       | adress  |
+|:---------------------------------------|--------:|
+| firmware/buld/bootloader/bootloader.bin|   0x1000|
+| firmware/buld/partitions.bin           |   0x8000|
+| firmware/buld/elflet.bin               |  0x10000|
+| firmware/buld/spiffsimage.bin          | 0x3f0000|
+
 elflet exports sevelal ESP32 pins to service port as below. You can download firmware by connection your USB serial dongle to there.
 
 <p align="center">

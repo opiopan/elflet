@@ -2226,6 +2226,7 @@ bool deleteShadowDevice(const std::string& name){
 	if ((*i)->getName() == name){
 	    shadows.erase(i);
 	    saveShadowDevicePool();
+	    saveShadowStatuses();
 	    ESP_LOGI(tag, "deleted shadow: %s", name.c_str());
 	    return true;;
 	}

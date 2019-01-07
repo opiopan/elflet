@@ -253,6 +253,13 @@ void stopBleHidService()
     Initialized = false;
 }
 
+void releaseBleResource()
+{
+    stopBleHidService();
+    ESP_LOGI(HID_DEMO_TAG, "release memory for Bluetooth");
+    esp_bt_mem_release(ESP_BT_MODE_BTDM);
+}
+
                 
 bool bleHidSendKeyValue(uint8_t specialMask, uint8_t* keybuf, int buflen,
 			int duration)

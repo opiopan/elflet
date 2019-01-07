@@ -8,6 +8,8 @@
 #include "Config.h"
 #include "ShadowDevice.h"
 #include "REST.h"
+#include "BleHidService.h"
+#include "reboot.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -168,6 +170,15 @@ class ShadowDefsHandler : public WebServerHandler {
 		//
 		// Add shadow
 		//
+		auto wakeupCause = elfletConfig->getWakeupCause();
+		auto mode = elfletConfig->getBootMode();
+		auto enableBLE = 
+		    (wakeupCause == WC_NOTSLEEP && mode == Config::Normal &&
+		     elfletConfig->getBleHid());
+		if (enableBLE){
+		    stopBleHidService();
+		    releaseBleResource();
+		}
 		auto body = req->body();
 		if (!addShadowDevice(name,
 				     std::string(body.data(), body.length()),
@@ -175,6 +186,9 @@ class ShadowDefsHandler : public WebServerHandler {
 		    httpStatus = HttpResponse::RESP_500_InternalServerError;
 		    stringPtr msgPtr(new std::string(std::move(msg)));
 		    resp->setBody(msgPtr);
+		}
+		if (enableBLE){
+		    rebootIn(1000);
 		}
 	    }else if (req->method() == HttpRequest::MethodDelete){
 		//

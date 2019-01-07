@@ -73,8 +73,7 @@ void MainTask::run(void *data){
     // release memory for Bluetooth if it's possible
     //--------------------------------------------------------------
     if (!enableBLE){
-	ESP_LOGI(tag, "release memory for Bluetooth");
-	esp_bt_mem_release(ESP_BT_MODE_BTDM);
+	releaseBleResource();
 	auto heapSize = xPortGetFreeHeapSize();
 	if (initialHeapSize < heapSize){
 	    initialHeapSize = heapSize;

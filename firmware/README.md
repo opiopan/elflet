@@ -7,8 +7,18 @@
 Sorry, I could not verify that these souce codes are compiled well on Windows environment since I have no PC running Windows.
 
 - **ESP-IDF**<br>
-Please install the ESP-IDF according to 
+Install the ESP-IDF according to 
 [this procedure](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html).
+
+- **mkspiffs**<br>
+Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy `mksspiffs` to a directory which is listed in `PATH` ernvironment variable such as `/usr/local/bin`.
+
+    ```
+    $ git clone --recursive https://github.com/igrr/mkspiffs.git
+    $ cd mkspiffs
+    $ make
+    $ sudo cp mkspiffs /usr/local/bin
+    ```
 
 ## Building Firmware
 1. **Preparing Key Files for Digital Signing**<br>
@@ -16,7 +26,7 @@ Please install the ESP-IDF according to
     You have to prepare 1024 bit RSA key pair, private key to sign and public key to verify.<br>
     Please make dedicated key pair as below.
 
-    ```shell
+    ```
     $ mkdir ~/esp/deploy
     $ cd ~/esp/deploy
     $ openssl genrsa 1024 > signingkey.pem
@@ -26,12 +36,12 @@ Please install the ESP-IDF according to
 2. **Downloading source codes**<br>
     elflet repository include a couple of other projects as sub module.
     Run `git clone` command with `--recursive` option.
-    ```shell
+    ```
     $ git clone --recursive https://github.com/opiopan/elflet.git
     ```
 3. **Configuration**<br>
     Execute configuration utility with:
-    ```shell
+    ```
     $ cd elflet/firmware
     $ make menuconfig
     ```
@@ -40,7 +50,7 @@ Please install the ESP-IDF according to
 
 4. **Building**<br>
     Just execute `make` command.
-    ```shell
+    ```
     $ make
     ```
 

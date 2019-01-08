@@ -90,7 +90,7 @@ for production
 
 ## Building Firmware
 Firmware source codes are placed at 
-[here](https://github.com/opiopan/elflet/blob/master/firmwaEre).
+[here](https://github.com/opiopan/elflet/blob/master/firmware).
 To build firmware binary, please refer 
 [this document](https://github.com/opiopan/elflet/blob/master/firmware/README.md).
 
@@ -151,6 +151,18 @@ In this case, the LED start to blink orange again and you can access setup Wizar
 During elflet is connecting to your home network, setup widzard is not available. If you want to access setup wizard, please transit elflet to CONFIGURATION mode. You can proceed this transition by pressing a button till LED start to blink orange.
 
 To change other detail configuration, please use a host tools, "`elflet-config`" and "`elflet-shadow`". Usage of these tools are described in [this document](https://github.com/opiopan/elflet/tree/master/hosttool/README.md).
+
+
+## Licencing
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
+elflet is released under dual open source licence.<br>
+[The elfle firmware](https://github.com/opiopan/elflet/blob/master/firmware)
+is in accordance with 
+[GNU General Public License, version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
+The other program source files, PCB design, and all documents are coverd by
+[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 ## Application Example
 My another project [Wakeserver](https://github.com/opiopan/wakeserver) is a good example of elfelt's application.

@@ -1,7 +1,7 @@
 elfet Host Tools
 ===
 
-There are CLI tools to controll elflet as bellow:
+There are CLI tools to controll elflet as below:
 
 - **elfelt-config**: configure elflet
 - **elfelt-shadow**: manage and controll device shadow

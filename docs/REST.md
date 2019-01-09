@@ -1,5 +1,5 @@
 elflet REST specification
----
+===
 **NOTE:** This document is under construction. All interfaces are listed, however descriptions are still insufficient.
 
 ## Management

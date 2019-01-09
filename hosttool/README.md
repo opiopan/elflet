@@ -26,5 +26,5 @@ $ sudo install
 ```
 
 ## Usage
-Run each command with `--help` option. It will show syntax and option's descritption.
+Run each command with `--help` option. It will show syntax and option's descritption.
 

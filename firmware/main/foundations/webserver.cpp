@@ -312,7 +312,7 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
 	responseData.getStatus() != HttpResponse::ST_FLUSHED){
 	if (responseData.getStatus() == HttpResponse::ST_OPEN){
 	    if (handler){
-		handler->recieveRequest(*this);
+		handler->receiveRequest(*this);
 	    }else{
 		makeFileResponse();
 	    }

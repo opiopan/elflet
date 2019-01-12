@@ -12,7 +12,7 @@ public:
     enum FunctionMode{FullSpec, SensorOnly};
     enum SessionType{SessionTCP, SessionTLS,
 		     SessionWebSocket, SessionWebSocketSecure};
-    enum IrrcRecieverMode{IrrcRecieverOnDemand, IrrcRecieverContinuous};
+    enum IrrcReceiverMode{IrrcReceiverOnDemand, IrrcReceiverContinuous};
     
 protected:
     static const char* defaultTimezone;
@@ -54,13 +54,13 @@ protected:
     std::string pubSubPassword;
 
     std::string sensorTopic;
-    std::string irrcRecieveTopic;
-    std::string irrcRecievedDataTopic;
+    std::string irrcReceiveTopic;
+    std::string irrcReceivedDataTopic;
     std::string irrcSendTopic;
     std::string downloadFirmwareTopic;
     std::string shadowTopic;
 
-    int32_t irrcRecieverMode;
+    int32_t irrcReceiverMode;
 
     bool bleHid;
     
@@ -103,17 +103,17 @@ public:
     const std::string& getPubSubUser() const{return pubSubUser;};
     const std::string& getPubSubPassword() const{return pubSubPassword;};
     const std::string& getSensorTopic() const{return sensorTopic;};
-    const std::string& getIrrcRecieveTopic() const{return irrcRecieveTopic;};
-    const std::string& getIrrcRecievedDataTopic() const{
-	return irrcRecievedDataTopic;
+    const std::string& getIrrcReceiveTopic() const{return irrcReceiveTopic;};
+    const std::string& getIrrcReceivedDataTopic() const{
+	return irrcReceivedDataTopic;
     };
     const std::string& getIrrcSendTopic() const{return irrcSendTopic;};
     const std::string& getDownloadFirmwareTopic() const{
 	return downloadFirmwareTopic;
     };
     const std::string& getShadowTopic()const {return shadowTopic;};
-    IrrcRecieverMode getIrrcRecieverMode() const{
-	return (IrrcRecieverMode)irrcRecieverMode;
+    IrrcReceiverMode getIrrcReceiverMode() const{
+	return (IrrcReceiverMode)irrcReceiverMode;
     };
     bool getBleHid()const {return bleHid;};
     
@@ -148,13 +148,13 @@ public:
     bool setPubSubUser(const std::string& user);
     bool setPubSubPassword(const std::string& pass);
     bool setSensorTopic(const std::string& topic);
-    bool setIrrcRecieveTopic(const std::string& topic);
-    bool setIrrcRecievedDataTopic(const std::string& topic);
+    bool setIrrcReceiveTopic(const std::string& topic);
+    bool setIrrcReceivedDataTopic(const std::string& topic);
     bool setIrrcSendTopic(const std::string& topic);
     bool setDownloadFirmwareTopic(const std::string& topic);
     bool setShadowTopic(const std::string& topic);
 
-    bool setIrrcRecieverMode(IrrcRecieverMode mode);
+    bool setIrrcReceiverMode(IrrcReceiverMode mode);
 
     bool setBleHid(bool enabled);
 
@@ -165,7 +165,7 @@ protected:
 		    int32_t& value);
     void applyValue(const json11::Json& json, const std::string& key,
 		    std::string& value);
-    void migrateConfig();
+    void migrateConfig(const json11::Json& config);
     void updateDefaultTopic(const std::string& oldNodeName);
 };
 
@@ -201,13 +201,13 @@ extern const char JSON_PUBSUBSERVERCERT[];
 extern const char JSON_PUBSUBUSER[];
 extern const char JSON_PUBSUBPASSWORD[];
 extern const char JSON_SENSORTOPIC[];
-extern const char JSON_IRRCRECIEVETOPIC[];
-extern const char JSON_IRRCRECIEVEDDATATOPIC[];
+extern const char JSON_IRRCRECEIVETOPIC[];
+extern const char JSON_IRRCRECEIVEDDATATOPIC[];
 extern const char JSON_IRRCSENDTOPIC[];
 extern const char JSON_DOWNLOADFIRMWARETOPIC[];
 extern const char JSON_SHADOWTOPIC[];
 
-extern const char JSON_IRRCRECIEVERMODE[];
+extern const char JSON_IRRCRECEIVERMODE[];
 extern const char JSON_BLEHID[];
 
 extern const char JSON_DATE[];

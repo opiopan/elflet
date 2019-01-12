@@ -41,7 +41,7 @@ public:
 
 private:
     void run(void *data) override;
-    bool flashAndRecieveCmd(IRSHeader* hdr, void** data, int32_t* dataSize);
+    bool flashAndReceiveCmd(IRSHeader* hdr, void** data, int32_t* dataSize);
     bool makeResponse(const IRSHeader* req, IRSCmd respCode,
 		      void* respData, int32_t respDataSize);
     bool cmdTxFormat(const IRSHeader* hdr, const void* data, int32_t dataSize);
@@ -100,7 +100,7 @@ void CommunicationTask::run(void *data)
     void* reqData;
     int32_t reqDataSize;
 
-    while(flashAndRecieveCmd(&req, &reqData, &reqDataSize)){
+    while(flashAndReceiveCmd(&req, &reqData, &reqDataSize)){
 	bool rc = false;
 	if (req.cmd == IRServerCmdTxFormat){
 	    rc = cmdTxFormat(&req, reqData, reqDataSize);
@@ -119,7 +119,7 @@ void CommunicationTask::run(void *data)
     ESP_LOGI(tag, "end communication task");
 }
 
-bool CommunicationTask::flashAndRecieveCmd(IRSHeader* hdr,
+bool CommunicationTask::flashAndReceiveCmd(IRSHeader* hdr,
 					   void** data, int32_t* dataSize)
 {
     if (ibufUsed == IRS_REQMAXSIZE){
@@ -127,12 +127,12 @@ bool CommunicationTask::flashAndRecieveCmd(IRSHeader* hdr,
 	return false;
     }
 
-    bool cmdRecieved = false;
+    bool cmdReceived = false;
     fd_set read_fds;
     fd_set write_fds;
     FD_ZERO(&read_fds);
     FD_ZERO(&write_fds);
-    while (!cmdRecieved || obufUsed - obufHead > 0){
+    while (!cmdReceived || obufUsed - obufHead > 0){
 	if (ibufUsed < IRS_REQMAXSIZE){
 	    FD_SET(sockfd, &read_fds);
 	}else{
@@ -169,7 +169,7 @@ bool CommunicationTask::flashAndRecieveCmd(IRSHeader* hdr,
 	if (FD_ISSET(sockfd, &read_fds)){
 	    rc = read(sockfd, ibuf + ibufUsed, sizeof(ibuf) - ibufUsed);
 	    if (rc < 0){
-		ESP_LOGE(tag, "reciing from client failed");
+		ESP_LOGE(tag, "receiving from client failed");
 		return false;
 	    }else if (rc == 0){
 		ESP_LOGI(tag, "connection closed from client");
@@ -185,7 +185,7 @@ bool CommunicationTask::flashAndRecieveCmd(IRSHeader* hdr,
 		    return false;
 		}
 		if (ibufUsed >= cmdsize){
-		    cmdRecieved = true;
+		    cmdReceived = true;
 		    hdr->id.intID = IRSIDINT;
 		    hdr->cmd = ntohs(rawhdr->cmd);
 		    hdr->size = cmdsize;
@@ -212,7 +212,7 @@ bool CommunicationTask::makeResponse(const IRSHeader* req, IRSCmd respCode,
     obufHead = 0;
     obufUsed = sizeof(IRSHeader) + respDataSize;
     if (obufUsed > sizeof(obuf)){
-	ESP_LOGE(tag, "reciing data size is too large");
+	ESP_LOGE(tag, "receiving data size is too large");
 	return false;
     }
     

@@ -15,14 +15,14 @@
 
 static const char tag[] = "RESTir";
 
-static void replyRecievedData(HttpRequest* req, HttpResponse* resp){
+static void replyReceivedData(HttpRequest* req, HttpResponse* resp){
     std::stringstream body;
     bool rc = false;
     auto params = req->parameters();
     if (params["type"] == "raw"){
-	rc = getIRRecievedDataRawJson(body);
+	rc = getIRReceivedDataRawJson(body);
     }else{
-	rc = getIRRecievedDataJson(body);
+	rc = getIRReceivedDataJson(body);
     }
     
     if (rc){
@@ -52,16 +52,16 @@ static void sendData(HttpRequest* req, HttpResponse* resp){
 }
 
 class IrHandler : public WebServerHandler {
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 
-	if (req->uri() == "/irrc/recievedData" &&
+	if (req->uri() == "/irrc/receivedData" &&
 	    req->method() == HttpRequest::MethodGet){
-	    replyRecievedData(req, resp);
-	}else if (req->uri() == "/irrc/startReciever" &&
+	    replyReceivedData(req, resp);
+	}else if (req->uri() == "/irrc/startReceiver" &&
 	    req->method() == HttpRequest::MethodGet){
-	    startIRReciever();
+	    startIRReceiver();
 	    resp->setHttpStatus(HttpResponse::RESP_200_OK);
 	    resp->close();
 	}else if (req->uri() == "/irrc/send" &&

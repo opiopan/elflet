@@ -92,8 +92,8 @@ void ButtonEventTask::run(void *data){
 			esp_restart();
 		    }else if (elfletConfig->getFunctionMode() ==
 			      Config::FullSpec){
-			ESP_LOGI(tag, "start IR reciever");
-			startIRReciever();
+			ESP_LOGI(tag, "start IR receiver");
+			startIRReceiver();
 		    }
 		}else if (mode == Config::Configuration){
 		    ESP_LOGI(tag, "go back to normal mode");

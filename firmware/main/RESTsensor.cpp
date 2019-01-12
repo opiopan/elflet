@@ -15,7 +15,7 @@
 static const char tag[] = "RESTsensor";
 
 class SensorHandler : public WebServerHandler {
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 

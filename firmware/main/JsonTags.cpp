@@ -27,13 +27,13 @@ const char JSON_PUBSUBSERVERCERT[] = "PubSubServerCert";
 const char JSON_PUBSUBUSER[] = "PubSubUser";
 const char JSON_PUBSUBPASSWORD[] = "PubSubPassword";
 const char JSON_SENSORTOPIC[] = "SensorTopic";
-const char JSON_IRRCRECIEVETOPIC[] = "IrrcRecieveTopic";
-const char JSON_IRRCRECIEVEDDATATOPIC[] = "IrrcRecievedDataTopic";
+const char JSON_IRRCRECEIVETOPIC[] = "IrrcReceiveTopic";
+const char JSON_IRRCRECEIVEDDATATOPIC[] = "IrrcReceivedDataTopic";
 const char JSON_IRRCSENDTOPIC[] = "IrrcSendTopic";
 const char JSON_DOWNLOADFIRMWARETOPIC[] = "DownloadFirmwareTopic";
 const char JSON_SHADOWTOPIC[] = "ShadowTopic";
 
-const char JSON_IRRCRECIEVERMODE[] = "IrrcRecieverMode";
+const char JSON_IRRCRECEIVERMODE[] = "IrrcReceiverMode";
 const char JSON_BLEHID[] = "EnableBLEHID";
 
 const char JSON_DATE[] = "date";

@@ -60,7 +60,7 @@ def parser():
     g.add_option('-i', '--irmode',
                  action='store', dest='irmode', metavar='MODE',
                  choices=['on-demand', 'continuous'],
-                 help="change IR reciever mode, MODE must be specified "
+                 help="change IR receiver mode, MODE must be specified "
                       "eather 'on-demand' or 'continuous'")
     g.add_option('-b', '--enable-ble-keyboard',
                  action='store_true', dest='blehid',
@@ -98,13 +98,13 @@ def parser():
     g.add_option('--shadow-topic',
                  action='store', dest='shadowTopic', metavar='TOPIC',
                  help="change topic name to publish shadow state")
-    g.add_option('--irrc-recieved-data-topic',
-                 action='store', dest='irrcRecievedDataTopic', metavar='TOPIC',
-                 help="change topic name to publish recieved IR data")
-    g.add_option('--irrc-recieve-topic',
-                 action='store', dest='irrcRecieveTopic', metavar='TOPIC',
+    g.add_option('--irrc-received-data-topic',
+                 action='store', dest='irrcReceivedDataTopic', metavar='TOPIC',
+                 help="change topic name to publish received IR data")
+    g.add_option('--irrc-receive-topic',
+                 action='store', dest='irrcReceiveTopic', metavar='TOPIC',
                  help="change topic name to subscribe request to "
-                      "transit IR recieving mode")
+                      "transit IR receiving mode")
     g.add_option('--irrc-send-topic',
                  action='store', dest='irrcSendTopic', metavar='TOPIC',
                  help="change topic name to subscribe transmitting IR data")
@@ -139,7 +139,7 @@ def genBody(parser, options):
     if options.sensorInterval != None:
         body['SensorFrequency'] = options.sensorInterval
     if options.irmode != None:
-        body['IrrcRecieverMode'] = irModeMap[options.irmode]
+        body['IrrcReceiverMode'] = irModeMap[options.irmode]
     if options.blehid != None:
         body['EnableBLEHID'] = options.blehid
     if options.pubsubServer != None:
@@ -162,10 +162,10 @@ def genBody(parser, options):
         body['SensorTopic'] = options.sensorTopic
     if options.shadowTopic != None:
         body['ShadowTopic'] = options.shadowTopic
-    if options.irrcRecievedDataTopic != None:
-        body['IrrcRecievedDataTopic'] = options.irrcRecievedDataTopic
-    if options.irrcRecieveTopic != None:
-        body['IrrcRecieveTopic'] = options.irrcRecieveTopic
+    if options.irrcReceivedDataTopic != None:
+        body['IrrcReceivedDataTopic'] = options.irrcReceivedDataTopic
+    if options.irrcReceiveTopic != None:
+        body['IrrcReceiveTopic'] = options.irrcReceiveTopic
     if options.irrcSendTopic != None:
         body['IrrcSendTopic'] = options.irrcSendTopic
     if options.downloadFirmwareTopic != None:
@@ -200,7 +200,7 @@ def printConfig(rdata):
     print '    MQTT PubSub Function:   {0}'.format('Enabled'
                                                    if pdata['PubSubServerAddr']
                                                    else 'Disabled')
-    shadowEnabled = (rdata['IrrcRecieverMode'] == 'Continuous' and
+    shadowEnabled = (rdata['IrrcReceiverMode'] == 'Continuous' and
                      not sensorOnly)
     print '    Device Shadow Funciton: {0}'.format('Enabled'
                                                    if shadowEnabled
@@ -217,7 +217,7 @@ def printConfig(rdata):
     print '    NTP:                    {0} ({1})'.format(rdata['NTPServer'],
                                                          rdata['Timezone'])
     print '    Function Mode:          {0}'.format(rdata['FunctionMode'])
-    print '    IR Reciever Mode:       {0}'.format(rdata['IrrcRecieverMode'])
+    print '    IR Receiver Mode:       {0}'.format(rdata['IrrcReceiverMode'])
     print '    Sensor Interval:        {0} sec'.format(
         rdata['SensorFrequency'])
 
@@ -237,11 +237,11 @@ def printConfig(rdata):
                                                      else 'Unregistered')
     print SUBHEADER + '    Publishing Topic:' + ENDC
     print '        Sensor Value:       {0}'.format(pdata['SensorTopic'])
-    print '        Recieved IR Data:   {0}'.\
-        format(pdata['IrrcRecievedDataTopic'])
+    print '        Received IR Data:   {0}'.\
+        format(pdata['IrrcReceivedDataTopic'])
     print '        Shadow Status:      {0}\n'.format(pdata['ShadowTopic'])
     print SUBHEADER + '    Subscribed Topic:' + ENDC
-    print '        Start IR recieving: {0}'.format(pdata['IrrcRecieveTopic'])
+    print '        Start IR receiving: {0}'.format(pdata['IrrcReceiveTopic'])
     print '        Send IR data:       {0}'.format(pdata['IrrcSendTopic'])
     print '        Download Firmware:  {0}'.\
         format(pdata['DownloadFirmwareTopic'])

@@ -18,7 +18,7 @@
 
 static const char tag[] = "Config";
 
-static const int32_t CONFIG_VERSION = 2;
+static const int32_t CONFIG_VERSION = 3;
 
 static const char NVS_NS[] = "elflet";
 static const std::string BOOTMODE_KEY = "bootmode";
@@ -98,7 +98,7 @@ Config::Config(WakeupCause cause) :
     wakeupCause(cause),
     configVersion(0),
     functionMode(FullSpec), sensorFrequency(0), 
-    pubSubSessionType(SessionTCP), irrcRecieverMode(IrrcRecieverOnDemand),
+    pubSubSessionType(SessionTCP), irrcReceiverMode(IrrcReceiverOnDemand),
     bleHid(false){
 }
 
@@ -130,12 +130,12 @@ Config& Config::operator = (const Config& src){
     pubSubUser = src.pubSubUser;
     pubSubPassword = src.pubSubPassword;
     sensorTopic = src.sensorTopic;
-    irrcRecieveTopic = src.irrcRecieveTopic;
-    irrcRecievedDataTopic = src.irrcRecievedDataTopic;
+    irrcReceiveTopic = src.irrcReceiveTopic;
+    irrcReceivedDataTopic = src.irrcReceivedDataTopic;
     irrcSendTopic = src.irrcSendTopic;
     downloadFirmwareTopic = src.downloadFirmwareTopic;
     shadowTopic = src.shadowTopic;
-    irrcRecieverMode = src.irrcRecieverMode;
+    irrcReceiverMode = src.irrcReceiverMode;
     bleHid = src.bleHid;
 
     return *this;
@@ -214,18 +214,18 @@ bool Config::load(){
     applyValue(config, JSON_PUBSUBUSER, pubSubUser);
     applyValue(config, JSON_PUBSUBPASSWORD, pubSubPassword);
     applyValue(config, JSON_SENSORTOPIC, sensorTopic);
-    applyValue(config, JSON_IRRCRECIEVETOPIC, irrcRecieveTopic);
-    applyValue(config, JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic);
+    applyValue(config, JSON_IRRCRECEIVETOPIC, irrcReceiveTopic);
+    applyValue(config, JSON_IRRCRECEIVEDDATATOPIC, irrcReceivedDataTopic);
     applyValue(config, JSON_IRRCSENDTOPIC, irrcSendTopic);
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
     applyValue(config, JSON_SHADOWTOPIC, shadowTopic);
-    applyValue(config, JSON_IRRCRECIEVERMODE, irrcRecieverMode);
+    applyValue(config, JSON_IRRCRECEIVERMODE, irrcReceiverMode);
     applyValue(config, JSON_BLEHID, bleHid);
 
     isDirty = false;
     isDirtyBootMode = false;
 
-    migrateConfig();
+    migrateConfig(config);
     
     return true;
 }
@@ -276,12 +276,12 @@ bool Config::commit(){
 		{JSON_PUBSUBUSER, pubSubUser},
 		{JSON_PUBSUBPASSWORD, pubSubPassword},
 		{JSON_SENSORTOPIC, sensorTopic},
-		{JSON_IRRCRECIEVETOPIC, irrcRecieveTopic},
-		{JSON_IRRCRECIEVEDDATATOPIC, irrcRecievedDataTopic},
+		{JSON_IRRCRECEIVETOPIC, irrcReceiveTopic},
+		{JSON_IRRCRECEIVEDDATATOPIC, irrcReceivedDataTopic},
 		{JSON_IRRCSENDTOPIC, irrcSendTopic},
 		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
 		{JSON_SHADOWTOPIC, shadowTopic},
-		{JSON_IRRCRECIEVERMODE, (int32_t)irrcRecieverMode},
+		{JSON_IRRCRECEIVERMODE, (int32_t)irrcReceiverMode},
 		{JSON_BLEHID, bleHid},
 	    });
 	
@@ -311,21 +311,39 @@ bool Config::commit(){
 //----------------------------------------------------------------------
 // migration between different version
 //----------------------------------------------------------------------
-void Config::migrateConfig(){
+void Config::migrateConfig(const json11::Json& config){
     auto setTopic = [&](std::string& v, const char* suffix){
 	if (v.length() == 0){
 	    v = this->nodeName;
 	    v += suffix;
 	}
     };
+    auto moveConfigInt = [&](const char* from, int32_t& to){
+	auto value = config[from];
+	if (value.is_number()){
+	    to = value.int_value();
+	}
+    };
+    auto moveConfigString = [&](const char* from, std::string& to){
+	auto value = config[from];
+	if (value.is_string()){
+	    to = value.string_value();
+	}
+    };
+    
     if (configVersion < 1){
 	setTopic(sensorTopic,"/sensor");
-	setTopic(irrcRecieveTopic, "/irrcRecieve");
-	setTopic(irrcRecievedDataTopic, "/irrcRecievedData");
+	setTopic(irrcReceiveTopic, "/irrcReceive");
+	setTopic(irrcReceivedDataTopic, "/irrcReceivedData");
 	setTopic(irrcSendTopic, "/irrcSend");
     }
     if (configVersion < 2){
 	setTopic(shadowTopic, "/shadow");
+    }
+    if (configVersion < 3){
+	moveConfigInt("IrrcRecieverMode", irrcReceiverMode);
+	moveConfigString("IrrcRecieveTopic", irrcReceiveTopic);
+	moveConfigString("IrrcRecievedDataTopic", irrcReceivedDataTopic);
     }
     configVersion = CONFIG_VERSION;
 }
@@ -460,14 +478,14 @@ bool Config::setSensorTopic(const std::string& topic){
     return true;
 }
 
-bool Config::setIrrcRecieveTopic(const std::string& topic){
-    irrcRecieveTopic = topic;
+bool Config::setIrrcReceiveTopic(const std::string& topic){
+    irrcReceiveTopic = topic;
     isDirty = true;
     return true;
 }
 
-bool Config::setIrrcRecievedDataTopic(const std::string& topic){
-    irrcRecievedDataTopic = topic;
+bool Config::setIrrcReceivedDataTopic(const std::string& topic){
+    irrcReceivedDataTopic = topic;
     isDirty = true;
     return true;
 }
@@ -490,8 +508,8 @@ bool Config::setShadowTopic(const std::string& topic){
     return true;
 }
 
-bool Config::setIrrcRecieverMode(IrrcRecieverMode mode){
-    irrcRecieverMode = mode;
+bool Config::setIrrcReceiverMode(IrrcReceiverMode mode){
+    irrcReceiverMode = mode;
     isDirty = true;
     return true;
 }
@@ -510,8 +528,8 @@ void Config::updateDefaultTopic(const std::string& oldNodeName){
 	}
     };
     updateTopic(sensorTopic,"/sensor");
-    updateTopic(irrcRecieveTopic, "/irrcRecieve");
-    updateTopic(irrcRecievedDataTopic, "/irrcRecievedData");
+    updateTopic(irrcReceiveTopic, "/irrcReceive");
+    updateTopic(irrcReceivedDataTopic, "/irrcReceivedData");
     updateTopic(irrcSendTopic, "/irrcSend");
     updateTopic(shadowTopic,"/shadow");
 }

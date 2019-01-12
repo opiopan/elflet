@@ -19,10 +19,10 @@
 
 static const char tag[] = "IRService";
 
-class RecieverTask;
+class ReceiverTask;
 class TransmitterTask;
 
-static RecieverTask* rxTask;
+static ReceiverTask* rxTask;
 static TransmitterTask* txTask;
 
 //----------------------------------------------------------------------
@@ -166,9 +166,9 @@ static bool sendFormatedData(const json11::Json& obj){
 }
 
 //----------------------------------------------------------------------
-// reciever task inmprementation
+// receiver task inmprementation
 //----------------------------------------------------------------------
-class RecieverTask : public Task {
+class ReceiverTask : public Task {
 protected:
     enum Status{ST_IDLE, ST_RUNNING};
     static const int EV_WAKE_SERVER = 1;
@@ -183,36 +183,36 @@ protected:
     uint8_t rcvBuf[48];
 
 public:
-    RecieverTask();
-    virtual ~RecieverTask();
+    ReceiverTask();
+    virtual ~ReceiverTask();
 
-    void enableReciever();
-    bool startReciever();
-    bool getRecievedData(IRRC_PROTOCOL* protocol,
+    void enableReceiver();
+    bool startReceiver();
+    bool getReceivedData(IRRC_PROTOCOL* protocol,
 			 int32_t* bits, uint8_t* data);
-    bool getRecievedDataRaw(const rmt_item32_t** data, int32_t* length);
+    bool getReceivedDataRaw(const rmt_item32_t** data, int32_t* length);
     
 protected:
     void run(void *data) override;
 };
 
-RecieverTask::RecieverTask() : status(ST_IDLE),
+ReceiverTask::ReceiverTask() : status(ST_IDLE),
 			       rcvProtocol(IRRC_UNKNOWN), rcvBits(0){
     events = xEventGroupCreate();
     IRRCInit(&irContext, IRRC_RX, IRRC_NEC, GPIO_IRRX);
 }
 
-RecieverTask::~RecieverTask(){
+ReceiverTask::~ReceiverTask(){
     IRRCDeinit(&irContext);
 }
 
-void RecieverTask::enableReciever(){
-    if (elfletConfig->getIrrcRecieverMode() == Config::IrrcRecieverContinuous){
-	startReciever();
+void ReceiverTask::enableReceiver(){
+    if (elfletConfig->getIrrcReceiverMode() == Config::IrrcReceiverContinuous){
+	startReceiver();
     }
 }
 
-bool RecieverTask::startReciever(){
+bool ReceiverTask::startReceiver(){
     LockHolder holder(mutex);
     if (status != ST_IDLE){
 	return false;
@@ -222,7 +222,7 @@ bool RecieverTask::startReciever(){
     return true;
 }
 
-bool RecieverTask::getRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits,
+bool ReceiverTask::getReceivedData(IRRC_PROTOCOL* protocol, int32_t* bits,
 				   uint8_t* data){
     LockHolder holder(mutex);
     *protocol = rcvProtocol;
@@ -231,16 +231,16 @@ bool RecieverTask::getRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits,
     return true;
 }
 
-bool RecieverTask::getRecievedDataRaw(
+bool ReceiverTask::getReceivedDataRaw(
     const rmt_item32_t** data, int32_t* length){
     *data = IRRC_ITEMS(&irContext);
     *length = IRRC_ITEM_LENGTH(&irContext);
     return true;
 }
 
-void RecieverTask::run(void *data){
+void ReceiverTask::run(void *data){
     auto isContinuousMode =
-	elfletConfig->getIrrcRecieverMode() == Config::IrrcRecieverContinuous;
+	elfletConfig->getIrrcReceiverMode() == Config::IrrcReceiverContinuous;
     if (isContinuousMode){
 	IRRC_SET_OPT(&irContext, IRRC_OPT_CONTINUOUS);
     }
@@ -259,20 +259,20 @@ void RecieverTask::run(void *data){
 	if (!isContinuousMode){
 	    ledSetBlinkMode(LEDBM_IRRX);
 	}
-	if (IRRCRecieve(&irContext, 30 * 1000)){
+	if (IRRCReceive(&irContext, 30 * 1000)){
 	    mutex.lock();
 	    auto pulses = IRRC_ITEM_LENGTH(&irContext);
 	    irrcStat.rcvPulses += pulses;
 	    rcvBits = sizeof(rcvBuf) * 8;
 	    if (irContext.protocol == IRRC_UNKNOWN ||
-		!IRRCDecodeRecievedData(&irContext,
+		!IRRCDecodeReceivedData(&irContext,
 					&rcvProtocol, rcvBuf, &rcvBits)){
 		irrcStat.rcvUnknownCmds++;
 		irrcStat.rcvUnknownPulses += pulses;
 		rcvProtocol = IRRC_UNKNOWN;
 		rcvBits = 0;
 	    }else if (rcvBits > 0){
-		ESP_LOGI(tag, "recieved IR command [%s : %d bits]",
+		ESP_LOGI(tag, "received IR command [%s : %d bits]",
 			 rcvProtocol == IRRC_NEC ? "NEC" :
 			 rcvProtocol == IRRC_AEHA ? "AEHA" :
 			 rcvProtocol == IRRC_SONY ? "SONY" :
@@ -280,8 +280,8 @@ void RecieverTask::run(void *data){
 			 rcvBits);
 		irrcStat.protocol[rcvProtocol].rcvCmds++;
 		irrcStat.protocol[rcvProtocol].rcvBits += rcvBits;
-		if (elfletConfig->getIrrcRecieverMode() ==
-		    Config::IrrcRecieverContinuous){
+		if (elfletConfig->getIrrcReceiverMode() ==
+		    Config::IrrcReceiverContinuous){
 		    IRCommand cmd;
 		    cmd.protocol = rcvProtocol;
 		    cmd.bits = rcvBits;
@@ -314,7 +314,7 @@ bool startIRService(){
 
     initShadowDevicePool();
 
-    rxTask = new RecieverTask;
+    rxTask = new ReceiverTask;
     rxTask->start();
     txTask = new TransmitterTask;
     txTask->start();
@@ -346,30 +346,30 @@ bool sendIRDataJson(const WebString& data){
     return false;
 }
 
-void enableIRReciever(){
+void enableIRReceiver(){
     if (rxTask){
-	rxTask->enableReciever();
+	rxTask->enableReceiver();
     }
 }
 
-bool startIRReciever(){
-    return rxTask->startReciever();
+bool startIRReceiver(){
+    return rxTask->startReceiver();
 }
     
-bool getIRRecievedData(IRRC_PROTOCOL* protocol, int32_t* bits, uint8_t* data){
-    return rxTask->getRecievedData(protocol, bits, data);
+bool getIRReceivedData(IRRC_PROTOCOL* protocol, int32_t* bits, uint8_t* data){
+    return rxTask->getReceivedData(protocol, bits, data);
 }
 
-bool getIRRecievedDataRaw(const rmt_item32_t** data, int32_t* length){
-    return rxTask->getRecievedDataRaw(data, length);
+bool getIRReceivedDataRaw(const rmt_item32_t** data, int32_t* length){
+    return rxTask->getReceivedDataRaw(data, length);
 }
 
-bool getIRRecievedDataJson(std::ostream& out){
+bool getIRReceivedDataJson(std::ostream& out){
     uint8_t buf[48];
     int32_t bits = sizeof(buf) * 8;
     IRRC_PROTOCOL protocol;
 
-    if (getIRRecievedData(&protocol, &bits, buf)){
+    if (getIRReceivedData(&protocol, &bits, buf)){
 	if (protocol == IRRC_UNKNOWN){
 	    out << "{\"Protocol\" : \"UNKNOWN\"}";
 	}else{
@@ -394,10 +394,10 @@ bool getIRRecievedDataJson(std::ostream& out){
     }
 }
 
-bool getIRRecievedDataRawJson(std::ostream& out){
+bool getIRReceivedDataRawJson(std::ostream& out){
     const rmt_item32_t* items;
     int32_t itemNum;
-    if (getIRRecievedDataRaw(&items, &itemNum)){
+    if (getIRReceivedDataRaw(&items, &itemNum)){
 	out << "{\"" << JSON_RAW << "\":[";
 	for (int i = 0; i < itemNum; i++){
 	    if (i > 0){

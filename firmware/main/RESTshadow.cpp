@@ -34,7 +34,7 @@ static std::string nameFromUri(const WebString& uri, size_t offset){
 // listing shadow
 //----------------------------------------------------------------------
 class ListShadowsHandler: public WebServerHandler{
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	resp->setHttpStatus(HttpResponse::RESP_200_OK);
@@ -58,7 +58,7 @@ class ListShadowsHandler: public WebServerHandler{
 // Shadow status management
 //----------------------------------------------------------------------
 class ShadowStatusHandler: public WebServerHandler{
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	auto httpStatus = HttpResponse::RESP_200_OK;
@@ -92,8 +92,8 @@ class ShadowStatusHandler: public WebServerHandler{
 	    httpStatus = HttpResponse::RESP_500_InternalServerError;
 	    resp->setBody("invalid method");
 	}else if (name.length() > 0){
-	    if (elfletConfig->getIrrcRecieverMode() ==
-		Config::IrrcRecieverContinuous){
+	    if (elfletConfig->getIrrcReceiverMode() ==
+		Config::IrrcReceiverContinuous){
 		auto shadow = findShadowDevice(name);
 		if (shadow){
 		    if (req->method() == HttpRequest::MethodGet){
@@ -116,7 +116,7 @@ class ShadowStatusHandler: public WebServerHandler{
 		}
 	    }else{
 		httpStatus = HttpResponse::RESP_500_InternalServerError;
-		resp->setBody("IR reciever must be in continuous mode.");
+		resp->setBody("IR receiver must be in continuous mode.");
 	    }
 	}else{
 	    httpStatus = HttpResponse::RESP_404_NotFound;
@@ -142,7 +142,7 @@ class ShadowDefsHandler : public WebServerHandler {
 	}
     };
     
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	auto httpStatus = HttpResponse::RESP_200_OK;

@@ -23,11 +23,12 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
 ## Building Firmware
 1. **Preparing Key Files for Digital Signing**<br>
     When OTA firmware updating, elflet justify firmware image by digital signature scheme based on public-key encription.
-    You have to prepare 1024 bit RSA key pair, private key to sign and public key to verify.<br>
+    You have to prepare 1024 bits RSA key pair, private key to sign and public key to verify.<br>
     Please make dedicated key pair as below.
 
     ```
     $ mkdir ~/esp/deploy
+    $ chmod 700 ~/esp/deploy
     $ cd ~/esp/deploy
     $ openssl genrsa 1024 > signingkey.pem
     $ openssl rsa -in signingkey.pem -pubout -out verificationkey.pem
@@ -55,4 +56,4 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
     ```
 
 ## Downloading Firmware
-Please refer [this section](https://github.com/opiopan/elflet#inital-firmware-downloading).
+Please refer [this section](../#inital-firmware-downloading).

@@ -23,7 +23,7 @@ static const char* sessionTypeStr[]{
     "TCP", "TSL", "WebSocket", "WebSocketSecure", NULL
 };
 
-static const char* irrcRecieverModeStr[]{
+static const char* irrcReceiverModeStr[]{
     "OnDemand", "Continuous", NULL
 };
 
@@ -68,8 +68,8 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_NTPSERVER, conf->getNtpServer()},
 	    {JSON_TIMEZONE, conf->getTimezone()},
 	    {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
-	    {JSON_IRRCRECIEVERMODE,
-		    irrcRecieverModeStr[conf->getIrrcRecieverMode()]},
+	    {JSON_IRRCRECEIVERMODE,
+		    irrcReceiverModeStr[conf->getIrrcReceiverMode()]},
 	    {JSON_BLEHID, conf->getBleHid()},
 	});
     auto pubsub = json11::Json::object({
@@ -79,8 +79,8 @@ static void serializeConfig(HttpResponse* resp){
 	    {JSON_PUBSUBSERVERCERT, conf->getPubSubServerCert()},
 	    {JSON_PUBSUBUSER, conf->getPubSubUser()},
 	    {JSON_SENSORTOPIC, conf->getSensorTopic()},
-	    {JSON_IRRCRECIEVETOPIC, conf->getIrrcRecieveTopic()},
-	    {JSON_IRRCRECIEVEDDATATOPIC, conf->getIrrcRecievedDataTopic()},
+	    {JSON_IRRCRECEIVETOPIC, conf->getIrrcReceiveTopic()},
+	    {JSON_IRRCRECEIVEDDATATOPIC, conf->getIrrcReceivedDataTopic()},
 	    {JSON_IRRCSENDTOPIC, conf->getIrrcSendTopic()},
 	    {JSON_SHADOWTOPIC, conf->getShadowTopic()},
 	    {JSON_DOWNLOADFIRMWARETOPIC, conf->getDownloadFirmwareTopic()},
@@ -135,12 +135,12 @@ static bool applyPubSub(const json11::Json& input, const char** rmsg){
     ApplyValue(input, JSON_SENSORTOPIC,
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setSensorTopic(v);});
-    ApplyValue(input, JSON_IRRCRECIEVETOPIC,
+    ApplyValue(input, JSON_IRRCRECEIVETOPIC,
 	       [](const std::string& v) -> bool{
-		   return elfletConfig->setIrrcRecieveTopic(v);});
-    ApplyValue(input, JSON_IRRCRECIEVEDDATATOPIC,
+		   return elfletConfig->setIrrcReceiveTopic(v);});
+    ApplyValue(input, JSON_IRRCRECEIVEDDATATOPIC,
 	       [](const std::string& v) -> bool{
-		   return elfletConfig->setIrrcRecievedDataTopic(v);});
+		   return elfletConfig->setIrrcReceivedDataTopic(v);});
     ApplyValue(input, JSON_IRRCSENDTOPIC,
 	       [](const std::string& v) -> bool{
 		   return elfletConfig->setIrrcSendTopic(v);});
@@ -240,18 +240,18 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
 	    }
 	});
 
-    ApplyValue(input, JSON_IRRCRECIEVERMODE, [&](const std::string& v) -> bool{
+    ApplyValue(input, JSON_IRRCRECEIVERMODE, [&](const std::string& v) -> bool{
 	    int i;
-	    for (i = 0; irrcRecieverModeStr[i]; i++){
-		if (v == irrcRecieverModeStr[i]){
+	    for (i = 0; irrcReceiverModeStr[i]; i++){
+		if (v == irrcReceiverModeStr[i]){
 		    break;
 		}
 	    }
-	    if (irrcRecieverModeStr[i]){
-		elfletConfig->setIrrcRecieverMode((Config::IrrcRecieverMode)i);
+	    if (irrcReceiverModeStr[i]){
+		elfletConfig->setIrrcReceiverMode((Config::IrrcReceiverMode)i);
 		return true;
 	    }else{
-		*msg = "invalid irrc reciever mode is specified";
+		*msg = "invalid irrc receiver mode is specified";
 		return false;
 	    }
 	});
@@ -287,7 +287,7 @@ class SetConfigHandler : public WebServerHandler {
 	}
     };
 
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	auto httpStatus = HttpResponse::RESP_200_OK;

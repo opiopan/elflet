@@ -11,7 +11,7 @@ static const char tag[] = "WebServerHandler";
 //  handle comlete request message
 //     nothing to do on default
 //----------------------------------------------------------------------
-void WebServerHandler::recieveRequest(WebServerConnection& connection){
+void WebServerHandler::receiveRequest(WebServerConnection& connection){
 }
 
 

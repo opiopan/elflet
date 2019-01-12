@@ -458,7 +458,7 @@ public:
 
     virtual bool needDigestAuthentication(HttpRequest& req){return false;};
 
-    virtual void recieveRequest(WebServerConnection& connection);
+    virtual void receiveRequest(WebServerConnection& connection);
 
     virtual void beginMultipart(WebServerConnection& connection);
     virtual void endMultipart(WebServerConnection& connection);

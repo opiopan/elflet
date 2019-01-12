@@ -14,8 +14,8 @@ POST|/manage/otaupdate|digest|multipart/form|-|update firmware.<br>firmware imag
 ## IR remote controller
 method | path | auth|req-body | resp-body | description
 :----|:------:|:-------------:|:------------:|:-------------:|:-----------
-GET|/irrc/startReciever|none|-|-| If `IrrcRecieverMode` parameter of configuration is `OnDemand`, elflet start to recieve IR remote controller signal. You can confirm elflet is in this mode as blinking LED blue.<br>If `IrrcRecieverMode` parameter is `Continuous`, This request is ignored.
-GET|/irrc/recievedData|none|-|application/json| get latest recieved IR remote controller code
+GET|/irrc/startReceiver|none|-|-| If `IrrcReceiverMode` parameter of configuration is `OnDemand`, elflet start to receive IR remote controller signal. You can confirm elflet is in this mode as blinking LED blue.<br>If `IrrcReceiverMode` parameter is `Continuous`, This request is ignored.
+GET|/irrc/receivedData|none|-|application/json| get latest received IR remote controller code
 POST|/irrc/send|none|application/json|-|sedn IR remote controller command
 
 ## Device Shadow

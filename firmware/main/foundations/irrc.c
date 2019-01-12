@@ -197,7 +197,7 @@ static bool makeSendData(IRRC* ctx, const uint8_t* data, int32_t bits)
 }
 
 //----------------------------------------------------------------------
-// reciever implementation
+// receiver implementation
 //----------------------------------------------------------------------
 static void initRx(IRRC* ctx, IRRC_PROTOCOL protocol, int32_t gpio)
 {
@@ -376,9 +376,9 @@ void IRRCSend(IRRC* ctx, const uint8_t* data, int32_t bits)
     }
 }
 
-bool IRRCRecieve(IRRC* ctx, int32_t timeout)
+bool IRRCReceive(IRRC* ctx, int32_t timeout)
 {
-    ESP_LOGD(tag,"start IR recieving");
+    ESP_LOGD(tag,"start IR receiving");
     ctx->usedLen = 0;
 
     if (!ctx->started || !(ctx->option & IRRC_OPT_CONTINUOUS)){
@@ -398,7 +398,7 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
     if (items){
 	ctx->usedLen = rx_size / sizeof(*items);
 	memcpy(ctx->buff, items, rx_size);
-	ESP_LOGD(tag,"%d unit data recieved", ctx->usedLen);
+	ESP_LOGD(tag,"%d unit data received", ctx->usedLen);
 	ctx->protocol = presumeProtocol(ctx);
 	ESP_LOGD(tag, "it seems %s format",
 		 ctx->protocol == IRRC_NEC ? "NEC" : 
@@ -408,12 +408,12 @@ bool IRRCRecieve(IRRC* ctx, int32_t timeout)
 	vRingbufferReturnItem(ctx->rb, (void*) items);
 	return true;
     }else{
-	ESP_LOGD(tag,"timeout, no data recieved");
+	ESP_LOGD(tag,"timeout, no data received");
 	return false;
     }
 }
 
-bool IRRCDecodeRecievedData(IRRC* ctx,
+bool IRRCDecodeReceivedData(IRRC* ctx,
 			    IRRC_PROTOCOL* protocol,
 			    uint8_t* data, int32_t* bits)
 {

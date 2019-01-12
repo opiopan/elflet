@@ -26,7 +26,7 @@ extern const char JSON_NVS_NSCOUNT[] = "NvsNamespaceCount";
 extern const char JSON_STAT[] = "Statistics";
 
 class StatusHandler : public WebServerHandler {
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 	if (req->method() != HttpRequest::MethodGet){

@@ -64,7 +64,7 @@ static void sendData(const WebString& data){
 }
 
 class BleHidHandler : public WebServerHandler {
-    void recieveRequest(WebServerConnection& connection) override{
+    void receiveRequest(WebServerConnection& connection) override{
 	auto req = connection.request();
 	auto resp = connection.response();
 

@@ -160,15 +160,15 @@ void PubSub::run(void *data){
 	    uint8_t buf[48];
 	    int32_t bits = sizeof(buf) * 8;
 	    IRRC_PROTOCOL protocol;
-	    if (getIRRecievedData(&protocol, &bits, buf)){
+	    if (getIRReceivedData(&protocol, &bits, buf)){
 		std::stringstream out;
 		if (protocol == IRRC_UNKNOWN){
 		    continue;
 		}
-		getIRRecievedDataJson(out);
+		getIRReceivedDataJson(out);
 		const auto data = out.str();
 		esp_mqtt_client_publish(
-		    client, elfletConfig->getIrrcRecievedDataTopic().c_str(),
+		    client, elfletConfig->getIrrcReceivedDataTopic().c_str(),
 		    data.data(), data.length(), 0, 0);
 	    }
 	}
@@ -212,7 +212,7 @@ void PubSub::subscribe(){
     const std::string* topics[] = {
 	&elfletConfig->getDownloadFirmwareTopic(),
 	&elfletConfig->getIrrcSendTopic(),
-	&elfletConfig->getIrrcRecieveTopic(),
+	&elfletConfig->getIrrcReceiveTopic(),
     };
 
     for (;subscribeStage < sizeof(topics) / sizeof(topics[0]);
@@ -248,23 +248,23 @@ esp_err_t PubSub::mqttEventHandler(esp_mqtt_event_handle_t event){
     case MQTT_EVENT_DATA:{
 	WebString topic(event->topic, event->topic_len);
 	auto irrcSend = elfletConfig->getIrrcSendTopic();
-	auto irrcRecieve = elfletConfig->getIrrcRecieveTopic();
+	auto irrcReceive = elfletConfig->getIrrcReceiveTopic();
 	auto downloadFirmware = elfletConfig->getDownloadFirmwareTopic();
 
 	if (event->total_data_len > event->data_len){
-	    ESP_LOGI(tag, "too large data recieved.");
+	    ESP_LOGI(tag, "too large data received.");
 	    break;
 	}
 
 	if (topic == irrcSend.c_str()){
-	    ESP_LOGI(tag, "recieve subscribed mqtt data: IrrcSend");
+	    ESP_LOGI(tag, "receive subscribed mqtt data: IrrcSend");
 	    WebString data(event->data, event->data_len);
 	    sendIRDataJson(data);
-	}else if (topic == irrcRecieve.c_str()){
-	    ESP_LOGI(tag, "recieve subscribed mqtt data: IrrcRecieve");
-	    startIRReciever();
+	}else if (topic == irrcReceive.c_str()){
+	    ESP_LOGI(tag, "receive subscribed mqtt data: IrrcReceive");
+	    startIRReceiver();
 	}else if (topic == downloadFirmware.c_str()){
-	    ESP_LOGI(tag, "recieve subscribed mqtt data: DwonloadFirmware");
+	    ESP_LOGI(tag, "receive subscribed mqtt data: DwonloadFirmware");
 	    std::string err;
 	    auto msg = json11::Json::parse(std::string(event->data,
 						       event->data_len),
@@ -345,7 +345,7 @@ void publishSensorData(){
 
 void publishIrrcData(){
     if (task &&
-	elfletConfig->getIrrcRecievedDataTopic().length() > 0){
+	elfletConfig->getIrrcReceivedDataTopic().length() > 0){
 	task->publishIrrcData();
 	pubsubStat.publishIrrcCount++;
     }

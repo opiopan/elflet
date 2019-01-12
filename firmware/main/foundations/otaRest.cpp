@@ -40,7 +40,7 @@ public:
 
     virtual bool needDigestAuthentication(HttpRequest& req) override;
 
-    virtual void recieveRequest(WebServerConnection& connection) override;
+    virtual void receiveRequest(WebServerConnection& connection) override;
 
     virtual void beginMultipart(WebServerConnection& connection) override;
     virtual void endMultipart(WebServerConnection& connection) override;
@@ -72,7 +72,7 @@ bool OTAWebHandler::needDigestAuthentication(HttpRequest& req){
     return needDigestAuth;
 }
 
-void OTAWebHandler::recieveRequest(WebServerConnection& connection){
+void OTAWebHandler::receiveRequest(WebServerConnection& connection){
     buildInvalidResp(connection.response());
 }
 

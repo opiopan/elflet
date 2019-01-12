@@ -15,8 +15,8 @@ Unlike other similar products, elflet highly abstructs IR remote controll protoc
 
 ## Features
 
-* **IR reciever**<br>
-Recievd IR remote controller signal is analized such as following abstracted protocol data.
+* **IR receiver**<br>
+Receivd IR remote controller signal is analized such as following abstracted protocol data.
 
     ```json
     {
@@ -26,7 +26,7 @@ Recievd IR remote controller signal is analized such as following abstracted pro
     }
     ```
     Analized protocol data can be retrieved via 
-    [REST interface](https://github.com/opiopan/elflet/blob/master/docs/REST.md), 
+    [REST interface](docs/REST.md), 
     or can be publishd via MQTT protocol.<br>
     **NOTE:** Supported protocols are NEC, SONY, and AEHA.
 
@@ -34,10 +34,10 @@ Recievd IR remote controller signal is analized such as following abstracted pro
 You can transmit IR remote controller signal by specifying the above level abstracted represatation.<br>
 elflet supports two protocols for IR transmitter, 
 The first one is 
-[REST](https://github.com/opiopan/elflet/blob/master/docs/REST.md)
+[REST](docs/REST.md)
 , and the other one is original binary protocol.
 Regarding this binary protocol, please refer 
-[these host-side library codes (`irslib.h`, `irslib.c`)](https://github.com/opiopan/elflet/tree/master/hosttool).
+[these host-side library codes (`irslib.h`, `irslib.c`)](hosttool).
 
 * **Device Shadow**<br>
 Device shadow is designed to help complecated IR command device management such as air conditioner.<br>
@@ -56,12 +56,12 @@ elflet analize IR command code pattern according to registered shadow definition
     ```
 
     Shadow status can be refered via 
-    [REST interface](https://github.com/opiopan/elflet/blob/master/docs/REST.md), and status change of shadow device can be known immediately as publicshed data via MQTT.<br>
+    [REST interface](docs/REST.md), and status change of shadow device can be known immediately as publicshed data via MQTT.<br>
     You can also change shadow's status by sending the above format data to elflet via 
-    [REST interface](https://github.com/opiopan/elflet/blob/master/docs/REST.md). 
+    [REST interface](docs/REST.md). 
     In this case, elflet synthesize IR code acording to shadow definition then transmit that.<br>
     A couple of shadow definition examples are shown at
-    [here](https://github.com/opiopan/elflet/blob/master/examples).
+    [here](examples).
 
 * **BLE Keyboard Emulator**<br>
 elflet can behave as Bluetooth LE (BLE) keyboard. You can send any key code to a device paired with elflet via Bluetooth LE.<br>
@@ -75,30 +75,30 @@ Following sensors are installed on elflet.
     * luminocity sensors
 
     You can retrieve sensor values via
-    [REST interface](https://github.com/opiopan/elflet/blob/master/docs/REST.md),
-    and can also recieve them periodically as MQTT published message.<br>
+    [REST interface](docs/REST.md),
+    and can also receive them periodically as MQTT published message.<br>
     elflet supports a SENSOR-ONLY mode to avoid own heat affecting to measuring temperature. In this mode, elflet stays in deep sleep status except when sensor values is captured and they are published.
     You can transit elflet to SENSOR-ONLY mode by using
-    [host tool](https://github.com/opiopan/elflet/blob/master/hosttool).
+    [host tool](hosttool).
 
 ## PCB
 PCB of elfet is designed by using [AUTODESK EAGLE](http://eagle.autodesk.com).
-* PCB design files are placed [here](https://github.com/opiopan/elflet/blob/master/pcb/mainboard)
+* PCB design files are placed [here](pcb/mainboard)
 * You can also use [this gerver data](https://raw.githubusercontent.com/wiki/opiopan/elflet/pcb/elflet-mainboard.zip)
 for production
-* BOM list is [here](https://github.com/opiopan/elflet/blob/master/pcb/elflet-bom.xlsx?raw=true)
+* BOM list is [here](pcb/elflet-bom.xlsx?raw=true)
 
 ## Building Firmware
 Firmware source codes are placed at 
-[here](https://github.com/opiopan/elflet/blob/master/firmware).
+[here](firmware).
 To build firmware binary, please refer 
-[this document](https://github.com/opiopan/elflet/blob/master/firmware/README.md).
+[this document](firmware/README.md).
 
 ## Inital Firmware Downloading
 Once elflet firmware runs on elflet board, you can download firmware binary via WiFi (OTA updating). However, you need to download firmware via UART at first time since OTA updating function does not work yet.<br>
 Folowing four binary files must be download at correct address in ESP-WROOM-32's SPI flash.
 
-|file to download                       | adress  |
+|file to download                        | adress  |
 |:---------------------------------------|--------:|
 | firmware/buld/bootloader/bootloader.bin|   0x1000|
 | firmware/buld/partitions.bin           |   0x8000|
@@ -114,7 +114,7 @@ elflet exports sevelal ESP32 pins to service port as below. You can download fir
 Another way to download firmware is using 
 [this jig board](https://raw.githubusercontent.com/wiki/opiopan/elflet/pcb/elflet-jig.zip)
 and Raspberry Pi. 
-[These tools running on Raspberry Pi](https://github.com/opiopan/elflet/blob/master/raspitools)
+[These tools running on Raspberry Pi](raspitools)
 may help you to download or debug elflet firmware.<br>
 When use this jig board, please connect following direction.
 
@@ -130,7 +130,7 @@ Please connect to elflet WiFi access point by specifing these SSID and passphras
 Once you connect to elflet WiFi access point, you can access to setup widzerd. Please try a URL "`http://elflet-000000.local/`".<br>
 
 **NOTE:** Initial node name and initial administorator password can be change in step of building firmware. Please refer
-[this document](https://github.com/opiopan/elflet/blob/master/firmware/README.md)
+[this document](firmware/README.md)
 regarding the detail. 
 
 <p align="center">
@@ -150,7 +150,7 @@ In this case, the LED start to blink orange again and you can access setup Wizar
 
 During elflet is connecting to your home network, setup widzard is not available. If you want to access setup wizard, please transit elflet to CONFIGURATION mode. You can proceed this transition by pressing a button till LED start to blink orange.
 
-To change other detail configuration, please use a host tools, "`elflet-config`" and "`elflet-shadow`". Usage of these tools are described in [this document](https://github.com/opiopan/elflet/tree/master/hosttool/README.md).
+To change other detail configuration, please use a host tools, "`elflet-config`" and "`elflet-shadow`". Usage of these tools are described in [this document](hosttool/README.md).
 
 
 ## Licencing
@@ -158,7 +158,7 @@ To change other detail configuration, please use a host tools, "`elflet-config`"
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
 elflet is released under dual open source licence.<br>
-[The elfle firmware](https://github.com/opiopan/elflet/blob/master/firmware)
+[The elfle firmware](firmware)
 is in accordance with 
 [GNU General Public License, version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 The other program source files, PCB design, and all documents are coverd by

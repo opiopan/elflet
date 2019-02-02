@@ -22,11 +22,11 @@ public:
     time_t getTime(){return time;};
 
     enum FORMAT{
-	SIMPLE_DATE,
-	SIMPLE_TIME,
-	SIMPLE_DATETIME,
-	ELAPSED_TIME,
-	RFC1123
+        SIMPLE_DATE,
+        SIMPLE_TIME,
+        SIMPLE_DATETIME,
+        ELAPSED_TIME,
+        RFC1123
     };
     
     const char* format(FORMAT type);

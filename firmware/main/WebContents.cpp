@@ -18,10 +18,10 @@ struct BinContent {
     bool isCompressed;
 
     BinContent(const char* d, size_t l, bool c) :
-	data(d), length(l), isCompressed(c){};
+        data(d), length(l), isCompressed(c){};
     BinContent() : data(NULL), length(0), isCompressed(false){};
     BinContent(const BinContent& s) :
-	data(s.data), length(s.length), isCompressed(s.isCompressed){};
+        data(s.data), length(s.length), isCompressed(s.isCompressed){};
 };
 
 typedef std::map<WebString, BinContent> ContentMap;
@@ -61,16 +61,16 @@ public:
 
 WebContents::WebContents(){
     if (elfletConfig->getBootMode() == Config::FactoryReset ||
-	elfletConfig->getBootMode() == Config::Configuration){
-	dict = new ContentMap({
-	    {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_jsz, true)},
-	    {"/", EMBEDDED(wizard_htmlz, true)},
-	    {"/wizard.html", EMBEDDED(wizard_htmlz, true)},
-	    {"/wizard.css", EMBEDDED(wizard_cssz, true)},
-	    {"/wizard.js", EMBEDDED(wizard_jsz, true)},
-	});
+        elfletConfig->getBootMode() == Config::Configuration){
+        dict = new ContentMap({
+            {"/jquery-3.3.1.min.js", EMBEDDED(jquery_3_3_1_min_jsz, true)},
+            {"/", EMBEDDED(wizard_htmlz, true)},
+            {"/wizard.html", EMBEDDED(wizard_htmlz, true)},
+            {"/wizard.css", EMBEDDED(wizard_cssz, true)},
+            {"/wizard.js", EMBEDDED(wizard_jsz, true)},
+        });
     }else{
-	dict = &normalDict;
+        dict = &normalDict;
     }
 }
 
@@ -80,9 +80,9 @@ WebContents::~WebContents(){
 ContentProvider::Content WebContents::getContent(const WebString& path) const {
     auto c = dict->find(path);
     if (c != dict->end()){
-	return {{c->second.data, c->second.length}, c->second.isCompressed};
+        return {{c->second.data, c->second.length}, c->second.isCompressed};
     }else{
-	return {{}, false};
+        return {{}, false};
     }
 }
 

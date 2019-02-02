@@ -1,25 +1,25 @@
 {
     "CommonCondition" : {
-	"Type" : "COMBINATION",
-	"Operator" : "AND",
-	"Formulas" : [
-	    {
-		"Type" : "PROTOCOL",
-		"Protocol" : "AEHA"
-	    },{
-		"Type" : "DATA",
-		"Data" : "1463001010"
-	    }
-	]
+        "Type" : "COMBINATION",
+        "Operator" : "AND",
+        "Formulas" : [
+            {
+                "Type" : "PROTOCOL",
+                "Protocol" : "AEHA"
+            },{
+                "Type" : "DATA",
+                "Data" : "1463001010"
+            }
+        ]
     },
     "OnCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "fe"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "fe"
     },
     "OffCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "02"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "02"
     }
 }

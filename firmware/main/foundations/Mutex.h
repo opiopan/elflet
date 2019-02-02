@@ -9,20 +9,20 @@ private:
 public:
     Mutex()
     {
-	sem = xSemaphoreCreateMutex();
+        sem = xSemaphoreCreateMutex();
     }
     ~Mutex()
     {
-	vSemaphoreDelete(sem);
+        vSemaphoreDelete(sem);
     }
 
     void lock()
     {
-	xSemaphoreTake(sem, portMAX_DELAY);
+        xSemaphoreTake(sem, portMAX_DELAY);
     }
     void unlock()
     {
-	xSemaphoreGive(sem);
+        xSemaphoreGive(sem);
     }
 };
 
@@ -32,10 +32,10 @@ private:
 
 public:
     LockHolder(Mutex& target) : mutex(target){
-	mutex.lock();
+        mutex.lock();
     };
     ~LockHolder()
     {
-	mutex.unlock();
+        mutex.unlock();
     }
 };

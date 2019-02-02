@@ -55,9 +55,9 @@ SensorTask::SensorTask() : enableFlag(0){
     events = xEventGroupCreate();
 
     bme280 = new BME280_I2C(0x77,
-			    (gpio_num_t)GPIO_I2C_SDA, (gpio_num_t)GPIO_I2C_SCL,
-			    I2C::DEFAULT_CLK_SPEED,
-			    I2C_NUM_0, false);
+                            (gpio_num_t)GPIO_I2C_SDA, (gpio_num_t)GPIO_I2C_SCL,
+                            I2C::DEFAULT_CLK_SPEED,
+                            I2C_NUM_0, false);
     bme280->init();
 }
 
@@ -80,46 +80,46 @@ void SensorTask::getValue(SensorValue* value){
 
 void SensorTask::run(void *data){
     xEventGroupWaitBits(events, EV_WAKE_SERVER,
-			pdTRUE, pdFALSE,
-			portMAX_DELAY);
+                        pdTRUE, pdFALSE,
+                        portMAX_DELAY);
 
     int workingSensors = 0;
     if (bme280->isWorking()){
-	workingSensors = 
-		SensorValue::TEMPERATURE |
-		SensorValue::HUMIDITY |
-		SensorValue::PRESSURE;
+        workingSensors = 
+                SensorValue::TEMPERATURE |
+                SensorValue::HUMIDITY |
+                SensorValue::PRESSURE;
     }
     
     while (true){
-	if (bme280->isWorking()){
-	    bme280->start(true);
-	    vTaskDelay(100 / portTICK_PERIOD_MS);
-	    bme280->measure();
-	    Time now;
-	    sensorStat.bme280CaptureCount++;
-	}
+        if (bme280->isWorking()){
+            bme280->start(true);
+            vTaskDelay(100 / portTICK_PERIOD_MS);
+            bme280->measure();
+            Time now;
+            sensorStat.bme280CaptureCount++;
+        }
 
-	{
-	    LockHolder holder(mutex);
-	    enableFlag = workingSensors;
-	    temperature = bme280->getTemperature();
-	    humidity = bme280->getHumidity();
-	    pressure = bme280->getPressure();
-	}
+        {
+            LockHolder holder(mutex);
+            enableFlag = workingSensors;
+            temperature = bme280->getTemperature();
+            humidity = bme280->getHumidity();
+            pressure = bme280->getPressure();
+        }
 
-	publishSensorData();
-	
-	/*
-	printf("%s Temp[%.1f dig] Hum[%.1f %%] Press[%.1f hPa]\n",
-	       now.format(Time::SIMPLE_DATETIME),
-	       bme280->getTemperatureFloat(),
-	       bme280->getHumidityFloat(),
-	       bme280->getPressureFloat());
-	*/
+        publishSensorData();
+        
+        /*
+        printf("%s Temp[%.1f dig] Hum[%.1f %%] Press[%.1f hPa]\n",
+               now.format(Time::SIMPLE_DATETIME),
+               bme280->getTemperatureFloat(),
+               bme280->getHumidityFloat(),
+               bme280->getPressureFloat());
+        */
 
-	vTaskDelay(
-	    elfletConfig->getSensorFrequency() * 1000 / portTICK_PERIOD_MS);
+        vTaskDelay(
+            elfletConfig->getSensorFrequency() * 1000 / portTICK_PERIOD_MS);
     }
 
     while (true){
@@ -131,8 +131,8 @@ void SensorTask::run(void *data){
 //----------------------------------------------------------------------
 bool startSensorService(){
     if (!sensorTask){
-	sensorTask = new SensorTask();
-	sensorTask->start();
+        sensorTask = new SensorTask();
+        sensorTask->start();
     }
 
     return true;
@@ -140,19 +140,19 @@ bool startSensorService(){
 
 void enableSensorCapturing(){
     if (sensorTask){
-	sensorTask->enableCapture();
+        sensorTask->enableCapture();
     }
 }
 
 void getSensorValue(SensorValue* value){
     if (sensorTask){
-	sensorTask->getValue(value);
+        sensorTask->getValue(value);
     }
 }
 
 void getSensorValueAsJson(std::ostream& out){
     if (!sensorTask){
-	return;
+        return;
     }
     
     SensorValue value;
@@ -160,39 +160,39 @@ void getSensorValueAsJson(std::ostream& out){
 
     bool first = true;
     auto sep = [&]() -> void {
-	if (first){
-	    first = false;
-	}else{
-	    out << ",";
-	}
+        if (first){
+            first = false;
+        }else{
+            out << ",";
+        }
     };
 
     out << "{";
     sep();
     out << "\"" << JSON_NODENAME << "\":\""
-	<< elfletConfig->getNodeName() << "\"";
+        << elfletConfig->getNodeName() << "\"";
     if (value.enableFlag != 0){
-	sep();
-	out << "\"" << JSON_DATE << "\":\""
-	    << value.captureTime.format(Time::RFC1123) << "\"";
+        sep();
+        out << "\"" << JSON_DATE << "\":\""
+            << value.captureTime.format(Time::RFC1123) << "\"";
     }
     if (value.enableFlag & SensorValue::TEMPERATURE){
-	sep();
-	out << "\"" << JSON_TEMP_UNIT << "\":\"celsius\",\""
-	    << JSON_TEMP << "\":"
-	    << value.temperatureFloat();
+        sep();
+        out << "\"" << JSON_TEMP_UNIT << "\":\"celsius\",\""
+            << JSON_TEMP << "\":"
+            << value.temperatureFloat();
     }
     if (value.enableFlag & SensorValue::HUMIDITY){
-	sep();
-	out << "\"" << JSON_HUM_UNIT << "\":\"percentage\",\""
-	    << JSON_HUM << "\":"
-	    << value.humidityFloat();
+        sep();
+        out << "\"" << JSON_HUM_UNIT << "\":\"percentage\",\""
+            << JSON_HUM << "\":"
+            << value.humidityFloat();
     }
     if (value.enableFlag & SensorValue::PRESSURE){
-	sep();
-	out << "\"" << JSON_PRESS_UNIT << "\":\"hPa\",\""
-	    << JSON_PRESS << "\":"
-	    << value.pressureFloat();
+        sep();
+        out << "\"" << JSON_PRESS_UNIT << "\":\"hPa\",\""
+            << JSON_PRESS << "\":"
+            << value.pressureFloat();
     }
     out << "}";
 }

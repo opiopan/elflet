@@ -47,8 +47,8 @@ void ButtonEventTask::sendEvent(bool level){
     printf("detected raw button event: %d\n", level);
     LockHolder holder(mutex);
     if (this->level != level){
-	this->level = level;
-	xEventGroupSetBits(events, 1);
+        this->level = level;
+        xEventGroupSetBits(events, 1);
     }
 }
 
@@ -56,51 +56,51 @@ void ButtonEventTask::run(void *data){
     //bool level = gpio_get_level((gpio_num_t)GPIO_BUTTON) != 0;
     bool level = 0;
     auto waitForEvent = [&](int timeToWait) -> bool {
-	auto ev = xEventGroupWaitBits(events, 1, pdTRUE, pdFALSE, timeToWait);
-	LockHolder holder(this->mutex);
-	level = this->level;
-	return ev != 0;
+        auto ev = xEventGroupWaitBits(events, 1, pdTRUE, pdFALSE, timeToWait);
+        LockHolder holder(this->mutex);
+        level = this->level;
+        return ev != 0;
     };
 
     while (true){
-	while (!level){
-	    waitForEvent(portMAX_DELAY);
-	}
-	printf("button down\n");
+        while (!level){
+            waitForEvent(portMAX_DELAY);
+        }
+        printf("button down\n");
 
-	while (level){
-	    if (!waitForEvent(5 * 1000 / portTICK_PERIOD_MS)){
-		auto mode = elfletConfig->getBootMode();
-		ESP_LOGI(tag,
-			 "long button press detected, boot mode is changing");
-		if (mode == Config::Normal){
-		    elfletConfig->setBootMode(Config::Configuration);
-		    elfletConfig->commit();
-		    esp_restart();
-		}else if (mode == Config::Configuration){
-		    elfletConfig->setBootMode(Config::FactoryReset);
-		    elfletConfig->commit();
-		    esp_restart();
-		}
-	    }else{
-		printf("button up\n");
-		auto mode = elfletConfig->getBootMode();
-		if (mode == Config::Normal){
-		    if (elfletConfig->getWakeupCause() == WC_BUTTON &&
-			elfletConfig->getFunctionMode() == Config::SensorOnly){
-			//enterDeepSleep(500);
-			esp_restart();
-		    }else if (elfletConfig->getFunctionMode() ==
-			      Config::FullSpec){
-			ESP_LOGI(tag, "start IR receiver");
-			startIRReceiver();
-		    }
-		}else if (mode == Config::Configuration){
-		    ESP_LOGI(tag, "go back to normal mode");
-		    esp_restart();
-		}
-	    }
-	}
+        while (level){
+            if (!waitForEvent(5 * 1000 / portTICK_PERIOD_MS)){
+                auto mode = elfletConfig->getBootMode();
+                ESP_LOGI(tag,
+                         "long button press detected, boot mode is changing");
+                if (mode == Config::Normal){
+                    elfletConfig->setBootMode(Config::Configuration);
+                    elfletConfig->commit();
+                    esp_restart();
+                }else if (mode == Config::Configuration){
+                    elfletConfig->setBootMode(Config::FactoryReset);
+                    elfletConfig->commit();
+                    esp_restart();
+                }
+            }else{
+                printf("button up\n");
+                auto mode = elfletConfig->getBootMode();
+                if (mode == Config::Normal){
+                    if (elfletConfig->getWakeupCause() == WC_BUTTON &&
+                        elfletConfig->getFunctionMode() == Config::SensorOnly){
+                        //enterDeepSleep(500);
+                        esp_restart();
+                    }else if (elfletConfig->getFunctionMode() ==
+                              Config::FullSpec){
+                        ESP_LOGI(tag, "start IR receiver");
+                        startIRReceiver();
+                    }
+                }else if (mode == Config::Configuration){
+                    ESP_LOGI(tag, "go back to normal mode");
+                    esp_restart();
+                }
+            }
+        }
     }
 }
 
@@ -142,17 +142,17 @@ void ButtonFilterTask::run(void *data){
 
     auto level = gpio_get_level((gpio_num_t)GPIO_BUTTON);
     while (true){
-	uint32_t num;
+        uint32_t num;
         if(xQueueReceive(evtQueue, &num, portMAX_DELAY)) {
-	    auto now = gpio_get_level((gpio_num_t)GPIO_BUTTON);
-	    if (now != level){
-		vTaskDelay(FILTER_DELAY);
-		if (now == gpio_get_level((gpio_num_t)GPIO_BUTTON)){
-		    level = now;
-		    eventTask->sendEvent(level != 0);
-		}
-	    }
-	}
+            auto now = gpio_get_level((gpio_num_t)GPIO_BUTTON);
+            if (now != level){
+                vTaskDelay(FILTER_DELAY);
+                if (now == gpio_get_level((gpio_num_t)GPIO_BUTTON)){
+                    level = now;
+                    eventTask->sendEvent(level != 0);
+                }
+            }
+        }
     }
 }
 
@@ -162,13 +162,13 @@ void ButtonFilterTask::run(void *data){
 //----------------------------------------------------------------------
 bool startButtonService(){
     if (!eventTask || !filterTask){
-	filterTask = new ButtonFilterTask;
-	filterTask->setStackSize(2048);
-	eventTask = new ButtonEventTask;
-	eventTask->setStackSize(4096);
-	filterTask->start();
-	eventTask->start();
+        filterTask = new ButtonFilterTask;
+        filterTask->setStackSize(2048);
+        eventTask = new ButtonEventTask;
+        eventTask->setStackSize(4096);
+        filterTask->start();
+        eventTask->start();
     }
-	    
+            
     return true;
 }

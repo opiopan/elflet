@@ -34,8 +34,8 @@ curl -F"image=@${IMAGE};type=application/octet-stream" \
 RESULT=`grep '^HTTP/1\.' ${HEADER} | tail -1`
 echo $RESULT | while read P CODE MSG;do
     if ! [ "$CODE" = "200" ];then
-	echo "Cannot update firmware: $MSG" >&2
-	exit 1
+        echo "Cannot update firmware: $MSG" >&2
+        exit 1
     fi
 done || exit 1
 

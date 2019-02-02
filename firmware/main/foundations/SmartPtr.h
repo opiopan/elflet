@@ -11,8 +11,8 @@ template <class T> class SmartPtr{
 protected:
     class ObjectHandle{
     protected:
-        T*	object;
-        int	refCount;
+        T*      object;
+        int     refCount;
         public:
         ObjectHandle(T* obj) : object(obj), refCount(1) {};
         void addRef(){refCount++;};
@@ -35,7 +35,7 @@ public:
         if (obj){
             handle = new ObjectHandle(obj);
         }else{
-	    handle = NULL;
+            handle = NULL;
         }
     };
 
@@ -66,12 +66,12 @@ public:
 
     operator T* () const
     {
-	return handle ? handle->pointer() : NULL;
+        return handle ? handle->pointer() : NULL;
     }
     
     T* operator -> (void) const
     {
-	return static_cast<T*>(*this);
+        return static_cast<T*>(*this);
     }
 
     void setNull()

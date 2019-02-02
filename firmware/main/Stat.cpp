@@ -75,56 +75,56 @@ const json11::Json::object getStatisticsJson(){
     int32_t sec = rmin - min * 60;
     std::stringstream out;
     if (day){
-	out << day << " days, ";
+        out << day << " days, ";
     }
     if (day || hour){
-	out << std::setfill('0');
-	out << std::setw(2) << hour << ":" << std::setw(2) << min;
+        out << std::setfill('0');
+        out << std::setw(2) << hour << ":" << std::setw(2) << min;
     }else if (min){
-	out << min << " minutes, " << sec << " seconds";
+        out << min << " minutes, " << sec << " seconds";
     }else{
-	out << sec << " seconds";
+        out << sec << " seconds";
     }
     
     json11::Json::object root({
-	    {JSON_STAT_UPTIME, out.str()},
-	    {JSON_STAT_DEEPSLEEP, baseStat.deepSleepCount},
-	    {JSON_STAT_OTACOUNT, elfletConfig->getOtaCount()},
-	});
+            {JSON_STAT_UPTIME, out.str()},
+            {JSON_STAT_DEEPSLEEP, baseStat.deepSleepCount},
+            {JSON_STAT_OTACOUNT, elfletConfig->getOtaCount()},
+        });
     json11::Json::object http({
-	    {JSON_STAT_HTTP_SESSION, getWebStat()->sessionCount},
-	});
+            {JSON_STAT_HTTP_SESSION, getWebStat()->sessionCount},
+        });
     json11::Json::object irrc({
-	    {JSON_STAT_IRRC_RPULSE, irrcStat.rcvPulses},
-	    {JSON_STAT_IRRC_SPULSE, irrcStat.sendPulses},
-	    {JSON_STAT_IRRC_RCMD_NEC, irrcStat.protocol[IRRC_NEC].rcvCmds},
-	    {JSON_STAT_IRRC_SCMD_NEC, irrcStat.protocol[IRRC_NEC].sendCmds},
-	    {JSON_STAT_IRRC_RBIT_NEC, irrcStat.protocol[IRRC_NEC].rcvBits},
-	    {JSON_STAT_IRRC_SBIT_NEC, irrcStat.protocol[IRRC_NEC].sendBits},
-	    {JSON_STAT_IRRC_RCMD_SONY, irrcStat.protocol[IRRC_SONY].rcvCmds},
-	    {JSON_STAT_IRRC_SCMD_SONY, irrcStat.protocol[IRRC_SONY].sendCmds},
-	    {JSON_STAT_IRRC_RBIT_SONY, irrcStat.protocol[IRRC_SONY].rcvBits},
-	    {JSON_STAT_IRRC_SBIT_SONY, irrcStat.protocol[IRRC_SONY].sendBits},
-	    {JSON_STAT_IRRC_RCMD_AEHA, irrcStat.protocol[IRRC_AEHA].rcvCmds},
-	    {JSON_STAT_IRRC_SCMD_AEHA, irrcStat.protocol[IRRC_AEHA].sendCmds},
-	    {JSON_STAT_IRRC_RBIT_AEHA, irrcStat.protocol[IRRC_AEHA].rcvBits},
-	    {JSON_STAT_IRRC_SBIT_AEHA, irrcStat.protocol[IRRC_AEHA].sendBits},
-	    {JSON_STAT_IRRC_RCMD_UNKNOWN, irrcStat.rcvUnknownCmds},
-	    {JSON_STAT_IRRC_RPULSE_UNKNOWN, irrcStat.rcvUnknownPulses},
-	});
+            {JSON_STAT_IRRC_RPULSE, irrcStat.rcvPulses},
+            {JSON_STAT_IRRC_SPULSE, irrcStat.sendPulses},
+            {JSON_STAT_IRRC_RCMD_NEC, irrcStat.protocol[IRRC_NEC].rcvCmds},
+            {JSON_STAT_IRRC_SCMD_NEC, irrcStat.protocol[IRRC_NEC].sendCmds},
+            {JSON_STAT_IRRC_RBIT_NEC, irrcStat.protocol[IRRC_NEC].rcvBits},
+            {JSON_STAT_IRRC_SBIT_NEC, irrcStat.protocol[IRRC_NEC].sendBits},
+            {JSON_STAT_IRRC_RCMD_SONY, irrcStat.protocol[IRRC_SONY].rcvCmds},
+            {JSON_STAT_IRRC_SCMD_SONY, irrcStat.protocol[IRRC_SONY].sendCmds},
+            {JSON_STAT_IRRC_RBIT_SONY, irrcStat.protocol[IRRC_SONY].rcvBits},
+            {JSON_STAT_IRRC_SBIT_SONY, irrcStat.protocol[IRRC_SONY].sendBits},
+            {JSON_STAT_IRRC_RCMD_AEHA, irrcStat.protocol[IRRC_AEHA].rcvCmds},
+            {JSON_STAT_IRRC_SCMD_AEHA, irrcStat.protocol[IRRC_AEHA].sendCmds},
+            {JSON_STAT_IRRC_RBIT_AEHA, irrcStat.protocol[IRRC_AEHA].rcvBits},
+            {JSON_STAT_IRRC_SBIT_AEHA, irrcStat.protocol[IRRC_AEHA].sendBits},
+            {JSON_STAT_IRRC_RCMD_UNKNOWN, irrcStat.rcvUnknownCmds},
+            {JSON_STAT_IRRC_RPULSE_UNKNOWN, irrcStat.rcvUnknownPulses},
+        });
     json11::Json::object pubsub({
-	    {JSON_STAT_PUBSUB_PUBSENSOR, pubsubStat.publishSensorCount},
-	    {JSON_STAT_PUBSUB_PUBIRRC, pubsubStat.publishIrrcCount},
-	    {JSON_STAT_PUBSUB_PUBSHADOW, pubsubStat.publishShadowCount},
-	});
+            {JSON_STAT_PUBSUB_PUBSENSOR, pubsubStat.publishSensorCount},
+            {JSON_STAT_PUBSUB_PUBIRRC, pubsubStat.publishIrrcCount},
+            {JSON_STAT_PUBSUB_PUBSHADOW, pubsubStat.publishShadowCount},
+        });
     json11::Json::object sensor({
-	    {JSON_STAT_SENSOR_BME280, sensorStat.bme280CaptureCount},
-	    {JSON_STAT_SENSOR_LUMINO, sensorStat.luminocityCaptureCount},
-	});
+            {JSON_STAT_SENSOR_BME280, sensorStat.bme280CaptureCount},
+            {JSON_STAT_SENSOR_LUMINO, sensorStat.luminocityCaptureCount},
+        });
     json11::Json::object shadow({
-	    {JSON_STAT_SHADOW_RECOGNIZE, shadowStat.recognizeCount},
-	    {JSON_STAT_SHADOW_SYNTHESIZE, shadowStat.synthesizeCount},
-	});
+            {JSON_STAT_SHADOW_RECOGNIZE, shadowStat.recognizeCount},
+            {JSON_STAT_SHADOW_SYNTHESIZE, shadowStat.synthesizeCount},
+        });
 
     root[JSON_STAT_HTTP] = http;
     root[JSON_STAT_IRRC] = irrc;

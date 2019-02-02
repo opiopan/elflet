@@ -152,11 +152,11 @@ void IRAM_ATTR LEDTask::isrHandler(void* arg){
     auto task = (LEDTask*)arg;
     BaseType_t higherPriorityTaskWoken = pdFALSE;
     auto rc = xEventGroupSetBitsFromISR(task->events,
-					FADE_END_EVENT,
-					&higherPriorityTaskWoken);
+                                        FADE_END_EVENT,
+                                        &higherPriorityTaskWoken);
     if (rc == pdPASS){
-	//portYIELD_FROM_ISR(higherPriorityTaskWoken);
-	portYIELD_FROM_ISR();
+        //portYIELD_FROM_ISR(higherPriorityTaskWoken);
+        portYIELD_FROM_ISR();
     }
 }
 
@@ -169,60 +169,60 @@ void LEDTask::run(void *data){
     int unitIndex = 0;
 
     auto reflectNewMode = [&](int timeToWait) -> bool {
-	auto ev = xEventGroupWaitBits(
-	    events, MODE_CHANGE_EVENT, pdTRUE, pdFALSE, timeToWait);
-	LockHolder holder(this->mutex);
-	if (ev & MODE_CHANGE_EVENT &&
-	    (blinkMode != this->blinkMode ||
-	     (blinkMode == LEDBM_DEFAULT &&
-	      defaultMode != this->defaultMode))){
-	    blinkMode = this->blinkMode;
-	    defaultMode = this->defaultMode;
-	    sequence = (blinkMode == LEDBM_DEFAULT) ?
-				defaultSequences[defaultMode] :
-		                otherSequences[blinkMode];
-	    unitIndex = 0;
-	    xEventGroupClearBits(events, ev);
-	    return true;
-	}
-	return false;
+        auto ev = xEventGroupWaitBits(
+            events, MODE_CHANGE_EVENT, pdTRUE, pdFALSE, timeToWait);
+        LockHolder holder(this->mutex);
+        if (ev & MODE_CHANGE_EVENT &&
+            (blinkMode != this->blinkMode ||
+             (blinkMode == LEDBM_DEFAULT &&
+              defaultMode != this->defaultMode))){
+            blinkMode = this->blinkMode;
+            defaultMode = this->defaultMode;
+            sequence = (blinkMode == LEDBM_DEFAULT) ?
+                                defaultSequences[defaultMode] :
+                                otherSequences[blinkMode];
+            unitIndex = 0;
+            xEventGroupClearBits(events, ev);
+            return true;
+        }
+        return false;
     };
 
     reflectNewMode(portMAX_DELAY);
 
     uint16_t lastDuty[3];
     while (true){
-	auto unit = sequence[unitIndex];
-	switch (unit.kind){
-	case SU_FADE:
-	    for (int i = 0; i < 3; i++){
-		if (lastDuty[i] == unit.duty[i]){
-		    continue;
-		}
-		ledc_set_fade_with_time(
-		    ledConfigs[i].speed_mode, ledConfigs[i].channel,
-		    unit.duty[i], unit.duration);
-		ledc_fade_start(
-		    ledConfigs[i].speed_mode, ledConfigs[i].channel,
-		    i < 3 ? LEDC_FADE_NO_WAIT : LEDC_FADE_WAIT_DONE);
-		lastDuty[i] = unit.duty[i];
-	    }
-	    vTaskDelay((unit.duration + 50)/ portTICK_PERIOD_MS);
-	    unitIndex++;
-	    reflectNewMode(0);
-	    break;
-	case SU_WAIT:
-	    if (!reflectNewMode(unit.duration / portTICK_PERIOD_MS)){
-		unitIndex++;
-	    }
-	    break;
-	case SU_LOOP:
-	    unitIndex = 0;
-	    break;
-	case SU_END:
-	    reflectNewMode(portMAX_DELAY);
-	    break;
-	}
+        auto unit = sequence[unitIndex];
+        switch (unit.kind){
+        case SU_FADE:
+            for (int i = 0; i < 3; i++){
+                if (lastDuty[i] == unit.duty[i]){
+                    continue;
+                }
+                ledc_set_fade_with_time(
+                    ledConfigs[i].speed_mode, ledConfigs[i].channel,
+                    unit.duty[i], unit.duration);
+                ledc_fade_start(
+                    ledConfigs[i].speed_mode, ledConfigs[i].channel,
+                    i < 3 ? LEDC_FADE_NO_WAIT : LEDC_FADE_WAIT_DONE);
+                lastDuty[i] = unit.duty[i];
+            }
+            vTaskDelay((unit.duration + 50)/ portTICK_PERIOD_MS);
+            unitIndex++;
+            reflectNewMode(0);
+            break;
+        case SU_WAIT:
+            if (!reflectNewMode(unit.duration / portTICK_PERIOD_MS)){
+                unitIndex++;
+            }
+            break;
+        case SU_LOOP:
+            unitIndex = 0;
+            break;
+        case SU_END:
+            reflectNewMode(portMAX_DELAY);
+            break;
+        }
     }
 }
 
@@ -262,8 +262,8 @@ void LEDTask::initLED(){
 
     /*
     ledc_isr_register(isrHandler, this,
-		      ESP_INTR_FLAG_LEVEL1 | ESP_INTR_FLAG_IRAM,
-		      &isrHandle);
+                      ESP_INTR_FLAG_LEVEL1 | ESP_INTR_FLAG_IRAM,
+                      &isrHandle);
     */
     
     ledc_fade_func_install(0);
@@ -274,9 +274,9 @@ void LEDTask::initLED(){
 //----------------------------------------------------------------------
 bool startLedService(){
     if (ledTask == NULL){
-	ledTask = new LEDTask;
-	ledTask->setStackSize(2048);
-	return ledTask->startService();
+        ledTask = new LEDTask;
+        ledTask->setStackSize(2048);
+        return ledTask->startService();
     }
     
     return true;

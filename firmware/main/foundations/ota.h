@@ -33,5 +33,5 @@ enum OTAPHASE {
 
 class WebServerHandler;
 WebServerHandler* getOTAWebHandler(const char* vkyepath, bool needDigestAuth,
-				   std::function<void(OTAPHASE)>* complete
-				   = nullptr);
+                                   std::function<void(OTAPHASE)>* complete
+                                   = nullptr);

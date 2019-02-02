@@ -11,7 +11,7 @@ public:
     enum BootMode{FactoryReset = 0, Configuration = 1, Normal = 2};
     enum FunctionMode{FullSpec, SensorOnly};
     enum SessionType{SessionTCP, SessionTLS,
-		     SessionWebSocket, SessionWebSocketSecure};
+                     SessionWebSocket, SessionWebSocketSecure};
     enum IrrcReceiverMode{IrrcReceiverOnDemand, IrrcReceiverContinuous};
     
 protected:
@@ -80,24 +80,24 @@ public:
     const std::string& getBoardVersion() const{return boardVersion;};
     const std::string& getNodeName() const{return nodeName;};
     const std::string& getAPSSID() const{
-	return apssid.length() > 0 ? apssid : nodeName;
+        return apssid.length() > 0 ? apssid : nodeName;
     };
     const std::string& getAdminPassword() const{return adminPassword;};
     const std::string& getSSIDtoConnect() const{return ssidToConnect;};
     const std::string& getWifiPassword() const{return wifiPassword;};
 
     const char* getNtpServer() const{
-	return ntpServer.length() == 0 ? "ntp.nict.jp" : ntpServer.c_str();
+        return ntpServer.length() == 0 ? "ntp.nict.jp" : ntpServer.c_str();
     };
     const char* getTimezone() const{
-	return timezone.length() == 0 ? defaultTimezone : timezone.c_str();
+        return timezone.length() == 0 ? defaultTimezone : timezone.c_str();
     };
     int32_t getSensorFrequency() const{
-	return sensorFrequency == 0? 60 : sensorFrequency;
+        return sensorFrequency == 0? 60 : sensorFrequency;
     };
     const std::string& getPubSubServerAddr() const{return pubSubServerAddr;};
     SessionType getPubSubSessionType() const{
-	return (SessionType)pubSubSessionType;
+        return (SessionType)pubSubSessionType;
     };
     const std::string& getPubSubServerCert() const{return pubSubServerCert;};
     const std::string& getPubSubUser() const{return pubSubUser;};
@@ -105,15 +105,15 @@ public:
     const std::string& getSensorTopic() const{return sensorTopic;};
     const std::string& getIrrcReceiveTopic() const{return irrcReceiveTopic;};
     const std::string& getIrrcReceivedDataTopic() const{
-	return irrcReceivedDataTopic;
+        return irrcReceivedDataTopic;
     };
     const std::string& getIrrcSendTopic() const{return irrcSendTopic;};
     const std::string& getDownloadFirmwareTopic() const{
-	return downloadFirmwareTopic;
+        return downloadFirmwareTopic;
     };
     const std::string& getShadowTopic()const {return shadowTopic;};
     IrrcReceiverMode getIrrcReceiverMode() const{
-	return (IrrcReceiverMode)irrcReceiverMode;
+        return (IrrcReceiverMode)irrcReceiverMode;
     };
     bool getBleHid()const {return bleHid;};
     
@@ -160,11 +160,11 @@ public:
 
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
-		    bool& value);
+                    bool& value);
     void applyValue(const json11::Json& json, const std::string& key,
-		    int32_t& value);
+                    int32_t& value);
     void applyValue(const json11::Json& json, const std::string& key,
-		    std::string& value);
+                    std::string& value);
     void migrateConfig(const json11::Json& config);
     void updateDefaultTopic(const std::string& oldNodeName);
 };

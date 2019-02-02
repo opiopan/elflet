@@ -27,20 +27,20 @@ WakeupCause initDeepSleep(){
     
     switch (esp_sleep_get_wakeup_cause()) {
     case ESP_SLEEP_WAKEUP_EXT1:
-	ESP_LOGI(tag, "wake up by pussing button");
-	return WC_BUTTON;
+        ESP_LOGI(tag, "wake up by pussing button");
+        return WC_BUTTON;
     case ESP_SLEEP_WAKEUP_TIMER:
-	ESP_LOGI(tag, "wake up by timter");
-	return WC_TIMER;
+        ESP_LOGI(tag, "wake up by timter");
+        return WC_TIMER;
     default:
-	ESP_LOGI(tag, "normal power on state");
-	return WC_NOTSLEEP;
+        ESP_LOGI(tag, "normal power on state");
+        return WC_NOTSLEEP;
     }
 }
 
 int32_t getSleepTimeMs(){
     return (now.tv_sec - sleepEnterTime.tv_sec) * 1000 +
-	(now.tv_usec - sleepEnterTime.tv_usec) / 1000;;
+        (now.tv_usec - sleepEnterTime.tv_usec) / 1000;;
 }
 
 static Mutex mutex;
@@ -49,7 +49,7 @@ static bool mustEnterDeepSleep = false;
 
 static void transitToDeepSleepMode(){
     ESP_LOGI(tag, "enter deep sleep state: wake up in %d sec",
-	     elfletConfig->getSensorFrequency());
+             elfletConfig->getSensorFrequency());
     vTaskDelay(20 / portTICK_PERIOD_MS);
     gettimeofday(&sleepEnterTime, NULL);
     esp_deep_sleep_start();
@@ -57,7 +57,7 @@ static void transitToDeepSleepMode(){
 
 void enterDeepSleep(int32_t ms){
     esp_sleep_enable_timer_wakeup(
-	elfletConfig->getSensorFrequency() * 1000000);
+        elfletConfig->getSensorFrequency() * 1000000);
 
     const int gpio = GPIO_BUTTON;;
     const uint64_t gpioMask = 1ULL << gpio;
@@ -68,8 +68,8 @@ void enterDeepSleep(int32_t ms){
     mutex.lock();
     mustEnterDeepSleep = true;;
     if (suspending){
-	mutex.unlock();
-	vTaskDelay(portMAX_DELAY);
+        mutex.unlock();
+        vTaskDelay(portMAX_DELAY);
     }
     transitToDeepSleepMode();
 }
@@ -84,6 +84,6 @@ void resumeEnterDeepSleep(){
     LockHolder holder(mutex);
     suspending--;
     if (suspending == 0 && mustEnterDeepSleep){
-	transitToDeepSleepMode();
+        transitToDeepSleepMode();
     }
 }

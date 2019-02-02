@@ -28,16 +28,16 @@ static struct {
 static int fs_open(void* ctx, const char * path, int flags, int mode)
 {
     if (flags & O_WRONLY || flags & O_RDWR){
-	errno = EACCES;
-	return -1;
+        errno = EACCES;
+        return -1;
     }
 
     for (int fd = 0; fd < HTDIGESTFS_FDMAX; fd++){
-	if (!fdcontexts[fd].isOpened){
-	    fdcontexts[fd].isOpened = true;
-	    fdcontexts[fd].pos = 0;
-	    return fd;
-	}
+        if (!fdcontexts[fd].isOpened){
+            fdcontexts[fd].isOpened = true;
+            fdcontexts[fd].pos = 0;
+            return fd;
+        }
     }
     errno = EMFILE;
     return -1;
@@ -60,16 +60,16 @@ static ssize_t fs_read(void* ctx, int fd, void * dst, size_t size)
 {
     FDCONTEXT* fdctx = fdcontexts + (fd & 0xffff);
     if (!fdctx->isOpened){
-	errno = EBADF;
-	return -1;
+        errno = EBADF;
+        return -1;
     }
     if (fdctx->pos >= digestData.length){
-	return 0;
+        return 0;
     }
 
     size_t rc = digestData.length - fdctx->pos;
     if (rc > size){
-	rc = size;
+        rc = size;
     }
     memcpy(dst, digestData.data + fdctx->pos, rc);
     fdctx->pos += rc;
@@ -81,25 +81,25 @@ static off_t fs_lseek(void* ctx, int fd, off_t offset, int mode)
 {
     FDCONTEXT* fdctx = fdcontexts + (fd & 0xffff);
     if (!fdctx->isOpened){
-	errno = EBADF;
-	return -1;
+        errno = EBADF;
+        return -1;
     }
 
     off_t newpos = fdctx->pos;
     if (mode == SEEK_SET){
-	newpos = 0;
+        newpos = 0;
     }else if (mode == SEEK_END){
-	newpos = digestData.length;
+        newpos = digestData.length;
     }
     newpos += offset;
 
     if (offset < 0 || offset > digestData.length){
-	errno = EINVAL;
-	return -1;
+        errno = EINVAL;
+        return -1;
     }
     if (offset < 0 || offset > digestData.length){
-	errno = EOVERFLOW;
-	return -1;
+        errno = EOVERFLOW;
+        return -1;
     }
 
     fdctx->pos = newpos;
@@ -110,15 +110,15 @@ static int fs_fstat(void* ctx, int fd, struct stat * st)
 {
     FDCONTEXT* fdctx = fdcontexts + (fd & 0xffff);
     if (!fdctx->isOpened){
-	errno = EBADF;
-	return -1;
+        errno = EBADF;
+        return -1;
     }
 
     *st = (struct stat){
-	.st_mode = S_IFREG | 0666,
-	.st_size = digestData.length,
-	.st_blocks = 1,
-	.st_blksize = digestData.length
+        .st_mode = S_IFREG | 0666,
+        .st_size = digestData.length,
+        .st_blocks = 1,
+        .st_blksize = digestData.length
     };
 
     return 0;
@@ -130,12 +130,12 @@ void htdigestfs_init(const char* mp)
 {
     esp_vfs_t fs = {
         .flags = ESP_VFS_FLAG_CONTEXT_PTR,
-	.write_p = &fs_write,
-	.open_p = &fs_open,
-	.fstat_p = &fs_fstat,
-	.close_p = &fs_close,
-	.read_p = &fs_read,
-	.lseek_p = &fs_lseek
+        .write_p = &fs_write,
+        .open_p = &fs_open,
+        .fstat_p = &fs_fstat,
+        .close_p = &fs_close,
+        .read_p = &fs_read,
+        .lseek_p = &fs_lseek
     };
     ESP_ERROR_CHECK(esp_vfs_register(mp, &fs, NULL));
 
@@ -147,7 +147,7 @@ void htdigestfs_init(const char* mp)
 }
 
 void htdigestfs_register(const char* user, const char* domain,
-			 const char* pass)
+                         const char* pass)
 {
     // calculate md5 hash
     size_t ulen = strlen(user);
@@ -165,7 +165,7 @@ void htdigestfs_register(const char* user, const char* domain,
     // generate htdigest file contents
     size_t size = ulen + dlen + HTDIGESTLENGTH * 2 + 2;
     if (digestData.data){
-	free(digestData.data);
+        free(digestData.data);
     }
     digestData.data = malloc(size);
     digestData.length = size;
@@ -173,9 +173,9 @@ void htdigestfs_register(const char* user, const char* domain,
     uint8_t* buf = digestData.data + ulen + dlen + 2;
     uint8_t* bytes = (uint8_t*)hash;
     for (int i = 0; i < HTDIGESTLENGTH * 2; i++){
-	int data = (bytes[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
-	static const uint8_t dic[] = "0123456789abcdef";
-	buf[i] = dic[data];
+        int data = (bytes[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
+        static const uint8_t dic[] = "0123456789abcdef";
+        buf[i] = dic[data];
     }
     
 }

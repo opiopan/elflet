@@ -22,23 +22,23 @@ static struct DictEnt{
 
 const char* findMimeType(const WebString& path){
     if (path == "/"){
-	return "text/html";
+        return "text/html";
     }
     
     int pos;
     for (pos = path.length() - 1; pos >= 0; pos--){
-	if (path.data()[pos] == '.'){
-	    break;
-	}
+        if (path.data()[pos] == '.'){
+            break;
+        }
     }
     pos++;
     auto ext = WebString(path.data() + pos, path.length() - pos);
     
     const DictEnt* entry;
     for (entry = dict; entry->extension; entry++){
-	if (ext == entry->extension){
-	    break;
-	}
+        if (ext == entry->extension){
+            break;
+        }
     }
     
     return entry->typeString;

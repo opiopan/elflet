@@ -20,11 +20,11 @@ static const char tag[] = "WebService";
 
 static std::function<void(OTAPHASE)> otaHandler = [](OTAPHASE phase){
     if (phase == OTA_BEGIN){
-	stopBleHidService();
+        stopBleHidService();
     }else if (phase == OTA_END){
-	elfletConfig->incrementOtaCount();
+        elfletConfig->incrementOtaCount();
     }else if (phase == OTA_ERROR){
-	startBleHidService();
+        startBleHidService();
     }
 };
 
@@ -35,14 +35,14 @@ bool startWebService(){
     
     htdigestfs_init("/auth");
     htdigestfs_register("admin", domain,
-			elfletConfig->getAdminPassword().c_str());
+                        elfletConfig->getAdminPassword().c_str());
     
     webserver = new WebServer();
     webserver->setHtdigest(htdigestfs_fp(), domain);
     webserver->setHandler(
-	getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true,
-			 &otaHandler),
-	"/manage/otaupdate");
+        getOTAWebHandler(elfletConfig->getVerificationKeyPath(), true,
+                         &otaHandler),
+        "/manage/otaupdate");
     registerConfigRESTHandler(webserver);
     registerStatusRESTHandler(webserver);
     registerIrRESTHandler(webserver);
@@ -55,7 +55,7 @@ bool startWebService(){
     webserver->setServerName(stringPtr(new std::string(name.str())));
     
     webserver->startServer(elfletConfig->getBootMode() == Config::Normal ?
-	"80" : "192.168.55.01:80");
+        "80" : "192.168.55.01:80");
 
     ESP_LOGI(tag, "http server has been started. port: 80");
 

@@ -21,12 +21,12 @@ bool Time::shouldAdjust(bool inDeepSleepCycle){
     time_t now;
     ::time(&now);
     if (now < 30 * 365 * 24 * 60){
-	return true;
+        return true;
     }
 
     auto period = inDeepSleepCycle ? 30 * 60 : 24 * 60 * 60;
     if (now - lastAdjustTime > period){
-	return true;
+        return true;
     }
 
     return false;
@@ -36,11 +36,11 @@ void Time::startSNTP(const char* server){
     sntp_stop();
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     if (server){
-	std::string addr(server);
-	resolveHostname(addr);
-	sntp_setservername(0, (char*)addr.c_str());
+        std::string addr(server);
+        resolveHostname(addr);
+        sntp_setservername(0, (char*)addr.c_str());
     }else{
-	sntp_setservername(0, (char*)"ntp.nict.jp");
+        sntp_setservername(0, (char*)"ntp.nict.jp");
     }
     sntp_init();
     time_t now;
@@ -53,11 +53,11 @@ bool Time::waitForFinishAdjustment(time_t timeout){
     ::time(&now);
     start = now;
     while (now < 30 * 365 * 24 * 60){
-	if (now - start > timeout){
-	    return false;
-	}
-	vTaskDelay(1000 / portTICK_PERIOD_MS);;
-	::time(&now);
+        if (now - start > timeout){
+            return false;
+        }
+        vTaskDelay(1000 / portTICK_PERIOD_MS);;
+        ::time(&now);
     }
     
     return true;
@@ -86,13 +86,13 @@ Time::Time(time_t time) : time(time){
 //----------------------------------------------------------------------
 const char* Time::format(FORMAT type){
     if (type == RFC1123){
-	return formatRFC1123();
+        return formatRFC1123();
     }
     
     const char* fmt =
-	type == SIMPLE_DATE ? "%Y-%m-%d" :
-	type == SIMPLE_TIME ? "%H:%M:%S" :
-	                      "%Y-%m-%d %H:%M:%S";
+        type == SIMPLE_DATE ? "%Y-%m-%d" :
+        type == SIMPLE_TIME ? "%H:%M:%S" :
+                              "%Y-%m-%d %H:%M:%S";
     tm timeinfo;
     localtime_r(&time, &timeinfo);
     return strftime(buf, sizeof(buf), fmt, &timeinfo) > 0 ? buf : NULL;
@@ -102,6 +102,6 @@ const char* Time::formatRFC1123(){
     tm timeinfo;
     gmtime_r(&time, &timeinfo);
     auto rc = strftime(buf, sizeof(buf),
-		       "%a, %d %b %Y %H:%M:%S GMT", &timeinfo);
+                       "%a, %d %b %Y %H:%M:%S GMT", &timeinfo);
     return rc > 0 ? buf : NULL;
 }

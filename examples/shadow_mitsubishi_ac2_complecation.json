@@ -1,129 +1,129 @@
 {
     "CommonCondition" : {
-	"Type" : "COMBINATION",
-	"Operator" : "AND",
-	"Formulas" : [
-	    {
-		"Type" : "PROTOCOL",
-		"Protocol" : "AEHA",
-		"BitCount" : 144
-	    },{
-		"Type" : "DATA",
-		"Offset" : 0,
-		"Data" : "23cb260100"
-	    }
-	]
+        "Type" : "COMBINATION",
+        "Operator" : "AND",
+        "Formulas" : [
+            {
+                "Type" : "PROTOCOL",
+                "Protocol" : "AEHA",
+                "BitCount" : 144
+            },{
+                "Type" : "DATA",
+                "Offset" : 0,
+                "Data" : "23cb260100"
+            }
+        ]
     },
     "OnCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "20",
-	"Mask" : "f0"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "20",
+        "Mask" : "f0"
     },
     "OffCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "00",
-	"Mask" : "f0"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "00",
+        "Mask" : "f0"
     },
     "Attributes": [
-	{
-	    "AttrName": "Mode",
-	    "Value" : {
-		"Type": "ADD",
-		"Values": [
-		    {
-			"Type": "PORTION",
-			"Offset" : 6,
-			"MultiplyBy" : 256
-		    },
-		    {
-			"Type": "PORTION",
-			"Offset" : 8
-		    }
-		]
-	    },
-	    "Dictionary": {
-		"Cooler": 6198,
-		"Dehum": 4146,
-		"Heater": 2096
-	    },
-	    "Default": "Cooler"
-	},
-	{
-	    "AttrName": "Temperature",
-	    "Value" : {
-		"Type": "PORTION",
-		"Offset" : 7,
-		"Mask": "0f",
-		"Bias": 16
-	    },
-	    "Default": 27,
-	    "Max": 31,
-	    "Min": 16,
-	    "Unit": 1,
-	    "VisibleCondition": {
-		"Type" : "COMBINATION",
-		"Operator" : "NAND",
-		"Formulas" : [
-		    {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode",
-			"Value": "Dehum"
-		    }
-		]
-	    }
-	}
+        {
+            "AttrName": "Mode",
+            "Value" : {
+                "Type": "ADD",
+                "Values": [
+                    {
+                        "Type": "PORTION",
+                        "Offset" : 6,
+                        "MultiplyBy" : 256
+                    },
+                    {
+                        "Type": "PORTION",
+                        "Offset" : 8
+                    }
+                ]
+            },
+            "Dictionary": {
+                "Cooler": 6198,
+                "Dehum": 4146,
+                "Heater": 2096
+            },
+            "Default": "Cooler"
+        },
+        {
+            "AttrName": "Temperature",
+            "Value" : {
+                "Type": "PORTION",
+                "Offset" : 7,
+                "Mask": "0f",
+                "Bias": 16
+            },
+            "Default": 27,
+            "Max": 31,
+            "Min": 16,
+            "Unit": 1,
+            "VisibleCondition": {
+                "Type" : "COMBINATION",
+                "Operator" : "NAND",
+                "Formulas" : [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode",
+                        "Value": "Dehum"
+                    }
+                ]
+            }
+        }
     ],
     "Synthesizing":{
-	"Protocol": "AEHA",
-	"Placeholder": "23cb26010000000000400000000004000000",
-	"BitCount": 144,
-	"Variables": [
-	    {
-		"Offset": 5,
-		"MultiplyBy": 32,
-		"Value": {
-		    "Type": "POWER"
-		}
-	    },
-	    {
-		"Offset": 6,
-		"DividedBy": 256,
-		"Value": {
-		    "Type": "INTEGER",
-		    "SubFormula": {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode"
-		    }
-		}
-	    },
-	    {
-		"Offset": 8,
-		"Value": {
-		    "Type": "INTEGER",
-		    "SubFormula": {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode"
-		    }
-		}
-	    },
-	    {
-		"Offset": 7,
-		"Mask": "0f",
-		"Bias": -16,
-		"Value": {
-		    "Type": "INTEGER",
-		    "SubFormula": {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Temperature"
-		    }
-		}
-	    }
-	],
-	"Redundant": {
-	    "Operator": "CHECKSUM",
-	    "Offset": 17
-	}
+        "Protocol": "AEHA",
+        "Placeholder": "23cb26010000000000400000000004000000",
+        "BitCount": 144,
+        "Variables": [
+            {
+                "Offset": 5,
+                "MultiplyBy": 32,
+                "Value": {
+                    "Type": "POWER"
+                }
+            },
+            {
+                "Offset": 6,
+                "DividedBy": 256,
+                "Value": {
+                    "Type": "INTEGER",
+                    "SubFormula": {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode"
+                    }
+                }
+            },
+            {
+                "Offset": 8,
+                "Value": {
+                    "Type": "INTEGER",
+                    "SubFormula": {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode"
+                    }
+                }
+            },
+            {
+                "Offset": 7,
+                "Mask": "0f",
+                "Bias": -16,
+                "Value": {
+                    "Type": "INTEGER",
+                    "SubFormula": {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Temperature"
+                    }
+                }
+            }
+        ],
+        "Redundant": {
+            "Operator": "CHECKSUM",
+            "Offset": 17
+        }
     }
 }

@@ -38,7 +38,7 @@ static bool Enabled = false;
 static bool Initialized = false;
 
 static void hidd_event_callback(esp_hidd_cb_event_t event,
-				esp_hidd_cb_param_t *param);
+                                esp_hidd_cb_param_t *param);
 
 static uint8_t hidd_service_uuid128[] = {
     /* LSB <------------------------------------------> MSB */
@@ -79,7 +79,7 @@ static esp_ble_adv_params_t hidd_adv_params = {
 };
 
 static void hidd_event_callback(esp_hidd_cb_event_t event,
-				esp_hidd_cb_param_t *param)
+                                esp_hidd_cb_param_t *param)
 {
     switch(event) {
         case ESP_HIDD_EVENT_REG_FINISH: {
@@ -94,8 +94,8 @@ static void hidd_event_callback(esp_hidd_cb_event_t event,
             break;
         }
         case ESP_HIDD_EVENT_DEINIT_FINISH:
-	     break;
-		case ESP_HIDD_EVENT_BLE_CONNECT: {
+             break;
+                case ESP_HIDD_EVENT_BLE_CONNECT: {
             ESP_LOGI(HID_DEMO_TAG, "ESP_HIDD_EVENT_BLE_CONNECT");
             hid_conn_id = param->connect.conn_id;
             break;
@@ -108,11 +108,11 @@ static void hidd_event_callback(esp_hidd_cb_event_t event,
         }
         case ESP_HIDD_EVENT_BLE_VENDOR_REPORT_WRITE_EVT: {
             ESP_LOGI(HID_DEMO_TAG,
-		     "%s, ESP_HIDD_EVENT_BLE_VENDOR_REPORT_WRITE_EVT",
-		     __func__);
+                     "%s, ESP_HIDD_EVENT_BLE_VENDOR_REPORT_WRITE_EVT",
+                     __func__);
             ESP_LOG_BUFFER_HEX(HID_DEMO_TAG,
-			       param->vendor_write.data,
-			       param->vendor_write.length);
+                               param->vendor_write.data,
+                               param->vendor_write.length);
         }    
         default:
             break;
@@ -121,7 +121,7 @@ static void hidd_event_callback(esp_hidd_cb_event_t event,
 }
 
 static void gap_event_handler(esp_gap_ble_cb_event_t event,
-			      esp_ble_gap_cb_param_t *param)
+                              esp_ble_gap_cb_param_t *param)
 {
     switch (event) {
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
@@ -130,26 +130,26 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event,
      case ESP_GAP_BLE_SEC_REQ_EVT:
         for(int i = 0; i < ESP_BD_ADDR_LEN; i++) {
              ESP_LOGD(HID_DEMO_TAG, "%x:",
-		      param->ble_security.ble_req.bd_addr[i]);
+                      param->ble_security.ble_req.bd_addr[i]);
         }
         esp_ble_gap_security_rsp(param->ble_security.ble_req.bd_addr, true);
-	 break;
+         break;
      case ESP_GAP_BLE_AUTH_CMPL_EVT:
         sec_conn = true;
         esp_bd_addr_t bd_addr;
         memcpy(bd_addr, param->ble_security.auth_cmpl.bd_addr,
-	       sizeof(esp_bd_addr_t));
+               sizeof(esp_bd_addr_t));
         ESP_LOGI(HID_DEMO_TAG, "remote BD_ADDR: %08x%04x",\
                 (bd_addr[0] << 24) + (bd_addr[1] << 16) +
-		 (bd_addr[2] << 8) + bd_addr[3],
+                 (bd_addr[2] << 8) + bd_addr[3],
                 (bd_addr[4] << 8) + bd_addr[5]);
         ESP_LOGI(HID_DEMO_TAG, "address type = %d",
-		 param->ble_security.auth_cmpl.addr_type);
+                 param->ble_security.auth_cmpl.addr_type);
         ESP_LOGI(HID_DEMO_TAG, "pair status = %s",
-		 param->ble_security.auth_cmpl.success ? "success" : "fail");
+                 param->ble_security.auth_cmpl.success ? "success" : "fail");
         if(!param->ble_security.auth_cmpl.success) {
             ESP_LOGE(HID_DEMO_TAG, "fail reason = 0x%x",
-		     param->ble_security.auth_cmpl.fail_reason);
+                     param->ble_security.auth_cmpl.fail_reason);
         }
         break;
     default:
@@ -166,7 +166,7 @@ void initBleHidService(const char* uname)
 bool startBleHidService()
 {
     if (!Enabled || Initialized){
-	return false;
+        return false;
     }
     
     esp_err_t ret;
@@ -217,11 +217,11 @@ bool startBleHidService()
     uint8_t init_key = ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK;
     uint8_t rsp_key = ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK;
     esp_ble_gap_set_security_param(ESP_BLE_SM_AUTHEN_REQ_MODE,
-				   &auth_req, sizeof(uint8_t));
+                                   &auth_req, sizeof(uint8_t));
     esp_ble_gap_set_security_param(ESP_BLE_SM_IOCAP_MODE,
-				   &iocap, sizeof(uint8_t));
+                                   &iocap, sizeof(uint8_t));
     esp_ble_gap_set_security_param(ESP_BLE_SM_MAX_KEY_SIZE,
-				   &key_size, sizeof(uint8_t));
+                                   &key_size, sizeof(uint8_t));
     // If your BLE device act as a Slave, the init_key means you hope which
     // types of key of the master should distribut to you,
     // and the response key means which key you can distribut to the Master;
@@ -229,9 +229,9 @@ bool startBleHidService()
     // which types of key of the slave should distribut to you, 
     // and the init key means which key you can distribut to the slave.
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_INIT_KEY,
-				   &init_key, sizeof(uint8_t));
+                                   &init_key, sizeof(uint8_t));
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_RSP_KEY,
-				   &rsp_key, sizeof(uint8_t));
+                                   &rsp_key, sizeof(uint8_t));
 
     Initialized = true;
 
@@ -241,7 +241,7 @@ bool startBleHidService()
 void stopBleHidService()
 {
     if (!Enabled || !Initialized){
-	return;
+        return;
     }
     
     esp_hidd_profile_deinit();
@@ -262,16 +262,16 @@ void releaseBleResource()
 
                 
 bool bleHidSendKeyValue(uint8_t specialMask, uint8_t* keybuf, int buflen,
-			int duration)
+                        int duration)
 {
     if (sec_conn) {
-	uint8_t stop = 0;
-	ESP_LOGI(HID_DEMO_TAG, "sending %d key combination", buflen);
-	esp_hidd_send_keyboard_value(hid_conn_id,
-				     specialMask, keybuf, buflen);
-	vTaskDelay(duration / portTICK_PERIOD_MS);
-	esp_hidd_send_keyboard_value(hid_conn_id,
-				     0, &stop, 1);
+        uint8_t stop = 0;
+        ESP_LOGI(HID_DEMO_TAG, "sending %d key combination", buflen);
+        esp_hidd_send_keyboard_value(hid_conn_id,
+                                     specialMask, keybuf, buflen);
+        vTaskDelay(duration / portTICK_PERIOD_MS);
+        esp_hidd_send_keyboard_value(hid_conn_id,
+                                     0, &stop, 1);
     }
     return true;
 }
@@ -279,10 +279,10 @@ bool bleHidSendKeyValue(uint8_t specialMask, uint8_t* keybuf, int buflen,
 bool bleHidSendConsumerValue(int8_t code, int duration)
 {
     if (sec_conn) {
-	ESP_LOGI(HID_DEMO_TAG, "sending consumer value [%d]", code);
-	esp_hidd_send_consumer_value(hid_conn_id, code, true);
-	vTaskDelay(duration / portTICK_PERIOD_MS);
-	esp_hidd_send_consumer_value(hid_conn_id, code, false);
+        ESP_LOGI(HID_DEMO_TAG, "sending consumer value [%d]", code);
+        esp_hidd_send_consumer_value(hid_conn_id, code, true);
+        vTaskDelay(duration / portTICK_PERIOD_MS);
+        esp_hidd_send_consumer_value(hid_conn_id, code, false);
     }
     return true;
 }

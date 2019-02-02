@@ -55,20 +55,20 @@ bool initConfig(){
     // Initialize NVS
     esp_err_t err = nvs_flash_init();
     if (err == ESP_ERR_NVS_NO_FREE_PAGES) {
-	// NVS partition was truncated and needs to be erased
-	// Retry nvs_flash_init
-	err = nvs_flash_erase();
-	if (err != ESP_OK){
-	    ESP_LOGE(tag, "failed to erase nvs: %s",
-		     GeneralUtils::errorToString(err));
-	    return false;
-	}
-	err = nvs_flash_init();
+        // NVS partition was truncated and needs to be erased
+        // Retry nvs_flash_init
+        err = nvs_flash_erase();
+        if (err != ESP_OK){
+            ESP_LOGE(tag, "failed to erase nvs: %s",
+                     GeneralUtils::errorToString(err));
+            return false;
+        }
+        err = nvs_flash_init();
     }
     if (err != ESP_OK){
-	ESP_LOGE(tag, "failed to initialize nvs: %s",
-		 GeneralUtils::errorToString(err));
-	return false;
+        ESP_LOGE(tag, "failed to initialize nvs: %s",
+                 GeneralUtils::errorToString(err));
+        return false;
     }
 
     // mount spiffs
@@ -80,9 +80,9 @@ bool initConfig(){
     };
     err = esp_vfs_spiffs_register(&conf);
     if (err != ESP_OK){
-	ESP_LOGE(tag, "failed to mount spiffs partition: %s",
-		 GeneralUtils::errorToString(err));
-	return false;
+        ESP_LOGE(tag, "failed to mount spiffs partition: %s",
+                 GeneralUtils::errorToString(err));
+        return false;
     }
     
     // load configuration
@@ -150,19 +150,19 @@ bool Config::load(){
     uint32_t mode;
     uint32_t ota;
     if (nvs.get(BOOTMODE_KEY, mode) != ESP_OK){
-	bootMode = FactoryReset;
-	fileGeneration = 0;
-	ota = 0;
+        bootMode = FactoryReset;
+        fileGeneration = 0;
+        ota = 0;
     }else{
-	bootMode = (BootMode)mode;
-	if (nvs.get(CONFIGGEN_KEY, fileGeneration) != ESP_OK ||
-	    bootMode == FactoryReset){
-	    bootMode = FactoryReset;
-	    fileGeneration = 0;
-	}
-	if (nvs.get(OTACOUNT_KEY, ota) != ESP_OK){
-	    ota = 0;
-	}
+        bootMode = (BootMode)mode;
+        if (nvs.get(CONFIGGEN_KEY, fileGeneration) != ESP_OK ||
+            bootMode == FactoryReset){
+            bootMode = FactoryReset;
+            fileGeneration = 0;
+        }
+        if (nvs.get(OTACOUNT_KEY, ota) != ESP_OK){
+            ota = 0;
+        }
     }
     bootModeCurrent = bootMode;
     otaCount = ota;
@@ -172,18 +172,18 @@ bool Config::load(){
     struct stat sbuf;
     int rc = stat(path, &sbuf);
     if (rc != 0 || S_ISDIR(sbuf.st_mode)){
-	ESP_LOGE(tag, "cannot access configuration file: %s", path);
-	return false;
+        ESP_LOGE(tag, "cannot access configuration file: %s", path);
+        return false;
     }
     auto length = sbuf.st_size;
     char* buf = new char[length];
     FILE* fp = fopen(path, "r");
     rc = fread(buf, length, 1, fp);
     if (rc != 1){
-	ESP_LOGE(tag, "cannot read configuration file: %s", path);
-	fclose(fp);
-	delete buf;
-	return false;
+        ESP_LOGE(tag, "cannot read configuration file: %s", path);
+        fclose(fp);
+        delete buf;
+        return false;
     }
     fclose(fp);
     std::string contents(buf, length);
@@ -192,8 +192,8 @@ bool Config::load(){
     std::string err;
     auto config = json11::Json::parse(contents, err);
     if (!config.is_object()){
-	ESP_LOGE(tag, "configuration file might corrupted: %s", path);
-	return false;
+        ESP_LOGE(tag, "configuration file might corrupted: %s", path);
+        return false;
     }
     
     // reflect configuration file to object attribute
@@ -231,26 +231,26 @@ bool Config::load(){
 }
 
 void Config::applyValue(const json11::Json& json, const std::string& key,
-		bool& value){
+                bool& value){
     auto obj = json[key];
     if (obj.is_bool()){
-	value = obj.bool_value();
+        value = obj.bool_value();
     }
 }
 
 void Config::applyValue(const json11::Json& json, const std::string& key,
-		int32_t& value){
+                int32_t& value){
     auto obj = json[key];
     if (obj.is_number()){
-	value = obj.int_value();
+        value = obj.int_value();
     }
 }
 
 void Config::applyValue(const json11::Json& json, const std::string& key,
-		std::string& value){
+                std::string& value){
     auto obj = json[key];
     if (obj.is_string()){
-	value = obj.string_value();
+        value = obj.string_value();
     }
 }
 
@@ -258,47 +258,47 @@ bool Config::commit(){
     NVS nvs(NVS_NS, NVS_READWRITE);
 
     if (isDirty && bootMode != FactoryReset){
-	auto obj = json11::Json::object({
-		{JSON_CONFIGVERSION, configVersion},
-		{JSON_FUNCTIONMODE, functionMode},
-		{JSON_BOARDVERSION, boardVersion},
-		{JSON_NODENAME, nodeName},
-		{JSON_APSSID, apssid},
-		{JSON_ADMINPASSWORD, adminPassword},
-		{JSON_SSID, ssidToConnect},
-		{JSON_WIFIPASSWORD, wifiPassword},
-		{JSON_NTPSERVER, ntpServer},
-		{JSON_TIMEZONE, timezone},
-		{JSON_SENSORFREQUENCY, sensorFrequency},
-		{JSON_PUBSUBSERVERADDR, pubSubServerAddr},
-		{JSON_PUBSUBSESSIONTYPE, (int32_t)pubSubSessionType},
-		{JSON_PUBSUBSERVERCERT, pubSubServerCert},
-		{JSON_PUBSUBUSER, pubSubUser},
-		{JSON_PUBSUBPASSWORD, pubSubPassword},
-		{JSON_SENSORTOPIC, sensorTopic},
-		{JSON_IRRCRECEIVETOPIC, irrcReceiveTopic},
-		{JSON_IRRCRECEIVEDDATATOPIC, irrcReceivedDataTopic},
-		{JSON_IRRCSENDTOPIC, irrcSendTopic},
-		{JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
-		{JSON_SHADOWTOPIC, shadowTopic},
-		{JSON_IRRCRECEIVERMODE, (int32_t)irrcReceiverMode},
-		{JSON_BLEHID, bleHid},
-	    });
-	
-	fileGeneration = (fileGeneration & 1) + 1;
-	auto path = CONFIGPATH[fileGeneration];
-	auto out = std::ofstream(path);
-	out << json11::Json(obj).dump();
-	out.close();
-	
-	nvs.set(CONFIGGEN_KEY, fileGeneration);
+        auto obj = json11::Json::object({
+                {JSON_CONFIGVERSION, configVersion},
+                {JSON_FUNCTIONMODE, functionMode},
+                {JSON_BOARDVERSION, boardVersion},
+                {JSON_NODENAME, nodeName},
+                {JSON_APSSID, apssid},
+                {JSON_ADMINPASSWORD, adminPassword},
+                {JSON_SSID, ssidToConnect},
+                {JSON_WIFIPASSWORD, wifiPassword},
+                {JSON_NTPSERVER, ntpServer},
+                {JSON_TIMEZONE, timezone},
+                {JSON_SENSORFREQUENCY, sensorFrequency},
+                {JSON_PUBSUBSERVERADDR, pubSubServerAddr},
+                {JSON_PUBSUBSESSIONTYPE, (int32_t)pubSubSessionType},
+                {JSON_PUBSUBSERVERCERT, pubSubServerCert},
+                {JSON_PUBSUBUSER, pubSubUser},
+                {JSON_PUBSUBPASSWORD, pubSubPassword},
+                {JSON_SENSORTOPIC, sensorTopic},
+                {JSON_IRRCRECEIVETOPIC, irrcReceiveTopic},
+                {JSON_IRRCRECEIVEDDATATOPIC, irrcReceivedDataTopic},
+                {JSON_IRRCSENDTOPIC, irrcSendTopic},
+                {JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
+                {JSON_SHADOWTOPIC, shadowTopic},
+                {JSON_IRRCRECEIVERMODE, (int32_t)irrcReceiverMode},
+                {JSON_BLEHID, bleHid},
+            });
+        
+        fileGeneration = (fileGeneration & 1) + 1;
+        auto path = CONFIGPATH[fileGeneration];
+        auto out = std::ofstream(path);
+        out << json11::Json(obj).dump();
+        out.close();
+        
+        nvs.set(CONFIGGEN_KEY, fileGeneration);
     }
 
     if (isDirtyBootMode){
-	nvs.set(BOOTMODE_KEY, (uint32_t)bootMode);
-	if (bootMode == FactoryReset){
-	    resetShadowDevicePool();
-	}
+        nvs.set(BOOTMODE_KEY, (uint32_t)bootMode);
+        if (bootMode == FactoryReset){
+            resetShadowDevicePool();
+        }
     }
 
     nvs.commit();
@@ -313,37 +313,37 @@ bool Config::commit(){
 //----------------------------------------------------------------------
 void Config::migrateConfig(const json11::Json& config){
     auto setTopic = [&](std::string& v, const char* suffix){
-	if (v.length() == 0){
-	    v = this->nodeName;
-	    v += suffix;
-	}
+        if (v.length() == 0){
+            v = this->nodeName;
+            v += suffix;
+        }
     };
     auto moveConfigInt = [&](const char* from, int32_t& to){
-	auto value = config[from];
-	if (value.is_number()){
-	    to = value.int_value();
-	}
+        auto value = config[from];
+        if (value.is_number()){
+            to = value.int_value();
+        }
     };
     auto moveConfigString = [&](const char* from, std::string& to){
-	auto value = config[from];
-	if (value.is_string()){
-	    to = value.string_value();
-	}
+        auto value = config[from];
+        if (value.is_string()){
+            to = value.string_value();
+        }
     };
     
     if (configVersion < 1){
-	setTopic(sensorTopic,"/sensor");
-	setTopic(irrcReceiveTopic, "/irrcReceive");
-	setTopic(irrcReceivedDataTopic, "/irrcReceivedData");
-	setTopic(irrcSendTopic, "/irrcSend");
+        setTopic(sensorTopic,"/sensor");
+        setTopic(irrcReceiveTopic, "/irrcReceive");
+        setTopic(irrcReceivedDataTopic, "/irrcReceivedData");
+        setTopic(irrcSendTopic, "/irrcSend");
     }
     if (configVersion < 2){
-	setTopic(shadowTopic, "/shadow");
+        setTopic(shadowTopic, "/shadow");
     }
     if (configVersion < 3){
-	moveConfigInt("IrrcRecieverMode", irrcReceiverMode);
-	moveConfigString("IrrcRecieveTopic", irrcReceiveTopic);
-	moveConfigString("IrrcRecievedDataTopic", irrcReceivedDataTopic);
+        moveConfigInt("IrrcRecieverMode", irrcReceiverMode);
+        moveConfigString("IrrcRecieveTopic", irrcReceiveTopic);
+        moveConfigString("IrrcRecievedDataTopic", irrcReceivedDataTopic);
     }
     configVersion = CONFIG_VERSION;
 }
@@ -367,7 +367,7 @@ bool Config::setBootMode(BootMode mode){
 
 bool Config::setFunctionMode(FunctionMode mode){
     if (mode == SensorOnly && pubSubServerAddr.length() == 0){
-	return false;
+        return false;
     }
     functionMode = (int32_t)mode;
     isDirty = true;
@@ -376,7 +376,7 @@ bool Config::setFunctionMode(FunctionMode mode){
 
 bool Config::setNodeName(const std::string& name){
     if (name.length() > MAX_NODENAME_LEN){
-	return false;
+        return false;
     }
     const std::string oldNodeName = std::move(nodeName);
     nodeName = name;
@@ -387,7 +387,7 @@ bool Config::setNodeName(const std::string& name){
 
 bool Config::setAPSSID(const std::string& ssid){
     if (ssid.length() > MAX_NODENAME_LEN){
-	return false;
+        return false;
     }
     apssid = ssid;
     isDirty = true;
@@ -396,7 +396,7 @@ bool Config::setAPSSID(const std::string& ssid){
 
 bool Config::setAdminPassword(const std::string& pass){
     if (pass.length() < 8 || pass.length() > MAX_PASSWORD_LEN){
-	return false;
+        return false;
     }
     adminPassword = pass;
     isDirty = true;
@@ -405,7 +405,7 @@ bool Config::setAdminPassword(const std::string& pass){
 
 bool Config::setSSIDtoConnect(const std::string& ssid){
     if (ssid.length() > MAX_NODENAME_LEN){
-	return false;
+        return false;
     }
     ssidToConnect = ssid;
     isDirty = true;
@@ -414,7 +414,7 @@ bool Config::setSSIDtoConnect(const std::string& ssid){
 
 bool Config::setWifiPassword(const std::string& pass){
     if (pass.length() > MAX_PASSWORD_LEN){
-	return false;
+        return false;
     }
     wifiPassword = pass;
     isDirty = true;
@@ -435,7 +435,7 @@ bool Config::setTimezone(const std::string& tz){
 
 bool Config::setSensorFrequency(int32_t frequency){
     if (frequency < 0){
-	return false;
+        return false;
     }
     sensorFrequency = frequency;
     isDirty = true;
@@ -522,10 +522,10 @@ bool Config::setBleHid(bool enabled){
 
 void Config::updateDefaultTopic(const std::string& oldNodeName){
     auto updateTopic = [&](std::string& v, const char* suffix){
-	if (v == oldNodeName + suffix){
-	    v = this->nodeName;
-	    v += suffix;
-	}
+        if (v == oldNodeName + suffix){
+            v = this->nodeName;
+            v += suffix;
+        }
     };
     updateTopic(sensorTopic,"/sensor");
     updateTopic(irrcReceiveTopic, "/irrcReceive");

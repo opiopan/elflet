@@ -36,14 +36,14 @@ private:
 public:
     CommunicationTask();
     void setSocket(int fd){
-	sockfd = fd;
+        sockfd = fd;
     };
 
 private:
     void run(void *data) override;
     bool flashAndReceiveCmd(IRSHeader* hdr, void** data, int32_t* dataSize);
     bool makeResponse(const IRSHeader* req, IRSCmd respCode,
-		      void* respData, int32_t respDataSize);
+                      void* respData, int32_t respDataSize);
     bool cmdTxFormat(const IRSHeader* hdr, const void* data, int32_t dataSize);
 };
 
@@ -101,14 +101,14 @@ void CommunicationTask::run(void *data)
     int32_t reqDataSize;
 
     while(flashAndReceiveCmd(&req, &reqData, &reqDataSize)){
-	bool rc = false;
-	if (req.cmd == IRServerCmdTxFormat){
-	    rc = cmdTxFormat(&req, reqData, reqDataSize);
-	}
+        bool rc = false;
+        if (req.cmd == IRServerCmdTxFormat){
+            rc = cmdTxFormat(&req, reqData, reqDataSize);
+        }
 
-	if (!rc){
-	    break;
-	}
+        if (!rc){
+            break;
+        }
     }
     
     close(sockfd);
@@ -120,11 +120,11 @@ void CommunicationTask::run(void *data)
 }
 
 bool CommunicationTask::flashAndReceiveCmd(IRSHeader* hdr,
-					   void** data, int32_t* dataSize)
+                                           void** data, int32_t* dataSize)
 {
     if (ibufUsed == IRS_REQMAXSIZE){
-	ESP_LOGE(tag, "no remaining input buffer, it may be bug");
-	return false;
+        ESP_LOGE(tag, "no remaining input buffer, it may be bug");
+        return false;
     }
 
     bool cmdReceived = false;
@@ -133,67 +133,67 @@ bool CommunicationTask::flashAndReceiveCmd(IRSHeader* hdr,
     FD_ZERO(&read_fds);
     FD_ZERO(&write_fds);
     while (!cmdReceived || obufUsed - obufHead > 0){
-	if (ibufUsed < IRS_REQMAXSIZE){
-	    FD_SET(sockfd, &read_fds);
-	}else{
-	    FD_CLR(sockfd, &read_fds);
-	}
-	if (obufUsed - obufHead > 0){
-	    FD_SET(sockfd, &write_fds);
-	}else{
-	    FD_CLR(sockfd, &write_fds);
-	}
+        if (ibufUsed < IRS_REQMAXSIZE){
+            FD_SET(sockfd, &read_fds);
+        }else{
+            FD_CLR(sockfd, &read_fds);
+        }
+        if (obufUsed - obufHead > 0){
+            FD_SET(sockfd, &write_fds);
+        }else{
+            FD_CLR(sockfd, &write_fds);
+        }
 
-	struct timeval timeout;
-	timeout.tv_sec = COMM_TIMEOUT;
-	timeout.tv_usec = 0;
+        struct timeval timeout;
+        timeout.tv_sec = COMM_TIMEOUT;
+        timeout.tv_usec = 0;
 
-	int rc = select(sockfd + 1, &read_fds, &write_fds, NULL, &timeout);
-	if (rc == 0){
-	    ESP_LOGI(tag, "client connection will be closed due to timeout");
-	    return false;
-	}else if (rc < 0){
-	    ESP_LOGE(tag, "select failed");
-	    return false;
-	}
+        int rc = select(sockfd + 1, &read_fds, &write_fds, NULL, &timeout);
+        if (rc == 0){
+            ESP_LOGI(tag, "client connection will be closed due to timeout");
+            return false;
+        }else if (rc < 0){
+            ESP_LOGE(tag, "select failed");
+            return false;
+        }
 
-	if (FD_ISSET(sockfd, &write_fds)){
-	    rc = write(sockfd, obuf + obufHead, obufUsed - obufHead);
-	    if (rc < 0){
-		ESP_LOGE(tag, "sending to client failed");
-		return false;
-	    }
-	    obufHead += rc;
-	}
+        if (FD_ISSET(sockfd, &write_fds)){
+            rc = write(sockfd, obuf + obufHead, obufUsed - obufHead);
+            if (rc < 0){
+                ESP_LOGE(tag, "sending to client failed");
+                return false;
+            }
+            obufHead += rc;
+        }
 
-	if (FD_ISSET(sockfd, &read_fds)){
-	    rc = read(sockfd, ibuf + ibufUsed, sizeof(ibuf) - ibufUsed);
-	    if (rc < 0){
-		ESP_LOGE(tag, "receiving from client failed");
-		return false;
-	    }else if (rc == 0){
-		ESP_LOGI(tag, "connection closed from client");
-		return false;
-	    }
-	    ibufUsed += rc;
-	    if (ibufUsed >= sizeof(IRSHeader)){
-		IRSHeader* rawhdr = (IRSHeader*)ibuf;
-		int16_t cmdsize = ntohs(rawhdr->size);
-		if (rawhdr->id.intID != IRSIDINT ||
-		    cmdsize > sizeof(ibuf)){
-		    ESP_LOGI(tag, "protocol error");
-		    return false;
-		}
-		if (ibufUsed >= cmdsize){
-		    cmdReceived = true;
-		    hdr->id.intID = IRSIDINT;
-		    hdr->cmd = ntohs(rawhdr->cmd);
-		    hdr->size = cmdsize;
-		    *data = ibuf + sizeof(IRSHeader);
-		    *dataSize = cmdsize - sizeof(IRSHeader);
-		}
-	    }
-	}
+        if (FD_ISSET(sockfd, &read_fds)){
+            rc = read(sockfd, ibuf + ibufUsed, sizeof(ibuf) - ibufUsed);
+            if (rc < 0){
+                ESP_LOGE(tag, "receiving from client failed");
+                return false;
+            }else if (rc == 0){
+                ESP_LOGI(tag, "connection closed from client");
+                return false;
+            }
+            ibufUsed += rc;
+            if (ibufUsed >= sizeof(IRSHeader)){
+                IRSHeader* rawhdr = (IRSHeader*)ibuf;
+                int16_t cmdsize = ntohs(rawhdr->size);
+                if (rawhdr->id.intID != IRSIDINT ||
+                    cmdsize > sizeof(ibuf)){
+                    ESP_LOGI(tag, "protocol error");
+                    return false;
+                }
+                if (ibufUsed >= cmdsize){
+                    cmdReceived = true;
+                    hdr->id.intID = IRSIDINT;
+                    hdr->cmd = ntohs(rawhdr->cmd);
+                    hdr->size = cmdsize;
+                    *data = ibuf + sizeof(IRSHeader);
+                    *dataSize = cmdsize - sizeof(IRSHeader);
+                }
+            }
+        }
     }
 
     obufHead = 0;
@@ -202,18 +202,18 @@ bool CommunicationTask::flashAndReceiveCmd(IRSHeader* hdr,
 }
 
 bool CommunicationTask::makeResponse(const IRSHeader* req, IRSCmd respCode,
-				     void* respData, int32_t respDataSize)
+                                     void* respData, int32_t respDataSize)
 {
     if (ibufUsed > req->size){
-	memcpy(ibuf, ibuf + req->size, ibufUsed - req->size);
+        memcpy(ibuf, ibuf + req->size, ibufUsed - req->size);
     }
     ibufUsed -= req->size;
 
     obufHead = 0;
     obufUsed = sizeof(IRSHeader) + respDataSize;
     if (obufUsed > sizeof(obuf)){
-	ESP_LOGE(tag, "receiving data size is too large");
-	return false;
+        ESP_LOGE(tag, "receiving data size is too large");
+        return false;
     }
     
     IRSHeader* resp = (IRSHeader*)obuf;
@@ -221,34 +221,34 @@ bool CommunicationTask::makeResponse(const IRSHeader* req, IRSCmd respCode,
     resp->cmd = htons(respCode);
     resp->size = htons(obufUsed);
     if (respDataSize > 0){
-	memcpy(obuf + sizeof(IRSHeader), respData, respDataSize);
+        memcpy(obuf + sizeof(IRSHeader), respData, respDataSize);
     }
 
     return true;
 }
     
 bool CommunicationTask::cmdTxFormat(const IRSHeader* hdr,
-				    const void* data, int32_t dataSize)
+                                    const void* data, int32_t dataSize)
 {
     {
-	IRSTxFormatData* dhdr = (IRSTxFormatData*)data;
-	IRSFormat format = (IRSFormat)ntohs(dhdr->format);
-	int bits = ntohs(dhdr->bits);
+        IRSTxFormatData* dhdr = (IRSTxFormatData*)data;
+        IRSFormat format = (IRSFormat)ntohs(dhdr->format);
+        int bits = ntohs(dhdr->bits);
 
-	IRRC_PROTOCOL protocol;
-	if (format == IRSFORMAT_NEC){
-	    protocol = IRRC_NEC;
-	}else if (format == IRSFORMAT_AEHA){
-	    protocol = IRRC_AEHA;
-	}else if (format == IRSFORMAT_SONY){
-	    protocol = IRRC_SONY;
-	}else{
-	    ESP_LOGE(tag, "not supported format");
-	    goto END;
-	}
+        IRRC_PROTOCOL protocol;
+        if (format == IRSFORMAT_NEC){
+            protocol = IRRC_NEC;
+        }else if (format == IRSFORMAT_AEHA){
+            protocol = IRRC_AEHA;
+        }else if (format == IRSFORMAT_SONY){
+            protocol = IRRC_SONY;
+        }else{
+            ESP_LOGE(tag, "not supported format");
+            goto END;
+        }
 
-	unsigned char* cbuf = (unsigned char*)(dhdr + 1);
-	sendIRData(protocol, bits, cbuf);
+        unsigned char* cbuf = (unsigned char*)(dhdr + 1);
+        sendIRData(protocol, bits, cbuf);
     }
 
 END:
@@ -270,34 +270,34 @@ CommunicationTask* CommunicationTaskList::getFirst()
 void CommunicationTaskList::add(CommunicationTask* task)
 {
     if (task->next != NULL || task->prev != NULL){
-	ESP_LOGE(tag, "task list corrupted");
-	abort();
+        ESP_LOGE(tag, "task list corrupted");
+        abort();
     }
     if (last){
-	last->next = task;
-	task->prev = last;
-	last = task;
+        last->next = task;
+        task->prev = last;
+        last = task;
     }else{
-	if (first){
-	    ESP_LOGE(tag, "task list corrupted");
-	    abort();
-	}
-	first = task;
-	last = task;
+        if (first){
+            ESP_LOGE(tag, "task list corrupted");
+            abort();
+        }
+        first = task;
+        last = task;
     }
 }
     
 void CommunicationTaskList::remove(CommunicationTask* task)
 {
     if (task->prev){
-	task->prev->next = task->next;
+        task->prev->next = task->next;
     }else{
-	first = task->next;
+        first = task->next;
     }
     if (task->next){
-	task->next->prev = task->prev;
+        task->next->prev = task->prev;
     }else{
-	last = task->prev;
+        last = task->prev;
     }
     task->next = NULL;
     task->prev = NULL;
@@ -310,39 +310,39 @@ IRServerTask::IRServerTask() :
     sockfd(-1)
 {
     for (int i = 0; i < MULTIPLICITY; i++){
-	freeCommTaskList.add(&commTasks[i]);
+        freeCommTaskList.add(&commTasks[i]);
     }
 }
     
 bool IRServerTask::init(in_port_t port)
 {
     {
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-	    ESP_LOGE(tag, "failed to careate socket");
-	    goto ERR1;
-	}
-	
-	struct sockaddr_in sock_addr;
-	memset(&sock_addr, 0, sizeof(sock_addr));
-	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_addr.s_addr = 0;
-	sock_addr.sin_port = htons(port);
-	int rc = bind(sockfd,
-		      (struct sockaddr*)&sock_addr,
-		      sizeof(sock_addr));
-	if (rc != 0) {
-	    ESP_LOGE(tag, "bind failed");
-	    goto ERR2;
-	}
-	
-	rc = listen(sockfd, MULTIPLICITY);
-	if (rc != 0) {
-	    ESP_LOGE(tag, "listen failed");
-	    goto ERR2;
-	}
-	
-	return true;
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd < 0) {
+            ESP_LOGE(tag, "failed to careate socket");
+            goto ERR1;
+        }
+        
+        struct sockaddr_in sock_addr;
+        memset(&sock_addr, 0, sizeof(sock_addr));
+        sock_addr.sin_family = AF_INET;
+        sock_addr.sin_addr.s_addr = 0;
+        sock_addr.sin_port = htons(port);
+        int rc = bind(sockfd,
+                      (struct sockaddr*)&sock_addr,
+                      sizeof(sock_addr));
+        if (rc != 0) {
+            ESP_LOGE(tag, "bind failed");
+            goto ERR2;
+        }
+        
+        rc = listen(sockfd, MULTIPLICITY);
+        if (rc != 0) {
+            ESP_LOGE(tag, "listen failed");
+            goto ERR2;
+        }
+        
+        return true;
     }
     
 ERR2:
@@ -363,30 +363,30 @@ void IRServerTask::run(void *data)
 {
     
     while (1){
-	struct sockaddr_in sock_addr;
-	socklen_t addr_len;
-	int newfd = accept(sockfd, (struct sockaddr*)&sock_addr, &addr_len);
-	if (newfd >= 0){
-	    ESP_LOGI(tag, "detected client request to connect");
-	    CommunicationTask* task = NULL;
-	    {
-		LockHolder holder = LockHolder(mutex);
-		task = freeCommTaskList.getFirst();
-		if (task){
-		    freeCommTaskList.remove(task);
-		    runningCommTaskList.add(task);
-		}
-	    }
-	    if (task){
-		task->setStackSize(4096);
-		task->setSocket(newfd);
-		task->start();
-	    }else{
-		ESP_LOGE(tag, "server is busy: there is no free task slot");
-	    }
-	}else{	    
-	    ESP_LOGE(tag, "failed to accept  socket");
-	}
+        struct sockaddr_in sock_addr;
+        socklen_t addr_len;
+        int newfd = accept(sockfd, (struct sockaddr*)&sock_addr, &addr_len);
+        if (newfd >= 0){
+            ESP_LOGI(tag, "detected client request to connect");
+            CommunicationTask* task = NULL;
+            {
+                LockHolder holder = LockHolder(mutex);
+                task = freeCommTaskList.getFirst();
+                if (task){
+                    freeCommTaskList.remove(task);
+                    runningCommTaskList.add(task);
+                }
+            }
+            if (task){
+                task->setStackSize(4096);
+                task->setSocket(newfd);
+                task->start();
+            }else{
+                ESP_LOGE(tag, "server is busy: there is no free task slot");
+            }
+        }else{      
+            ESP_LOGE(tag, "failed to accept  socket");
+        }
     }
 }
 
@@ -396,10 +396,10 @@ void IRServerTask::run(void *data)
 void startIRServer()
 {
     if (server == NULL){
-	server = new IRServerTask();
-	server->init(IRSERVER_PORT);
-	server->setStackSize(2048);
-	server->start();
-	ESP_LOGI(tag, "IR server has been started. port: %d", IRSERVER_PORT);
+        server = new IRServerTask();
+        server->init(IRSERVER_PORT);
+        server->setStackSize(2048);
+        server->start();
+        ESP_LOGI(tag, "IR server has been started. port: %d", IRSERVER_PORT);
     }
 }

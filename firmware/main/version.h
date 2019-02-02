@@ -12,19 +12,19 @@ public:
 
     int compare(const Version& other) const;
     bool operator == (const Version& right) const {
-	return compare(right) == 0;
+        return compare(right) == 0;
     };
     bool operator < (const Version& right) const {
-	return compare(right) < 0;
+        return compare(right) < 0;
     };
     bool operator <= (const Version& right) const {
-	return compare(right) <= 0;
+        return compare(right) <= 0;
     };
     bool operator > (const Version& right) const {
-	return compare(right) > 0;
+        return compare(right) > 0;
     };
     bool operator >= (const Version& right) const {
-	return compare(right) >= 0;
+        return compare(right) >= 0;
     };
 };
 

@@ -2,12 +2,12 @@
 
 RAWVERSION=`git log --oneline --pretty='%d' | \
             sed 's/[(),]/ /g' | awk '{for(i=0;i<NF;i++){print $(i+1)}}' | \
-	                egrep '^V[0-9\]' | head -1 | sed 's/^V//'`
+                        egrep '^V[0-9\]' | head -1 | sed 's/^V//'`
 
 SUBVERSION=`git log --pretty="%h%d" | sed 's/[(),]/ /g' | \
             awk -v tag=V"$RAWVERSION" \
-	        'BEGIN{subv=0}
-		 {
+                'BEGIN{subv=0}
+                 {
                    for (i=1; i <= NF; i++){
                      if ($i == tag){print subv;exit 0;}
                    }

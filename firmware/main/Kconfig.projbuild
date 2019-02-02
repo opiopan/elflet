@@ -2,52 +2,52 @@ menu "elflet Configuration"
 
 config HW_VERSION
      string "elflet board version"
-	default "1.1"
-	help
-		elflet board version which defualt spiffs image indicates.
-		You can also make persinalized spiffs image for each board.
-		This variable is used for just default spiffs image when "make all" is invoked.
+        default "1.1"
+        help
+                elflet board version which defualt spiffs image indicates.
+                You can also make persinalized spiffs image for each board.
+                This variable is used for just default spiffs image when "make all" is invoked.
 
 config ELFLET_NODE_NAME
      string "Initial node name"
-	default "elflet-000000"
-	help
-		Initial node name. This name can be modified through setup
-		wizard.
+        default "elflet-000000"
+        help
+                Initial node name. This name can be modified through setup
+                wizard.
 
 config ELFLET_ADMIN_PASSWORD
      string "Administorator password"
-	default "elflet00"
-	help
-		Administorator password. This is also used as WiFI passphrase.
+        default "elflet00"
+        help
+                Administorator password. This is also used as WiFI passphrase.
 
 config OTA_IMAGE_SIGNING_KEY
      string "Private signing key for OTA firmware image"
-	default "$(HOME)/esp/deploy/signingkey.pem"
-	help
-		Path to the key file used to sign firmware image for OTA.
-		Key file is SRA private key in PEM format.
+        default "$(HOME)/esp/deploy/signingkey.pem"
+        help
+                Path to the key file used to sign firmware image for OTA.
+                Key file is SRA private key in PEM format.
 
-		This signing & verification mechanizm just gurantee only official firmware will be accepted via OTA. It means this is not perfect security solution, such as providing protection via serial update.
-		To realize perfect security solution, please use Secure Boot of ESP-IDF.
+                This signing & verification mechanizm just gurantee only official firmware will be accepted via OTA. It means this is not perfect security solution, such as providing protection via serial update.
+                To realize perfect security solution, please use Secure Boot of ESP-IDF.
 
 config OTA_IMAGE__VERIFICATION_KEY
     string "Public signature verification key for OTA firmware image"
-	default "$(HOME)/esp/deploy/verificationkey.pem"
-	help
-		Path to a public key file used to verify signed images recieved via OTA. This key is packed into the PDATA partition image,
-		Key file is SRA public key in PEM format.
+        default "$(HOME)/esp/deploy/verificationkey.pem"
+        help
+                Path to a public key file used to verify signed images recieved via OTA. This key is packed into the PDATA partition image,
+                Key file is SRA public key in PEM format.
 
 config WIFI_COUNTRY_CODE
      string "Country code of WiFi AP"
-	default "JP"
-	help
-		This code will publish in WiFi AP mode.
+        default "JP"
+        help
+                This code will publish in WiFi AP mode.
 
 config FIRMWARE_DOWNLOAD_URI
      string "URI to download firmware"
-	default "http://mserver.local:8080/firmware/elflet.sbin"
-	help
-		URI to download firmware when reques will be issued via MQTT.
+        default "http://mserver.local:8080/firmware/elflet.sbin"
+        help
+                URI to download firmware when reques will be issued via MQTT.
 
 endmenu

@@ -54,31 +54,31 @@ void TimeTask::run(void *data){
     Time::setTZ(elfletConfig->getTimezone());
 
     xEventGroupWaitBits(events, EV_WAKE_SERVER,
-			pdTRUE, pdFALSE,
-			portMAX_DELAY);
+                        pdTRUE, pdFALSE,
+                        portMAX_DELAY);
     
     bool first = true;
     while (true){
-	if (Time::shouldAdjust(elfletConfig->getWakeupCause() != WC_NOTSLEEP)){
-	    ESP_LOGI(tag, "start SNTP & wait for finish adjustment");
-	    Time::startSNTP();
-	    if (!Time::waitForFinishAdjustment(3)){
-		ESP_LOGE(tag, "fail to adjust time by SNTP");
-	    }
-	    Time now;
-	    ESP_LOGI(tag, "adjusted time: %s",
-		     now.format(Time::SIMPLE_DATETIME));
-	    if (baseStat.boottime < 60 * 60 * 24 * 365){
-		baseStat.boottime = now.getTime();
-	    }
-	}
+        if (Time::shouldAdjust(elfletConfig->getWakeupCause() != WC_NOTSLEEP)){
+            ESP_LOGI(tag, "start SNTP & wait for finish adjustment");
+            Time::startSNTP();
+            if (!Time::waitForFinishAdjustment(3)){
+                ESP_LOGE(tag, "fail to adjust time by SNTP");
+            }
+            Time now;
+            ESP_LOGI(tag, "adjusted time: %s",
+                     now.format(Time::SIMPLE_DATETIME));
+            if (baseStat.boottime < 60 * 60 * 24 * 365){
+                baseStat.boottime = now.getTime();
+            }
+        }
 
-	if (first){
-	    first = false;
-	    enableSensorCapturing();
-	}
+        if (first){
+            first = false;
+            enableSensorCapturing();
+        }
 
-	vTaskDelay(60 * 60 * 1000 / portTICK_PERIOD_MS);
+        vTaskDelay(60 * 60 * 1000 / portTICK_PERIOD_MS);
     }
 }
 
@@ -87,9 +87,9 @@ void TimeTask::run(void *data){
 //----------------------------------------------------------------------
 bool startTimeService(){
     if (!task){
-	task = new TimeTask;
-	task->setStackSize(2048);
-	task->start();
+        task = new TimeTask;
+        task->setStackSize(2048);
+        task->start();
     }
     return true;
 }

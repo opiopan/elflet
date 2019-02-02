@@ -1,38 +1,38 @@
 {
     "CommonCondition" : {
-	"Type" : "COMBINATION",
-	"Operator" : "AND",
-	"Formulas" : [
-	    {
-		"Type" : "PROTOCOL",
-		"Protocol" : "AEHA"
-	    },{
-		"Type" : "DATA",
-		"Data" : "01103050af"
-	    },{
-		"Type" : "DATA",
-		"Data" : "c33c",
-		"Offset" : 9
-	    }
-	]
+        "Type" : "COMBINATION",
+        "Operator" : "AND",
+        "Formulas" : [
+            {
+                "Type" : "PROTOCOL",
+                "Protocol" : "AEHA"
+            },{
+                "Type" : "DATA",
+                "Data" : "01103050af"
+            },{
+                "Type" : "DATA",
+                "Data" : "c33c",
+                "Offset" : 9
+            }
+        ]
     },
     "OnCondition" : {
-	"Type" : "DATA",
-	"Offset" : 7,
-	"Data" : "02"
+        "Type" : "DATA",
+        "Offset" : 7,
+        "Data" : "02"
     },
     "OffCondition" : {
-	"Type" : "DATA",
-	"Offset" : 7,
-	"Data" : "03"
+        "Type" : "DATA",
+        "Offset" : 7,
+        "Data" : "03"
     },
     "Synthesizing":{
-	"Protocol": "AEHA",
-	"Placeholder": "01103050af00ff02fdc33c"
+        "Protocol": "AEHA",
+        "Placeholder": "01103050af00ff02fdc33c"
     },
     "SynthesizingToOff":{
-	"Protocol": "AEHA",
-	"Placeholder": "01103050af00ff03fcc33c"
+        "Protocol": "AEHA",
+        "Placeholder": "01103050af00ff03fcc33c"
     }
 }
 

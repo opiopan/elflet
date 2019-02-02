@@ -13,10 +13,10 @@ public:
     RebootTask(int msec) : msec(msec){};
 private:
     void run(void *data) override {
-	ESP_LOGI(tag, "wait for %d msec", msec);
-	vTaskDelay(msec / portTICK_PERIOD_MS);
-	ESP_LOGI(tag, "restart!");
-	esp_restart();
+        ESP_LOGI(tag, "wait for %d msec", msec);
+        vTaskDelay(msec / portTICK_PERIOD_MS);
+        ESP_LOGI(tag, "restart!");
+        esp_restart();
     };
 };
 

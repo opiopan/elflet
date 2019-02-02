@@ -10,4 +10,4 @@ int irsSendRequest(IRSHANDLE handle, IRSCmd cmd, void* data, int dataSize);
 int irsGetRespons(IRSHANDLE handle, void** data, int* dataSize);
 
 int irsInvokeTxFormat(IRSHANDLE handle,
-		      IRSFormat format, void* data, int bits);
+                      IRSFormat format, void* data, int bits);

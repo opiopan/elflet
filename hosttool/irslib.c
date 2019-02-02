@@ -24,13 +24,13 @@ IRSHANDLE irsOpen(const char* host)
 {
     struct hostent* he = gethostbyname(host);
     if (*he->h_addr_list == NULL){
-	errno = ENOENT;
-	goto ERR1;
+        errno = ENOENT;
+        goto ERR1;
     }
 
     int sockfd = socket(PF_INET, SOCK_STREAM, 0);
     if (sockfd < 0){
-	goto ERR1;
+        goto ERR1;
     }
     
     struct sockaddr_in addr;
@@ -39,12 +39,12 @@ IRSHANDLE irsOpen(const char* host)
     addr.sin_port = htons(IRSERVER_PORT);
 
     if (connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0){
-	goto ERR2;
+        goto ERR2;
     }
 
     IRSCTX* ctx = (IRSCTX*)malloc(sizeof(IRSCTX));
     if (ctx == NULL){
-	goto ERR2;
+        goto ERR2;
     }
     ctx->sockfd = sockfd;
     ctx->ibufUsed = 0;
@@ -72,46 +72,46 @@ int irsSendRequest(IRSHANDLE handle, IRSCmd cmd, void* data, int dataSize)
 
     IRSHeader* hdr = (IRSHeader*)ctx->obuf;
     if (sizeof(*hdr) + dataSize > sizeof(ctx->obuf)){
-	errno = E2BIG;
-	return -1;
+        errno = E2BIG;
+        return -1;
     }
     hdr->id.intID = IRSIDINT;
     hdr->cmd = htons(cmd);
     hdr->size = htons(sizeof(*hdr) + dataSize);
     if (dataSize > 0){
-	memcpy(hdr + 1, data, dataSize);
+        memcpy(hdr + 1, data, dataSize);
     }
     
     int toSend = sizeof(*hdr) + dataSize;
     int sent = 0;
     while (sent < toSend){
-	int rc = write(ctx->sockfd, ctx->obuf + sent, toSend - sent);
-	if (rc < 0){
-	    return -1;
-	}
-	sent += rc;
+        int rc = write(ctx->sockfd, ctx->obuf + sent, toSend - sent);
+        if (rc < 0){
+            return -1;
+        }
+        sent += rc;
     }
 
     ctx->resp = false;
     ctx->ibufUsed = 0;
     while (!ctx->resp){
-	int rc = read(ctx->sockfd, ctx->ibuf + ctx->ibufUsed,
-		      sizeof(ctx->ibuf) - ctx->ibufUsed);
-	if (rc < 0){
-	    return -1;
-	}
-	ctx->ibufUsed += rc;
-	if (ctx->ibufUsed >= sizeof(IRSHeader)){
-	    IRSHeader* hdr = (IRSHeader*)ctx->ibuf;
-	    int size = ntohs(hdr->size);
-	    if (hdr->id.intID != IRSIDINT || size > sizeof(ctx->ibuf)){
-		errno = EPROTO;
-		return -1;
-	    }
-	    if (ctx->ibufUsed == size){
-		ctx->resp = true;
-	    }
-	}
+        int rc = read(ctx->sockfd, ctx->ibuf + ctx->ibufUsed,
+                      sizeof(ctx->ibuf) - ctx->ibufUsed);
+        if (rc < 0){
+            return -1;
+        }
+        ctx->ibufUsed += rc;
+        if (ctx->ibufUsed >= sizeof(IRSHeader)){
+            IRSHeader* hdr = (IRSHeader*)ctx->ibuf;
+            int size = ntohs(hdr->size);
+            if (hdr->id.intID != IRSIDINT || size > sizeof(ctx->ibuf)){
+                errno = EPROTO;
+                return -1;
+            }
+            if (ctx->ibufUsed == size){
+                ctx->resp = true;
+            }
+        }
     }
     
     return 0;
@@ -122,8 +122,8 @@ int irsGetRespons(IRSHANDLE handle, void** data, int* dataSize)
     IRSCTX* ctx = (IRSCTX*)handle;
 
     if (!ctx->resp){
-	errno = EBUSY;
-	return -1;
+        errno = EBUSY;
+        return -1;
     }
 
     
@@ -136,7 +136,7 @@ int irsGetRespons(IRSHANDLE handle, void** data, int* dataSize)
 }
 
 int irsInvokeTxFormat(IRSHANDLE handle,
-		      IRSFormat format, void* data, int bits)
+                      IRSFormat format, void* data, int bits)
 {
     int bytes = (bits + 7) / 8;
     IRSCTX* ctx = (IRSCTX*)handle;
@@ -144,14 +144,14 @@ int irsInvokeTxFormat(IRSHANDLE handle,
     char buf[sizeof(ctx->obuf) - sizeof(IRSHeader)];
     IRSTxFormatData* hdr = (IRSTxFormatData*)buf;
     if (bytes + sizeof(*hdr) > sizeof(buf)){
-	errno = E2BIG;
-	return -1;
+        errno = E2BIG;
+        return -1;
     }
     hdr->format = htons(format);
     hdr->bits = htons(bits);
     if (bytes > 0){
-	memcpy(hdr + 1, data, bytes);
+        memcpy(hdr + 1, data, bytes);
     }
     return irsSendRequest(handle, IRServerCmdTxFormat,
-			  buf, bytes + sizeof(*hdr));
+                          buf, bytes + sizeof(*hdr));
 }

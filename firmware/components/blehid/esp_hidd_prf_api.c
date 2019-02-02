@@ -36,7 +36,7 @@ esp_err_t esp_hidd_register_callbacks(esp_hidd_event_cb_t callbacks)
     esp_err_t hidd_status;
 
     if(callbacks != NULL) {
-   	    hidd_le_env.hidd_cb = callbacks;
+            hidd_le_env.hidd_cb = callbacks;
     } else {
         return ESP_FAIL;
     }
@@ -75,10 +75,10 @@ esp_err_t esp_hidd_profile_deinit(void)
     }
 
     if(hidd_svc_hdl != 0) {
-	esp_ble_gatts_stop_service(hidd_svc_hdl);
-	esp_ble_gatts_delete_service(hidd_svc_hdl);
+        esp_ble_gatts_stop_service(hidd_svc_hdl);
+        esp_ble_gatts_delete_service(hidd_svc_hdl);
     } else {
-	return ESP_FAIL;
+        return ESP_FAIL;
    }
     
     /* register the HID device profile to the BTA_GATTS module*/
@@ -89,7 +89,7 @@ esp_err_t esp_hidd_profile_deinit(void)
 
 uint16_t esp_hidd_get_version(void)
 {
-	return HIDD_VERSION;
+        return HIDD_VERSION;
 }
 
 void esp_hidd_send_consumer_value(uint16_t conn_id, uint8_t key_cmd, bool key_pressed)

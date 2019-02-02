@@ -16,7 +16,7 @@ static const char tag[] = "mdnsService";
 bool startmdnsService(){
     ESP_ERROR_CHECK(mdns_init());
     ESP_ERROR_CHECK(mdns_hostname_set(
-			elfletConfig->getNodeName().c_str()));
+                        elfletConfig->getNodeName().c_str()));
     ESP_ERROR_CHECK(mdns_instance_name_set("elflet home IoT unit"));
 
     mdns_txt_item_t serviceTxtData[] = {
@@ -25,10 +25,10 @@ bool startmdnsService(){
 
     //initialize service
     ESP_ERROR_CHECK( mdns_service_add( "elflet WebServer", "_http", "_tcp", 80,
-				       serviceTxtData, 1) );
+                                       serviceTxtData, 1) );
     ESP_ERROR_CHECK( mdns_service_add("irserver", "_irserveer", "_tcp",
-				      IRSERVER_PORT, NULL, 0) );
-	
+                                      IRSERVER_PORT, NULL, 0) );
+        
     return true;
 }
 

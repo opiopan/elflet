@@ -32,47 +32,47 @@ protected:
     EventGroupHandle_t events;
 public:
     ObserverTask(){
-	events = xEventGroupCreate();
+        events = xEventGroupCreate();
     }
 
     virtual ~ObserverTask(){
-	vEventGroupDelete(events);
+        vEventGroupDelete(events);
     }
 
     void connected(){
-	xEventGroupSetBits(events, EV_CONNECTED);
+        xEventGroupSetBits(events, EV_CONNECTED);
     }
 
     void gotAddress(){
-	xEventGroupSetBits(events, EV_GOTADDRESS);
+        xEventGroupSetBits(events, EV_GOTADDRESS);
     }
 
     void waitForReady(){
-	xEventGroupWaitBits(
-	    events, EV_GOTADDRESS, pdFALSE, pdFALSE, portMAX_DELAY);
+        xEventGroupWaitBits(
+            events, EV_GOTADDRESS, pdFALSE, pdFALSE, portMAX_DELAY);
     }
     
 protected:
     void run(void *data) override{
-	vTaskDelay(5000 / portTICK_PERIOD_MS);
-	auto ev = xEventGroupWaitBits(
-	    events, EV_CONNECTED, pdFALSE, pdFALSE,
-	    60000 / portTICK_PERIOD_MS);
-	if (ev){
-	    if (elfletConfig->getWakeupCause() != WC_TIMER){
-		ledSetDefaultMode(LEDDM_STANDBY);
-	    }
-	    return;
-	}else{
-	    if (elfletConfig->getWakeupCause() == WC_BUTTON){
-		enterDeepSleep(0);
-	    }
-	    
-	    // fall back to configuration mode
-	    elfletConfig->setBootMode(Config::Configuration);
-	    elfletConfig->commit();
-	    rebootIn(0);
-	}
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        auto ev = xEventGroupWaitBits(
+            events, EV_CONNECTED, pdFALSE, pdFALSE,
+            60000 / portTICK_PERIOD_MS);
+        if (ev){
+            if (elfletConfig->getWakeupCause() != WC_TIMER){
+                ledSetDefaultMode(LEDDM_STANDBY);
+            }
+            return;
+        }else{
+            if (elfletConfig->getWakeupCause() == WC_BUTTON){
+                enterDeepSleep(0);
+            }
+            
+            // fall back to configuration mode
+            elfletConfig->setBootMode(Config::Configuration);
+            elfletConfig->commit();
+            rebootIn(0);
+        }
     };
 };
 
@@ -87,20 +87,20 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         esp_wifi_connect();
         break;
     case SYSTEM_EVENT_STA_CONNECTED:
-	observerTask->connected();
+        observerTask->connected();
         /* enable ipv6 */
         tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
-	observerTask->gotAddress();
-	notifySMTPserverAccesivility();
-	enablePubSub();
-	enableIRReceiver();
+        observerTask->gotAddress();
+        notifySMTPserverAccesivility();
+        enablePubSub();
+        enableIRReceiver();
         break;
     case SYSTEM_EVENT_AP_STA_GOT_IP6:
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
-	esp_wifi_connect();
+        esp_wifi_connect();
         break;
     default:
         break;
@@ -115,8 +115,8 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 #define ESPERR_RET(x, msg) {\
     int err = (x);\
     if (err != ESP_OK){\
-	ESP_LOGE(tag, msg ": %s", GeneralUtils::errorToString((err)));\
-	return false;\
+        ESP_LOGE(tag, msg ": %s", GeneralUtils::errorToString((err)));\
+        return false;\
     }\
 }
 
@@ -145,9 +145,9 @@ bool startWifiService(){
     auto ssid = elfletConfig->getSSIDtoConnect();
     auto pass = elfletConfig->getWifiPassword();
     if (ssid.length() > sizeof(wifi_config.sta.ssid) ||
-	pass.length() > sizeof(wifi_config.sta.password)){
-	ESP_LOGE(tag, "SSID or PASSWORD length too long");
-	return false;
+        pass.length() > sizeof(wifi_config.sta.password)){
+        ESP_LOGE(tag, "SSID or PASSWORD length too long");
+        return false;
     }
     memset(&wifi_config, 0, sizeof(wifi_config));
     memcpy(wifi_config.sta.ssid, ssid.data(), ssid.length()) ;
@@ -155,7 +155,7 @@ bool startWifiService(){
     wifi_config.sta.scan_method = WIFI_ALL_CHANNEL_SCAN;
     wifi_config.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
     ESPERR_RET(esp_wifi_set_config(WIFI_IF_STA, &wifi_config),
-	       "esp_wifi_set_config");
+               "esp_wifi_set_config");
 
     ESPERR_RET(esp_wifi_start(), "esp_wifi_start");
 

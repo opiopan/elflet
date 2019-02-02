@@ -1,169 +1,169 @@
 {
     "CommonCondition" : {
-	"Type" : "COMBINATION",
-	"Operator" : "AND",
-	"Formulas" : [
-	    {
-		"Type" : "PROTOCOL",
-		"Protocol" : "AEHA"
-	    },{
-		"Type" : "DATA",
-		"Data" : "1463001010"
-	    }
-	]
+        "Type" : "COMBINATION",
+        "Operator" : "AND",
+        "Formulas" : [
+            {
+                "Type" : "PROTOCOL",
+                "Protocol" : "AEHA"
+            },{
+                "Type" : "DATA",
+                "Data" : "1463001010"
+            }
+        ]
     },
     "OnCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "fe"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "fe"
     },
     "OffCondition" : {
-	"Type" : "DATA",
-	"Offset" : 5,
-	"Data" : "02"
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Data" : "02"
     },
     "Attributes": [
-	{
-	    "AttrName": "Mode",
-	    "NotApplyInOff": true,
-	    "Value" : {
-		"Type": "PORTION",
-		"Offset" : 9,
-		"Mask" : "0f"
-	    },
-	    "Dictionary": {
-		"Auto":   0,
-		"Cooler": 1,
-		"Blower": 3,
-		"Heater": 4,
-		"Dehum":  5
-	    },
-	    "Default": "Cooler"
-	},
-	{
-	    "AttrName": "Temperature",
-	    "NotApplyInOff": true,
-	    "Value": {
-		"Type": "PORTION",
-		"Offset" : 8,
-		"Mask": "f0",
-		"DividedBy": 16,
-		"Bias": 16
-	    },
-	    "Default": 27,
-	    "Max": 31,
-	    "Min": 16,
-	    "Unit": 1,
-	    "ApplyCondition": {
-		"Type" : "COMBINATION",
-		"Operator" : "NAND",
-		"Formulas" : [
-		    {
-			"Type" : "DATA",
-			"Offset" : 9,
-			"Data" : "00"
-		    }
-		]
-	    },
-	    "VisibleCondition": {
-		"Type" : "COMBINATION",
-		"Operator" : "OR",
-		"Formulas" : [
-		    {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode",
-			"Value": "Cooler"
-		    },
-		    {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode",
-			"Value": "Heater"
-		    },
-		    {
-			"Type": "ATTRIBUTE",
-			"AttrName": "Mode",
-			"Value": "Dehum"
-		    }
-		]
-	    }
-	},
-	{
-	    "AttrName": "RelativeTemperature",
-	    "NotApplyInOff": true,
-	    "Value": {
-		"Type": "PORTION",
-		"Offset" : 8,
-		"Mask": "0e",
-		"DividedBy": 2,
-		"Bias": -3
-	    },
-	    "Default": -3,
-	    "Max": 2,
-	    "Min": -2,
-	    "Unit": 1,
-	    "ApplyCondition": {
-		"Type" : "DATA",
-		"Offset" : 9,
-		"Data" : "00"
-	    },
-	    "VisibleCondition": {
-		"Type": "ATTRIBUTE",
-		"AttrName": "Mode",
-		"Value": "Auto"
-	    }
-	}
+        {
+            "AttrName": "Mode",
+            "NotApplyInOff": true,
+            "Value" : {
+                "Type": "PORTION",
+                "Offset" : 9,
+                "Mask" : "0f"
+            },
+            "Dictionary": {
+                "Auto":   0,
+                "Cooler": 1,
+                "Blower": 3,
+                "Heater": 4,
+                "Dehum":  5
+            },
+            "Default": "Cooler"
+        },
+        {
+            "AttrName": "Temperature",
+            "NotApplyInOff": true,
+            "Value": {
+                "Type": "PORTION",
+                "Offset" : 8,
+                "Mask": "f0",
+                "DividedBy": 16,
+                "Bias": 16
+            },
+            "Default": 27,
+            "Max": 31,
+            "Min": 16,
+            "Unit": 1,
+            "ApplyCondition": {
+                "Type" : "COMBINATION",
+                "Operator" : "NAND",
+                "Formulas" : [
+                    {
+                        "Type" : "DATA",
+                        "Offset" : 9,
+                        "Data" : "00"
+                    }
+                ]
+            },
+            "VisibleCondition": {
+                "Type" : "COMBINATION",
+                "Operator" : "OR",
+                "Formulas" : [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode",
+                        "Value": "Cooler"
+                    },
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode",
+                        "Value": "Heater"
+                    },
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "Mode",
+                        "Value": "Dehum"
+                    }
+                ]
+            }
+        },
+        {
+            "AttrName": "RelativeTemperature",
+            "NotApplyInOff": true,
+            "Value": {
+                "Type": "PORTION",
+                "Offset" : 8,
+                "Mask": "0e",
+                "DividedBy": 2,
+                "Bias": -3
+            },
+            "Default": -3,
+            "Max": 2,
+            "Min": -2,
+            "Unit": 1,
+            "ApplyCondition": {
+                "Type" : "DATA",
+                "Offset" : 9,
+                "Data" : "00"
+            },
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "Mode",
+                "Value": "Auto"
+            }
+        }
     ],
     "Synthesizing":{
-	"Protocol": "AEHA",
-	"Placeholder": "1463001010fe09300100000000002800",
-	"Variables": [
-	    {
-		"Offset": 9,
-		"Mask": "0f",
-		"Value": {
-		    "Type": "ATTRIBUTE",
-		    "AttrName": "Mode"
-		}
-	    },
-	    {
-		"Offset": 8,
-		"Mask": "fe",
-		"Bias": -16,
-		"MultiplyBy": 16,
-		"Value": {
-		    "Type": "ATTRIBUTE",
-		    "AttrName": "Temperature"
-		},
-		"RelateWithVisibilityOfAttribute": "Temperature"
-	    },
-	    {
-		"Offset": 8,
-		"Mask": "0e",
-		"Bias": 3,
-		"MultiplyBy": 2,
-		"Value": {
-		    "Type": "ATTRIBUTE",
-		    "AttrName": "RelativeTemperature"
-		},
-		"RelateWithVisibilityOfAttribute": "RelativeTemperature"
-	    },
-	    {
-		"Offset": 8,
-		"Mask": "f0",
-		"Value": {
-		    "Type": "CONSTANT",
-		    "Value": "90"
-		},
-		"RelateWithVisibilityOfAttribute": "RelativeTemperature"
-	    }
-	],
-	"Redundant": {
-	    "Operator": "4BITSUB",
-	    "Seed": "7e"
-	}
+        "Protocol": "AEHA",
+        "Placeholder": "1463001010fe09300100000000002800",
+        "Variables": [
+            {
+                "Offset": 9,
+                "Mask": "0f",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Mode"
+                }
+            },
+            {
+                "Offset": 8,
+                "Mask": "fe",
+                "Bias": -16,
+                "MultiplyBy": 16,
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Temperature"
+                },
+                "RelateWithVisibilityOfAttribute": "Temperature"
+            },
+            {
+                "Offset": 8,
+                "Mask": "0e",
+                "Bias": 3,
+                "MultiplyBy": 2,
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "RelativeTemperature"
+                },
+                "RelateWithVisibilityOfAttribute": "RelativeTemperature"
+            },
+            {
+                "Offset": 8,
+                "Mask": "f0",
+                "Value": {
+                    "Type": "CONSTANT",
+                    "Value": "90"
+                },
+                "RelateWithVisibilityOfAttribute": "RelativeTemperature"
+            }
+        ],
+        "Redundant": {
+            "Operator": "4BITSUB",
+            "Seed": "7e"
+        }
     },
     "SynthesizingToOff":{
-	"Protocol": "AEHA",
-	"Placeholder": "146300101002fd"
+        "Protocol": "AEHA",
+        "Placeholder": "146300101002fd"
     }
 }

@@ -16,23 +16,23 @@ static const char tag[] = "RESTsensor";
 
 class SensorHandler : public WebServerHandler {
     void receiveRequest(WebServerConnection& connection) override{
-	auto req = connection.request();
-	auto resp = connection.response();
+        auto req = connection.request();
+        auto resp = connection.response();
 
-	if (req->method() != HttpRequest::MethodGet){
-	    resp->setHttpStatus(HttpResponse::RESP_400_BadRequest);
-	    resp->close();
-	    return;
-	}
+        if (req->method() != HttpRequest::MethodGet){
+            resp->setHttpStatus(HttpResponse::RESP_400_BadRequest);
+            resp->close();
+            return;
+        }
 
-	std::stringstream out;
-	getSensorValueAsJson(out);
+        std::stringstream out;
+        getSensorValueAsJson(out);
 
-	stringPtr body(new std::string(out.str()));
-	resp->setBody(body);
-	resp->setHttpStatus(HttpResponse::RESP_200_OK);
-	resp->addHeader("Content-Type", "application/json");
-	resp->close();
+        stringPtr body(new std::string(out.str()));
+        resp->setBody(body);
+        resp->setHttpStatus(HttpResponse::RESP_200_OK);
+        resp->addHeader("Content-Type", "application/json");
+        resp->close();
     }
 };
 

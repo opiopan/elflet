@@ -11,7 +11,7 @@ extern "C" {
     
 void htdigestfs_init(const char* mp);
 void htdigestfs_register(const char* user, const char* domain,
-			 const char* pass);
+                         const char* pass);
 FILE* htdigestfs_fp();
 
 #ifdef __cplusplus

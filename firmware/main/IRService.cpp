@@ -61,14 +61,14 @@ TransmitterTask::~TransmitterTask(){
 }
 
 bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
-			       int32_t bits, const uint8_t* data){
+                               int32_t bits, const uint8_t* data){
     
     LockHolder holder(mutex);
     if (status != ST_IDLE){
-	return false;
+        return false;
     }
     if (bits / 8 > sizeof(this->data)){
-	return false;
+        return false;
     }
     status = ST_RUNNING;
     this->protocol = protocol;
@@ -80,25 +80,25 @@ bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
 
 void TransmitterTask::run(void *){
     while (true){
-	mutex.lock();
-	while (status == ST_IDLE){
-	    mutex.unlock();
-	    xEventGroupWaitBits(events, EV_WAKE_SERVER,
-				pdTRUE, pdFALSE,
-				portMAX_DELAY);
-	    mutex.lock();
-	}
-	mutex.unlock();
+        mutex.lock();
+        while (status == ST_IDLE){
+            mutex.unlock();
+            xEventGroupWaitBits(events, EV_WAKE_SERVER,
+                                pdTRUE, pdFALSE,
+                                portMAX_DELAY);
+            mutex.lock();
+        }
+        mutex.unlock();
 
-	IRRCChangeProtocol(&irContext, protocol);
-	IRRCSend(&irContext, data, bits);
-	irrcStat.protocol[protocol].sendCmds++;
-	irrcStat.protocol[protocol].sendBits += bits;
-	irrcStat.sendPulses += bits + 2;
+        IRRCChangeProtocol(&irContext, protocol);
+        IRRCSend(&irContext, data, bits);
+        irrcStat.protocol[protocol].sendCmds++;
+        irrcStat.protocol[protocol].sendBits += bits;
+        irrcStat.sendPulses += bits + 2;
 
-	mutex.lock();
-	status = ST_IDLE;
-	mutex.unlock();
+        mutex.lock();
+        status = ST_IDLE;
+        mutex.unlock();
     }
 }
 
@@ -106,58 +106,58 @@ static bool sendFormatedData(const json11::Json& obj){
     auto protocol = obj[JSON_PROTOCOL];
     auto protocolValue = IRRC_UNKNOWN;
     if (protocol.is_string()){
-	auto value = protocol.string_value();
-	if (value == "NEC"){
-	    protocolValue = IRRC_NEC;
-	}else if (value == "AEHA"){
-	    protocolValue = IRRC_AEHA;
-	}else if (value == "SONY"){
-	    protocolValue = IRRC_SONY;
-	}
+        auto value = protocol.string_value();
+        if (value == "NEC"){
+            protocolValue = IRRC_NEC;
+        }else if (value == "AEHA"){
+            protocolValue = IRRC_AEHA;
+        }else if (value == "SONY"){
+            protocolValue = IRRC_SONY;
+        }
     }
 
     auto data = obj[JSON_DATA];
     char dataStream[IRS_REQMAXSIZE];
     auto dataLength = -1;
     if (data.is_string()){
-	auto value = data.string_value();
-	if (value.length() & 1 || value.length() > sizeof(dataStream) * 2){
-	    return false;
-	}
-	dataLength = value.length() / 2;
+        auto value = data.string_value();
+        if (value.length() & 1 || value.length() > sizeof(dataStream) * 2){
+            return false;
+        }
+        dataLength = value.length() / 2;
 
-	auto hex = [](int c) -> int {
-	    if (c >= '0' && c <= '9'){
-		return c - '0';
-	    }else if (c >= 'a' && c <= 'f'){
-		return c - 'a' + 0xa;
-	    }else if (c >= 'A' && c <= 'F'){
-		return c - 'A' + 0xa;
-	    }
-	    return -1;
-	};
+        auto hex = [](int c) -> int {
+            if (c >= '0' && c <= '9'){
+                return c - '0';
+            }else if (c >= 'a' && c <= 'f'){
+                return c - 'a' + 0xa;
+            }else if (c >= 'A' && c <= 'F'){
+                return c - 'A' + 0xa;
+            }
+            return -1;
+        };
 
-	for (auto i = 0; i < value.length(); i += 2){
-	    auto lh = hex(value[i]);
-	    auto sh = hex(value[i + 1]);
-	    if (lh < 0 || sh < 0){
-		return false;
-	    }
-	    dataStream[i / 2] = (lh << 4) | sh;
-	}
+        for (auto i = 0; i < value.length(); i += 2){
+            auto lh = hex(value[i]);
+            auto sh = hex(value[i + 1]);
+            if (lh < 0 || sh < 0){
+                return false;
+            }
+            dataStream[i / 2] = (lh << 4) | sh;
+        }
     }
 
     if (protocolValue == IRRC_UNKNOWN || dataLength <= 0){
-	return false;
+        return false;
     }
 
     auto bitCount = obj[JSON_BITCOUNT];
     auto bitCountValue = 0;
     if (bitCount.is_number()){
-	bitCountValue = bitCount.int_value();
+        bitCountValue = bitCount.int_value();
     }
     if (bitCountValue <= 0){
-	bitCountValue = dataLength * 8;
+        bitCountValue = dataLength * 8;
     }
 
     sendIRData(protocolValue, bitCountValue, (uint8_t*)dataStream);
@@ -189,7 +189,7 @@ public:
     void enableReceiver();
     bool startReceiver();
     bool getReceivedData(IRRC_PROTOCOL* protocol,
-			 int32_t* bits, uint8_t* data);
+                         int32_t* bits, uint8_t* data);
     bool getReceivedDataRaw(const rmt_item32_t** data, int32_t* length);
     
 protected:
@@ -197,7 +197,7 @@ protected:
 };
 
 ReceiverTask::ReceiverTask() : status(ST_IDLE),
-			       rcvProtocol(IRRC_UNKNOWN), rcvBits(0){
+                               rcvProtocol(IRRC_UNKNOWN), rcvBits(0){
     events = xEventGroupCreate();
     IRRCInit(&irContext, IRRC_RX, IRRC_NEC, GPIO_IRRX);
 }
@@ -208,14 +208,14 @@ ReceiverTask::~ReceiverTask(){
 
 void ReceiverTask::enableReceiver(){
     if (elfletConfig->getIrrcReceiverMode() == Config::IrrcReceiverContinuous){
-	startReceiver();
+        startReceiver();
     }
 }
 
 bool ReceiverTask::startReceiver(){
     LockHolder holder(mutex);
     if (status != ST_IDLE){
-	return false;
+        return false;
     }
     status = ST_RUNNING;
     xEventGroupSetBits(events, EV_WAKE_SERVER);
@@ -223,7 +223,7 @@ bool ReceiverTask::startReceiver(){
 }
 
 bool ReceiverTask::getReceivedData(IRRC_PROTOCOL* protocol, int32_t* bits,
-				   uint8_t* data){
+                                   uint8_t* data){
     LockHolder holder(mutex);
     *protocol = rcvProtocol;
     *bits = rcvBits;
@@ -240,67 +240,67 @@ bool ReceiverTask::getReceivedDataRaw(
 
 void ReceiverTask::run(void *data){
     auto isContinuousMode =
-	elfletConfig->getIrrcReceiverMode() == Config::IrrcReceiverContinuous;
+        elfletConfig->getIrrcReceiverMode() == Config::IrrcReceiverContinuous;
     if (isContinuousMode){
-	IRRC_SET_OPT(&irContext, IRRC_OPT_CONTINUOUS);
+        IRRC_SET_OPT(&irContext, IRRC_OPT_CONTINUOUS);
     }
     
     while (true){
-	mutex.lock();
-	while (status == ST_IDLE){
-	    mutex.unlock();
-	    xEventGroupWaitBits(events, EV_WAKE_SERVER,
-				pdTRUE, pdFALSE,
-				portMAX_DELAY);
-	    mutex.lock();
-	}
-	mutex.unlock();
+        mutex.lock();
+        while (status == ST_IDLE){
+            mutex.unlock();
+            xEventGroupWaitBits(events, EV_WAKE_SERVER,
+                                pdTRUE, pdFALSE,
+                                portMAX_DELAY);
+            mutex.lock();
+        }
+        mutex.unlock();
 
-	if (!isContinuousMode){
-	    ledSetBlinkMode(LEDBM_IRRX);
-	}
-	if (IRRCReceive(&irContext, 30 * 1000)){
-	    mutex.lock();
-	    auto pulses = IRRC_ITEM_LENGTH(&irContext);
-	    irrcStat.rcvPulses += pulses;
-	    rcvBits = sizeof(rcvBuf) * 8;
-	    if (irContext.protocol == IRRC_UNKNOWN ||
-		!IRRCDecodeReceivedData(&irContext,
-					&rcvProtocol, rcvBuf, &rcvBits)){
-		irrcStat.rcvUnknownCmds++;
-		irrcStat.rcvUnknownPulses += pulses;
-		rcvProtocol = IRRC_UNKNOWN;
-		rcvBits = 0;
-	    }else if (rcvBits > 0){
-		ESP_LOGI(tag, "received IR command [%s : %d bits]",
-			 rcvProtocol == IRRC_NEC ? "NEC" :
-			 rcvProtocol == IRRC_AEHA ? "AEHA" :
-			 rcvProtocol == IRRC_SONY ? "SONY" :
-			                            "Unknown",
-			 rcvBits);
-		irrcStat.protocol[rcvProtocol].rcvCmds++;
-		irrcStat.protocol[rcvProtocol].rcvBits += rcvBits;
-		if (elfletConfig->getIrrcReceiverMode() ==
-		    Config::IrrcReceiverContinuous){
-		    IRCommand cmd;
-		    cmd.protocol = rcvProtocol;
-		    cmd.bits = rcvBits;
-		    cmd.data = rcvBuf;
-		    applyIRCommandToShadow(&cmd);
-		}
-	    }
-	    //ESP_LOG_BUFFER_HEX(tag, rcvBuf, (rcvBits + 7) / 8);
-	    mutex.unlock();
-	    if (rcvBits > 0){
-		publishIrrcData();
-	    }
-	}
-	if (!isContinuousMode){
-	    ledSetBlinkMode(LEDBM_DEFAULT);
-	    mutex.lock();
-	    status = ST_IDLE;
-	    mutex.unlock();
-	}
+        if (!isContinuousMode){
+            ledSetBlinkMode(LEDBM_IRRX);
+        }
+        if (IRRCReceive(&irContext, 30 * 1000)){
+            mutex.lock();
+            auto pulses = IRRC_ITEM_LENGTH(&irContext);
+            irrcStat.rcvPulses += pulses;
+            rcvBits = sizeof(rcvBuf) * 8;
+            if (irContext.protocol == IRRC_UNKNOWN ||
+                !IRRCDecodeReceivedData(&irContext,
+                                        &rcvProtocol, rcvBuf, &rcvBits)){
+                irrcStat.rcvUnknownCmds++;
+                irrcStat.rcvUnknownPulses += pulses;
+                rcvProtocol = IRRC_UNKNOWN;
+                rcvBits = 0;
+            }else if (rcvBits > 0){
+                ESP_LOGI(tag, "received IR command [%s : %d bits]",
+                         rcvProtocol == IRRC_NEC ? "NEC" :
+                         rcvProtocol == IRRC_AEHA ? "AEHA" :
+                         rcvProtocol == IRRC_SONY ? "SONY" :
+                                                    "Unknown",
+                         rcvBits);
+                irrcStat.protocol[rcvProtocol].rcvCmds++;
+                irrcStat.protocol[rcvProtocol].rcvBits += rcvBits;
+                if (elfletConfig->getIrrcReceiverMode() ==
+                    Config::IrrcReceiverContinuous){
+                    IRCommand cmd;
+                    cmd.protocol = rcvProtocol;
+                    cmd.bits = rcvBits;
+                    cmd.data = rcvBuf;
+                    applyIRCommandToShadow(&cmd);
+                }
+            }
+            //ESP_LOG_BUFFER_HEX(tag, rcvBuf, (rcvBits + 7) / 8);
+            mutex.unlock();
+            if (rcvBits > 0){
+                publishIrrcData();
+            }
+        }
+        if (!isContinuousMode){
+            ledSetBlinkMode(LEDBM_DEFAULT);
+            mutex.lock();
+            status = ST_IDLE;
+            mutex.unlock();
+        }
     }
 }
 
@@ -309,7 +309,7 @@ void ReceiverTask::run(void *data){
 //----------------------------------------------------------------------
 bool startIRService(){
     if (rxTask || txTask){
-	return false;
+        return false;
     }
 
     initShadowDevicePool();
@@ -330,17 +330,17 @@ bool sendIRData(IRRC_PROTOCOL protocol, int32_t bits, const uint8_t* data){
 bool sendIRDataJson(const WebString& data){
     std::string err;
     auto body =
-	json11::Json::parse(std::string(data.data(), data.length()), err);
+        json11::Json::parse(std::string(data.data(), data.length()), err);
 
     if (body.is_object()){
-	auto formatedData = body[JSON_FORMATED];
-	bool rc = false;
-	if (formatedData.is_object()){
-	    rc = sendFormatedData(json11::Json(formatedData.object_items()));
-	}else{
-	    rc = sendFormatedData(body);
-	}
-	return rc;
+        auto formatedData = body[JSON_FORMATED];
+        bool rc = false;
+        if (formatedData.is_object()){
+            rc = sendFormatedData(json11::Json(formatedData.object_items()));
+        }else{
+            rc = sendFormatedData(body);
+        }
+        return rc;
     }
 
     return false;
@@ -348,7 +348,7 @@ bool sendIRDataJson(const WebString& data){
 
 void enableIRReceiver(){
     if (rxTask){
-	rxTask->enableReceiver();
+        rxTask->enableReceiver();
     }
 }
 
@@ -370,27 +370,27 @@ bool getIRReceivedDataJson(std::ostream& out){
     IRRC_PROTOCOL protocol;
 
     if (getIRReceivedData(&protocol, &bits, buf)){
-	if (protocol == IRRC_UNKNOWN){
-	    out << "{\"Protocol\" : \"UNKNOWN\"}";
-	}else{
-	    char hexstr[sizeof(buf) * 2 + 1];
-	    for (int i = 0; i < ((bits + 7) / 8) * 2; i++){
-		int data = (buf[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
-		static const unsigned char dic[] = "0123456789abcdef";
-		hexstr[i] = dic[data];
-	    }
-	    hexstr[((bits + 7) / 8) * 2] = 0;
-		    
-	    out << "{\"" << JSON_FORMATED << "\":{\""
-		<< JSON_PROTOCOL << "\":\""
-		<< (protocol == IRRC_NEC ? "NEC" :
-		    protocol == IRRC_AEHA ? "AEHA" : "SONY")
-		<< "\",\"" << JSON_BITCOUNT << "\":" << bits << ",\""
-		<< JSON_DATA << "\":\"" << hexstr << "\"}}";
-	}
-	return true;
+        if (protocol == IRRC_UNKNOWN){
+            out << "{\"Protocol\" : \"UNKNOWN\"}";
+        }else{
+            char hexstr[sizeof(buf) * 2 + 1];
+            for (int i = 0; i < ((bits + 7) / 8) * 2; i++){
+                int data = (buf[i/2] >> (i & 1 ? 0 : 4)) & 0xf;
+                static const unsigned char dic[] = "0123456789abcdef";
+                hexstr[i] = dic[data];
+            }
+            hexstr[((bits + 7) / 8) * 2] = 0;
+                    
+            out << "{\"" << JSON_FORMATED << "\":{\""
+                << JSON_PROTOCOL << "\":\""
+                << (protocol == IRRC_NEC ? "NEC" :
+                    protocol == IRRC_AEHA ? "AEHA" : "SONY")
+                << "\",\"" << JSON_BITCOUNT << "\":" << bits << ",\""
+                << JSON_DATA << "\":\"" << hexstr << "\"}}";
+        }
+        return true;
     }else{
-	return false;
+        return false;
     }
 }
 
@@ -398,19 +398,19 @@ bool getIRReceivedDataRawJson(std::ostream& out){
     const rmt_item32_t* items;
     int32_t itemNum;
     if (getIRReceivedDataRaw(&items, &itemNum)){
-	out << "{\"" << JSON_RAW << "\":[";
-	for (int i = 0; i < itemNum; i++){
-	    if (i > 0){
-		out << ",";
-	    }
-	    out << "{\"" << JSON_LEVEL << "\":1,\""
-		<< JSON_DURATION << "\":" << items[i].duration0 << "},{\""
-		<< JSON_LEVEL << "\":0,\""
-		<< JSON_DURATION << "\":" << items[i].duration1 << "}";
-	}
-	out << "]}";
-	return true;
+        out << "{\"" << JSON_RAW << "\":[";
+        for (int i = 0; i < itemNum; i++){
+            if (i > 0){
+                out << ",";
+            }
+            out << "{\"" << JSON_LEVEL << "\":1,\""
+                << JSON_DURATION << "\":" << items[i].duration0 << "},{\""
+                << JSON_LEVEL << "\":0,\""
+                << JSON_DURATION << "\":" << items[i].duration1 << "}";
+        }
+        out << "]}";
+        return true;
     }else{
-	return false;
+        return false;
     }
 }

@@ -33,20 +33,20 @@ BME280::~BME280() {
 void BME280::init(BME280Config* newConfig) {
     // set several configuration registers
     if (newConfig){
-	config = *newConfig;
+        config = *newConfig;
     }
 
     auto id = readRegister(REG_ID);
     if (id != 0x60){
-	ESP_LOGE(tag, "BME280 might not be installed on I2C bus");
-	return;
+        ESP_LOGE(tag, "BME280 might not be installed on I2C bus");
+        return;
     }
     working = true;
     
     stop();
     writeRegister(
-	REG_CONFIG,
-	(config.t_sb << 5) | (config.filter << 2) | config.enable3WireSPI);
+        REG_CONFIG,
+        (config.t_sb << 5) | (config.filter << 2) | config.enable3WireSPI);
     writeRegister(REG_CTRL_HUM, config.osrsHumidity);
 
     // retrieve compensation parameters
@@ -68,11 +68,11 @@ void BME280::init(BME280Config* newConfig) {
     cdata.dig_H2 = readInt16(0xe1, 0xe2);
     cdata.dig_H3 = readRegister(0xe3);
     cdata.dig_H4 = (int16_t)(
-	(((uint16_t)readRegister(0xe4) << 4) & 0xff0) |
-	(readRegister(0xe5) & 0xf));
+        (((uint16_t)readRegister(0xe4) << 4) & 0xff0) |
+        (readRegister(0xe5) & 0xf));
     cdata.dig_H5 = (int16_t)(
-	(((uint16_t)readRegister(0xe6) << 4) & 0xff0) |
-	((readRegister(0xe5) >> 4) & 0xf));
+        (((uint16_t)readRegister(0xe6) << 4) & 0xff0) |
+        ((readRegister(0xe5) >> 4) & 0xf));
     cdata.dig_H6 = (int8_t)readRegister(0xe7);
 }
 
@@ -82,15 +82,15 @@ void BME280::init(BME280Config* newConfig) {
 void BME280::start(bool asForcedMode){
     uint8_t mode = asForcedMode ? MODE_FORCED : MODE_NORMAL;
     writeRegister(
-	REG_CTRL_MEAS,
-	(config.osrsTemperature << 5) | (config.osrsPressure << 2) | mode);
+        REG_CTRL_MEAS,
+        (config.osrsTemperature << 5) | (config.osrsPressure << 2) | mode);
 }
 
 void BME280::stop(){
     writeRegister(
-	REG_CTRL_MEAS,
-	(config.osrsTemperature << 5) | (config.osrsPressure << 2) | 
-	MODE_SLEEP);
+        REG_CTRL_MEAS,
+        (config.osrsTemperature << 5) | (config.osrsPressure << 2) | 
+        MODE_SLEEP);
 }
 
 
@@ -113,10 +113,10 @@ void BME280::measure() {
 void BME280::compensateTemperature(){
     int32_t var1, var2;
     var1 = ((((tempRaw >> 3) - ((int32_t)cdata.dig_T1 << 1))) *
-	    ((int32_t)cdata.dig_T2)) >> 11;
+            ((int32_t)cdata.dig_T2)) >> 11;
     var2 = (((((tempRaw >> 4) - ((int32_t)cdata.dig_T1)) *
-	      ((tempRaw >> 4) - ((int32_t)cdata.dig_T1))) >> 12) *
-	    ((int32_t)cdata.dig_T3)) >> 14;
+              ((tempRaw >> 4) - ((int32_t)cdata.dig_T1))) >> 12) *
+            ((int32_t)cdata.dig_T3)) >> 14;
     tempFine = var1 + var2;
     temperature = (tempFine * 5 + 128) >> 8;
 }
@@ -128,11 +128,11 @@ void BME280::compensatePressure(){
     var2 = var2 + ((var1 * (int64_t)cdata.dig_P5) << 17);
     var2 = var2 + (((int64_t)cdata.dig_P4) << 35);
     var1 = ((var1 * var1 * (int64_t)cdata.dig_P3) >> 8) +
-	((var1 * (int64_t)cdata.dig_P2) << 12);
+        ((var1 * (int64_t)cdata.dig_P2) << 12);
     var1 = (((((int64_t)1) << 47) + var1)) * ((int64_t)cdata.dig_P1) >> 33;
     if (var1 == 0){
-	pressure = 0; // avoid exception caused by division by zero
-	return; 
+        pressure = 0; // avoid exception caused by division by zero
+        return; 
     }
     p = 1048576 - presRaw;
     p = (((p << 31) - var2) * 3125) / var1;
@@ -146,15 +146,15 @@ void BME280::compensateHumidity(){
     int32_t v_x1_u32r;
     v_x1_u32r = (tempFine - ((int32_t)76800));
     v_x1_u32r = (((((humRaw << 14) - (((int32_t)cdata.dig_H4) << 20) -
-		    (((int32_t)cdata.dig_H5) * v_x1_u32r)) +
-		   ((int32_t)16384)) >> 15) *
-		 (((((((v_x1_u32r * ((int32_t)cdata.dig_H6)) >> 10) *
-		      (((v_x1_u32r * ((int32_t)cdata.dig_H3)) >> 11) +
-		       ((int32_t)32768))) >> 10) + ((int32_t)2097152)) *
-		   ((int32_t)cdata.dig_H2) + 8192) >> 14));
+                    (((int32_t)cdata.dig_H5) * v_x1_u32r)) +
+                   ((int32_t)16384)) >> 15) *
+                 (((((((v_x1_u32r * ((int32_t)cdata.dig_H6)) >> 10) *
+                      (((v_x1_u32r * ((int32_t)cdata.dig_H3)) >> 11) +
+                       ((int32_t)32768))) >> 10) + ((int32_t)2097152)) *
+                   ((int32_t)cdata.dig_H2) + 8192) >> 14));
     v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) *
-				 (v_x1_u32r >> 15)) >> 7) *
-			       ((int32_t)cdata.dig_H1)) >> 4));
+                                 (v_x1_u32r >> 15)) >> 7) *
+                               ((int32_t)cdata.dig_H1)) >> 4));
     v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
     v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
     humidity = (uint32_t)(v_x1_u32r >> 12);
@@ -164,24 +164,24 @@ void BME280::compensateHumidity(){
 // I2C behavior
 //----------------------------------------------------------------------
 BME280_I2C::BME280_I2C(uint8_t address,
-		       gpio_num_t sdaPin,
-		       gpio_num_t sclPin,
-		       uint32_t clkSpeed,
-		       i2c_port_t portNum,
-		       bool builtinPullup){
+                       gpio_num_t sdaPin,
+                       gpio_num_t sclPin,
+                       uint32_t clkSpeed,
+                       i2c_port_t portNum,
+                       bool builtinPullup){
     i2c.init(address, sdaPin, sclPin, clkSpeed, portNum);
     if (!builtinPullup){
-	int rc = i2c_set_pin(portNum, sdaPin, sclPin,
-			     GPIO_PULLUP_DISABLE, GPIO_PULLUP_DISABLE,
-			     I2C_MODE_SLAVE);
-	if (rc != ESP_OK){
-	    ESP_LOGE(tag, "I2C bus setting failed: "
-		     "cannot disable builtin pullup register");
-	}
+        int rc = i2c_set_pin(portNum, sdaPin, sclPin,
+                             GPIO_PULLUP_DISABLE, GPIO_PULLUP_DISABLE,
+                             I2C_MODE_SLAVE);
+        if (rc != ESP_OK){
+            ESP_LOGE(tag, "I2C bus setting failed: "
+                     "cannot disable builtin pullup register");
+        }
     }
     i2c.slavePresent(0);
     if (!i2c.slavePresent(address)){
-	i2c.scan();
+        i2c.scan();
     }
 }
 

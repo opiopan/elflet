@@ -49,7 +49,7 @@
 #define HID_RPT_ID_LED_OUT       0  // LED output report ID
 #define HID_RPT_ID_FEATURE       0  // Feature report ID
 
-#define HIDD_APP_ID			0x1812//ATT_SVC_HID
+#define HIDD_APP_ID                     0x1812//ATT_SVC_HID
 
 #define BATTRAY_APP_ID       0x180f
 

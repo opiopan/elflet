@@ -38,8 +38,6 @@ def request(host, path, method = GET, data = None, password = None):
             
         if code == 401:
             rdata = 'authorization failed'
-        elif not rdata:
-            rdata = 'elflet returnd error'
             
         return (code == 200, rdata)
 

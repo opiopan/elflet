@@ -98,6 +98,12 @@ def parse():
             print >> sys.stderr, \
                 'elflet-shadow: specified data is invalid JSON format'
             sys.exit(1)
+
+    if (options.mode == ADDDEF or options.mode == DELDEF or 
+        options.mode == SHOWDEF) and shadow == None:
+        print >> sys.stderr, \
+            'elflet-shadow: shadow name must be specified'
+        sys.exit(1)
         
     return options, host, shadow
 

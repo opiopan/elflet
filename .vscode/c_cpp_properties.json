@@ -6,13 +6,15 @@
                 "${workspaceFolder}/firmware/build/include",
                 "${workspaceFolder}/firmware/**",
                 "${workspaceFolder}/firmware/main/foundations",
+                "${env:IDF_PATH}/components/mdns/include",
                 "${env:IDF_PATH}/**",
                 "${env:HOME}/esp/xtensa-esp32-elf/include"
             ],
             "defines": [
                 "MG_ENABLE_HTTP_STREAMING_MULTIPART",
                 "LWIP_SOCKET",
-                "LWIP_COMPAT_SOCKETS=2"
+                "LWIP_COMPAT_SOCKETS=2",
+                "LWIP_MDNS_RESPONDER"
             ],
             "macFrameworkPath": [
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"

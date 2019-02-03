@@ -5,14 +5,34 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Debug with Reboot",
             "type": "gdb",
             "request": "attach",
             "executable": "${workspaceFolder}/firmware/build/elflet.elf",
             "cwd": "${workspaceFolder}/firmware/",
             "target": "janus.local:3333",
             "remote": true,
-            "gdbpath": "xtensa-esp32-elf-gdb"
+            "gdbpath": "xtensa-esp32-elf-gdb",
+            "autorun": [
+                "set remote hardware-watchpoint-limit 2",
+                "mon reset halt",
+                "flush regs",
+                "thb app_main"
+            ],
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "Attach Current Context",
+            "type": "gdb",
+            "request": "attach",
+            "executable": "${workspaceFolder}/firmware/build/elflet.elf",
+            "cwd": "${workspaceFolder}/firmware/",
+            "target": "janus.local:3333",
+            "remote": true,
+            "gdbpath": "xtensa-esp32-elf-gdb",
+            "autorun": [
+            ],
+            "internalConsoleOptions": "neverOpen"
         }
     ]
 }

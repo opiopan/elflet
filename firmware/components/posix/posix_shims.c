@@ -1,1 +1,1 @@
-../esp32-snippets/src/posix/posix_shims.c
+../esp32-snippets/esp32-snippets/posix/posix_shims.c

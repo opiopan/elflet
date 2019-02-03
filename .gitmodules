@@ -1,12 +1,12 @@
-[submodule "firmware/components/mongoose/src"]
-	path = firmware/components/mongoose/src
-	url = https://github.com/cesanta/mongoose.git
-[submodule "firmware/components/json11/src"]
-	path = firmware/components/json11/src
-	url = https://github.com/dropbox/json11.git
 [submodule "firmware/components/espmqtt"]
 	path = firmware/components/espmqtt
 	url = https://github.com/tuanpmt/espmqtt.git
-[submodule "firmware/components/esp32-snippets/src"]
-	path = firmware/components/esp32-snippets/src
+[submodule "firmware/components/mongoose/mongoose"]
+	path = firmware/components/mongoose/mongoose
+	url = https://github.com/cesanta/mongoose.git
+[submodule "firmware/components/json11/json11"]
+	path = firmware/components/json11/json11
+	url = https://github.com/dropbox/json11.git
+[submodule "firmware/components/esp32-snippets/esp32-snippets"]
+	path = firmware/components/esp32-snippets/esp32-snippets
 	url = https://github.com/nkolban/esp32-snippets.git

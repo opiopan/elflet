@@ -56,4 +56,4 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
     ```
 
 ## Downloading Firmware
-Please refer [this section](../#inital-firmware-downloading).
+Please refer [this section](../README.md/#inital-firmware-downloading).

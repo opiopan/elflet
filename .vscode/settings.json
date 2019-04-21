@@ -4,6 +4,12 @@
     },
     "[makefile]": {
         "editor.detectIndentation": false,
-        "editor.tabSize": 8
+        "editor.tabSize": 8,
+        "editor.insertSpaces": false
+    },
+    "workbench.colorTheme": "Default Light+",
+    "workbench.colorCustomizations":{
+        "activityBar.background": "#c0c0c0",
+        "activityBar.foreground": "#404040"
     }
 }

@@ -1,0 +1,34 @@
+{
+    "CommonCondition": {
+        "Type": "COMBINATION",
+        "Operator": "AND",
+        "Formulas": [
+            {
+                "Type": "PROTOCOL",
+                "Protocol": "AEHA"
+            },
+            {
+                "Type": "DATA",
+                "Data": "2c52"
+            }
+        ]
+    },
+    "OnCondition": {
+        "Type": "DATA",
+        "Offset": 2,
+        "Data": "09353c"
+    },
+    "OffCondition": {
+        "Type": "DATA",
+        "Offset": 2,
+        "Data": "09373e"
+    },
+    "Synthesizing": {
+        "Protocol": "AEHA",
+        "Placeholder": "2c5209353c"
+    },
+    "SynthesizingToOff": {
+        "Protocol": "AEHA",
+        "Placeholder": "2c5209373e"
+    }
+}

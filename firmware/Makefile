@@ -10,6 +10,9 @@ EXCLUDE_COMPONENTS	:= asio aws_iot coap \
 			   jsmn libsodium openssl \
 			   protocomm
 SIGNEDIMAGE		:= build/$(PROJECT_NAME).sbin
+OTAUSER			:= admin
+OTAPASS			:=
+OTAADDR			:=
 
 myall : all $(SIGNEDIMAGE)
 
@@ -42,11 +45,12 @@ $(SIGNEDIMAGE): build/$(PROJECT_NAME).bin
 otaflash: $(SIGNEDIMAGE)
 	if [ "$(OTAUSER)" = "" ] || [ "$(OTAPASS)" = "" ] || \
 	   [ "$(OTAADDR)" = "" ]; then \
+	    echo >&2; \
 	    echo "Parameters need to proceed OTA are not specified." >&2; \
 	    echo "Make sure following variables are specified:" >&2; \
-	    echo "    OTAUSER" >&2; \
-	    echo "    OTAPATH" >&2; \
+	    echo "    OTAPASS" >&2; \
 	    echo "    OTAADDR" >&2; \
+	    echo >&2; \
 	    exit 1;\
 	fi
 	tools/ota "$(OTAUSER)" "$(OTAPASS)" "$(OTAADDR)" $(SIGNEDIMAGE)

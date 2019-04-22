@@ -10,6 +10,7 @@
 #include "SensorService.h"
 #include "TimeService.h"
 #include "Stat.h"
+#include "WatchDog.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -71,6 +72,8 @@ void TimeTask::run(void *data){
             if (baseStat.boottime < 60 * 60 * 24 * 365){
                 baseStat.boottime = now.getTime();
             }
+
+            updateWatchDog();
         }
 
         if (first){

@@ -9,6 +9,7 @@
 #include "reboot.h"
 #include "Config.h"
 #include "REST.h"
+#include "WatchDog.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -288,6 +289,7 @@ class SetConfigHandler : public WebServerHandler {
     };
 
     void receiveRequest(WebServerConnection& connection) override{
+        updateWatchDog();
         auto req = connection.request();
         auto resp = connection.response();
         auto httpStatus = HttpResponse::RESP_200_OK;

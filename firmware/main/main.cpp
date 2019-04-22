@@ -15,6 +15,7 @@
 #include "PubSubService.h"
 #include "Stat.h"
 #include "BleHidService.h"
+#include "WatchDog.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -34,6 +35,7 @@ class MainTask : public Task {
 
 void MainTask::run(void *data){
     ESP_LOGI(tag, "elflet firmware version %s", getVersionString());
+    updateWatchDog();
 
     //--------------------------------------------------------------
     // initialize UI LED
@@ -129,6 +131,18 @@ void MainTask::run(void *data){
         if (enableBLE){
             initBleHidService(elfletConfig->getNodeName().c_str());
             startBleHidService();
+        }
+    }
+
+    //--------------------------------------------------------------
+    // survey watch dog timer
+    //--------------------------------------------------------------
+    if (mode == Config::Configuration){
+        while (true){
+            if (getWatchDogTimerInterval() > 10 * 60){
+                ESP_LOGI(tag, "go back to normal mode");
+                esp_restart();
+            }
         }
     }
 }

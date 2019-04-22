@@ -26,7 +26,7 @@ bool startmdnsService(){
     //initialize service
     ESP_ERROR_CHECK( mdns_service_add( "elflet WebServer", "_http", "_tcp", 80,
                                        serviceTxtData, 1) );
-    ESP_ERROR_CHECK( mdns_service_add("irserver", "_irserveer", "_tcp",
+    ESP_ERROR_CHECK( mdns_service_add("irserver", "_irserver", "_tcp",
                                       IRSERVER_PORT, NULL, 0) );
         
     return true;

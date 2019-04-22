@@ -25,3 +25,4 @@ hosttool/irtx
 *.jsz
 *.cssz
 *.pyc
+.vscode/ipch

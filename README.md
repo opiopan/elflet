@@ -108,7 +108,7 @@ Folowing four binary files must be download at correct address in ESP-WROOM-32's
 elflet exports sevelal ESP32 pins to service port as below. You can download firmware by connection your USB serial dongle to there.
 
 <p align="center">
-<img alt="description" src="https://raw.githubusercontent.com/wiki/opiopan/elflet/images/elflet-port.jpg" width=300>
+<img alt="description" src="https://raw.githubusercontent.com/wiki/opiopan/elflet/images/elflet-port.jpg" width=450>
 </p>
 
 Another way to download firmware is using 

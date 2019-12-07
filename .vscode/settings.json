@@ -11,5 +11,6 @@
     "workbench.colorCustomizations":{
         "activityBar.background": "#c0c0c0",
         "activityBar.foreground": "#404040"
-    }
+    },
+    "python.pythonPath": "/Users/opiopan/.pyenv/shims/python2"
 }

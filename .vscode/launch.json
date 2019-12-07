@@ -30,9 +30,18 @@
             "target": "janus.local:3333",
             "remote": true,
             "gdbpath": "xtensa-esp32-elf-gdb",
-            "autorun": [
-            ],
+            "autorun": [],
             "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "Python: elflet-config",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/hosttool/elflet-config",
+            "args": ["-p", "elflet00", "--pubsub-server=janus.local", "elflet-test.local"],
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "justMyCode": false
         }
     ]
 }

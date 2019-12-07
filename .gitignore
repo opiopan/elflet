@@ -26,3 +26,5 @@ hosttool/irtx
 *.cssz
 *.pyc
 .vscode/ipch
+CAMOutputs
+outputs

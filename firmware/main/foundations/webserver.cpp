@@ -190,6 +190,7 @@ void HttpResponse::flush(mg_connection* con){
         headerData["Date"] = now.format(Time::RFC1123);
         
         bool contentLength = false;
+        bool connection = false;
         std::stringstream resp;
         resp << "HTTP/1.1 " << httpStatusStr[httpStatus] << std::endl;
         for (auto i = headerData.begin(); i != headerData.end(); i++){
@@ -197,7 +198,12 @@ void HttpResponse::flush(mg_connection* con){
             resp << key << ": " << i->second << "\r\n";
             if (key == "Content-Length"){
                 contentLength = true;
+            }else if (key == "Connection"){
+                connection = true;
             }
+        }
+        if (!connection){
+            resp << "Connection: close\r\n";
         }
         if (!contentLength){
             resp << "Content-Length: " << bodyData.length() << "\r\n";
@@ -357,7 +363,14 @@ bool WebServerConnection::authenticate(http_message* hm){
         if (!mg_http_check_digest_auth(hm, htdigest->domain,
                                        htdigest->fp)){
             ESP_LOGD(tag, "authorize failed");
-            mg_http_send_digest_auth_request(connection, htdigest->domain);
+            //mg_http_send_digest_auth_request(connection, htdigest->domain);
+            mg_printf(connection,
+                      "HTTP/1.1 401 Unauthorized\r\n"
+                      "WWW-Authenticate: Digest qop=\"auth\", "
+                      "realm=\"%s\", nonce=\"%lx\"\r\n"
+                      "Connection: close\r\n"
+                      "Content-Length: 0\r\n\r\n",
+                      htdigest->domain, (unsigned long)mg_time());
             responseData.close(HttpResponse::ST_FLUSHED);
             connection->flags |= MG_F_SEND_AND_CLOSE;;
             return false;

@@ -143,6 +143,7 @@ void MainTask::run(void *data){
                 ESP_LOGI(tag, "go back to normal mode");
                 esp_restart();
             }
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
     }
 }

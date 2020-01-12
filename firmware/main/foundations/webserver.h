@@ -390,6 +390,7 @@ public:
 
 protected:
     void makeFileResponse();
+    bool judgeRedirection();
     bool authenticate(http_message* hm);
 };
 
@@ -400,9 +401,11 @@ public:
 
         Stat():sessionCount(0){};
     };
+    using RedirectFilter = const char* (*)(const WebString&);
 protected:
     const  ContentProvider* contentProvider;
     mg_connection* listener;
+    RedirectFilter redirectFilter;
     std::map<WebString, WebServerHandler*> matchHandlers;
     std::map<WebString, WebServerHandler*,
              std::greater<WebString> > prefixHandlers;
@@ -424,6 +427,12 @@ public:
     };
     const ContentProvider* getContentProvider() const{
         return contentProvider;
+    };
+    void setRedirectFilter(RedirectFilter filter){
+	redirectFilter = filter;
+    };
+    RedirectFilter getRedirectFilter() const{
+	return redirectFilter;
     };
     void setHandler(WebServerHandler* handler,
                     const char* path, bool exactMatch = true);

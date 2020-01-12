@@ -6,6 +6,8 @@
 #include <Task.h>
 #include <freertos/event_groups.h>
 #include <GeneralUtils.h>
+#include <dns_hijack_srv.h>
+#include <lwip/sockets.h>
 #include "Config.h"
 #include "mdnsService.h"
 #include "WifiApService.h"
@@ -111,6 +113,14 @@ bool startWifiApService(){
 
     xEventGroupWaitBits(
         events, EV_STARTED, pdFALSE, pdFALSE, portMAX_DELAY);
+
+    ip4_addr_t resolve_ip;
+    inet_pton(AF_INET, "192.168.55.1", &resolve_ip);
+    if(dns_hijack_srv_start(resolve_ip) == ESP_OK) {
+	ESP_LOGI(tag, "DNS hijack server started");
+    } else {
+	ESP_LOGE(tag, "DNS hijack server has not started");
+    }
     
     return true;
 }

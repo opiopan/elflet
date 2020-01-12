@@ -237,6 +237,10 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
         auto hm = (http_message*)p;
         requestData.reset(hm, false);
         responseData.reset(server->getServerName());
+	if (judgeRedirection()){
+	    status = CON_COMPLETE;
+	    break;
+	}
         handler = server->findHandler(requestData.uri());
         status = CON_COMPLETE;
         authenticate(hm);
@@ -247,6 +251,10 @@ void WebServerConnection::dispatchEvent(int ev, void* p){
         auto hm = (http_message*)p;
         requestData.reset(hm, true);
         responseData.reset(server->getServerName());
+	if (judgeRedirection()){
+	    status = CON_COMPLETE;
+	    break;
+	}
         handler = server->findHandler(requestData.uri());
         if (!authenticate(hm)){
             status = CON_COMPLETE;
@@ -356,6 +364,22 @@ void WebServerConnection::makeFileResponse(){
     }
 }
 
+bool WebServerConnection::judgeRedirection(){
+    auto hostKey = WebString("Host");
+    auto redirectFilter = server->getRedirectFilter();
+    if (redirectFilter && requestData.header().count(hostKey) != 0){
+	auto url = redirectFilter(requestData.header(hostKey));
+	if (url){
+	    responseData.setHttpStatus(HttpResponse::RESP_302_Found);
+	    responseData.addHeader(WebString("Location"),
+				   WebString(url));
+	    responseData.close();
+	    return true;
+	}
+    }
+    return false;
+}
+
 bool WebServerConnection::authenticate(http_message* hm){
     if (handler && handler->needDigestAuthentication(requestData)){
         auto htdigest = server->getHtdigest();
@@ -382,7 +406,8 @@ bool WebServerConnection::authenticate(http_message* hm){
 //----------------------------------------------------------------------
 // WebServer imprementation
 //----------------------------------------------------------------------
-WebServer::WebServer() : contentProvider(NULL), listener(NULL){
+WebServer::WebServer() :
+    contentProvider(NULL), listener(NULL), redirectFilter(NULL){
     htdigest.fp = NULL;
     htdigest.domain = NULL;
 }

@@ -82,6 +82,7 @@ void MainTask::run(void *data){
             ESP_LOGI(tag, "initial heap size increase to %d bytes", heapSize);
         }
     }
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 
     //--------------------------------------------------------------
     // start peripheral services

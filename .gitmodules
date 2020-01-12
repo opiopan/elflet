@@ -10,3 +10,6 @@
 [submodule "firmware/components/esp32-snippets/esp32-snippets"]
 	path = firmware/components/esp32-snippets/esp32-snippets
 	url = https://github.com/nkolban/esp32-snippets.git
+[submodule "firmware/components/esp-dns-hijack-srv"]
+	path = firmware/components/esp-dns-hijack-srv
+	url = https://github.com/opiopan/esp-dns-hijack-srv

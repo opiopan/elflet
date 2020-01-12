@@ -11,6 +11,7 @@
 #include <fstream>
 #include <limits>
 #include <iomanip>
+#include <functional>
 #include <GeneralUtils.h>
 #include <json11.hpp>
 #include "SmartPtr.h"

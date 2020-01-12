@@ -127,14 +127,17 @@ When initial firmware downloading finish, LED on elflet starts to blink orange. 
 The SSID is same as node name of elflet, 
 and the initial node name is "`elflet-000000`". Passphrase to connect elflet WiFi access point is same as administorator password, and the initial password is "`elflet00`".
 Please connect to elflet WiFi access point by specifing these SSID and passphrase<br>
-Once you connect to elflet WiFi access point, you can access to setup widzerd. Please try a URL "`http://elflet-000000.local/`".<br>
+
+Once you connect to elflet WiFi access point, you can access to setup widzard. <br>
+Since this wizard behaves as same mechanism of [captive portal](https://en.wikipedia.org/wiki/Captive_portal), typical OS shows that wizard window automatically when you connect to elflet WiFi access point.<br>
+If no wizard window is shown, try a URL "```http://elflet.setup/```"
 
 **NOTE:** Initial node name and initial administorator password can be change in step of building firmware. Please refer
 [this document](firmware/README.md)
 regarding the detail. 
 
 <p align="center">
-<img alt="description" src="https://raw.githubusercontent.com/wiki/opiopan/elflet/images/wizard.jpg" width=300>
+<img alt="description" src="https://raw.githubusercontent.com/wiki/opiopan/elflet/images/wizard.jpg" width=800>
 </p>
 
 By this wizard, you can configure following items:

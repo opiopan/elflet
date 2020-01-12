@@ -7,8 +7,8 @@ PROJECT_NAME 		:= elflet
 EXCLUDE_COMPONENTS	:= asio aws_iot coap \
 			   esp_adc_cal esp_http_server esp_https_ota \
 			   esp_https_server espmqtt expat freemodbus \
-			   jsmn libsodium openssl \
-			   protocomm
+			   jsmn libsodium openssl esp_local_ctrl\
+			   protocomm wifi_provisioning
 SIGNEDIMAGE		:= build/$(PROJECT_NAME).sbin
 OTAUSER			:= admin
 OTAPASS			:=

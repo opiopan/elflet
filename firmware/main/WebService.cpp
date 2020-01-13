@@ -29,9 +29,13 @@ static std::function<void(OTAPHASE)> otaHandler = [](OTAPHASE phase){
 };
 
 static WebServer* webserver;
+static std::string hostName;
 
 static const char* redirectFilter(const WebString& host){
-    if (host == "elflet.setup"){
+    if (host == "elflet.setup" ||
+	host == "192.168.55.1" ||
+	host == elfletConfig->getNodeName().c_str() ||
+	host == hostName.c_str()){
 	return NULL;
     }else{
 	return "http://elflet.setup";
@@ -62,6 +66,8 @@ bool startWebService(){
     name << "elflet/" << getVersionString();
     webserver->setServerName(stringPtr(new std::string(name.str())));
     if (elfletConfig->getBootMode() != Config::Normal){
+	hostName = elfletConfig->getNodeName();
+	hostName += ".local";
 	webserver->setRedirectFilter(redirectFilter);
     }
     

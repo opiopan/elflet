@@ -12,6 +12,7 @@
 #include <json11.hpp>
 #include "Config.h"
 #include "ShadowDevice.h"
+#include "BleHidJson.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -99,7 +100,7 @@ Config::Config(WakeupCause cause) :
     configVersion(0),
     functionMode(FullSpec), sensorFrequency(0), 
     pubSubSessionType(SessionTCP), irrcReceiverMode(IrrcReceiverOnDemand),
-    bleHid(false){
+    bleHid(false), buttonMode(BLEHID_KEYCODE){
 }
 
 Config::~Config(){
@@ -137,6 +138,8 @@ Config& Config::operator = (const Config& src){
     shadowTopic = src.shadowTopic;
     irrcReceiverMode = src.irrcReceiverMode;
     bleHid = src.bleHid;
+    buttonMode = src.buttonMode;
+    buttonBleHidCode = src.buttonBleHidCode;
 
     return *this;
 }
@@ -221,6 +224,14 @@ bool Config::load(){
     applyValue(config, JSON_SHADOWTOPIC, shadowTopic);
     applyValue(config, JSON_IRRCRECEIVERMODE, irrcReceiverMode);
     applyValue(config, JSON_BLEHID, bleHid);
+    applyValue(config, JSON_BUTTON_MODE, buttonMode);
+
+    auto hidcode = config[JSON_BUTTON_BLEHIDCODE];
+    if (hidcode.is_object()){
+        buttonBleHidCode = bleHidJsonToData(hidcode);
+    }else{
+        buttonBleHidCode = BLEHID_DEFAULT_CODE;
+    }
 
     isDirty = false;
     isDirtyBootMode = false;
@@ -258,6 +269,7 @@ bool Config::commit(){
     NVS nvs(NVS_NS, NVS_READWRITE);
 
     if (isDirty && bootMode != FactoryReset){
+        auto hidcode = bleHidDataToJson(buttonBleHidCode);
         auto obj = json11::Json::object({
                 {JSON_CONFIGVERSION, configVersion},
                 {JSON_FUNCTIONMODE, functionMode},
@@ -283,6 +295,8 @@ bool Config::commit(){
                 {JSON_SHADOWTOPIC, shadowTopic},
                 {JSON_IRRCRECEIVERMODE, (int32_t)irrcReceiverMode},
                 {JSON_BLEHID, bleHid},
+                {JSON_BUTTON_MODE, buttonMode},
+                {JSON_BUTTON_BLEHIDCODE, hidcode},
             });
         
         fileGeneration = (fileGeneration & 1) + 1;
@@ -516,6 +530,18 @@ bool Config::setIrrcReceiverMode(IrrcReceiverMode mode){
 
 bool Config::setBleHid(bool enabled){
     bleHid = enabled;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setButtonMode(ButtonMode mode){
+    buttonMode = mode;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setButtonBleHidCode(const BleHidCodeData &code){
+    buttonBleHidCode = code;
     isDirty = true;
     return true;
 }

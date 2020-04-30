@@ -36,6 +36,9 @@ const char JSON_SHADOWTOPIC[] = "ShadowTopic";
 const char JSON_IRRCRECEIVERMODE[] = "IrrcReceiverMode";
 const char JSON_BLEHID[] = "EnableBLEHID";
 
+const char JSON_BUTTON_MODE[] = "ButtonMode";
+const char JSON_BUTTON_BLEHIDCODE[] = "ButtonBleHidCode";
+
 const char JSON_DATE[] = "date";
 const char JSON_TEMP_UNIT[] = "temperatureUnit";
 const char JSON_HUM_UNIT[] = "humidityUnit";

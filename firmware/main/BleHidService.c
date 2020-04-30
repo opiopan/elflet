@@ -260,15 +260,38 @@ void releaseBleResource()
     esp_bt_mem_release(ESP_BT_MODE_BTDM);
 }
 
-                
-bool bleHidSendKeyValue(uint8_t specialMask, uint8_t* keybuf, int buflen,
+const BleHidCodeData BLEHID_DEFAULT_CODE = {
+    .type = BLEHID_KEYCODE,
+    .duration = 100,
+    .data.keycode.keynum = 1,
+    .data.keycode.keys = {0x28},
+};
+
+bool bleHidSendCode(const BleHidCodeData *data)
+{
+    if (sec_conn) {
+        if (data->type == BLEHID_KEYCODE){
+            return bleHidSendKeyValue(
+                data->data.keycode.mask, 
+                data->data.keycode.keys,
+                data->data.keycode.keynum,
+                data->duration
+            );
+        }else{
+            return bleHidSendConsumerValue(data->data.consumercode, data->duration);
+        }
+    }
+    return true;
+}
+
+bool bleHidSendKeyValue(uint8_t specialMask, const uint8_t* keybuf, int buflen,
                         int duration)
 {
     if (sec_conn) {
         uint8_t stop = 0;
         ESP_LOGI(HID_DEMO_TAG, "sending %d key combination", buflen);
         esp_hidd_send_keyboard_value(hid_conn_id,
-                                     specialMask, keybuf, buflen);
+                                     specialMask, (uint8_t*)keybuf, buflen);
         vTaskDelay(duration / portTICK_PERIOD_MS);
         esp_hidd_send_keyboard_value(hid_conn_id,
                                      0, &stop, 1);

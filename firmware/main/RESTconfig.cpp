@@ -10,6 +10,7 @@
 #include "Config.h"
 #include "REST.h"
 #include "WatchDog.h"
+#include "BleHidJson.h"
 
 #include "boardconfig.h"
 #include "sdkconfig.h"
@@ -26,6 +27,10 @@ static const char* sessionTypeStr[]{
 
 static const char* irrcReceiverModeStr[]{
     "OnDemand", "Continuous", NULL
+};
+
+static const char* buttonModeStr[]{
+    "RemoteReceiver", "BLEHID", NULL
 };
 
 static bool ApplyValue(const json11::Json& json, const std::string& key,
@@ -60,19 +65,21 @@ enum ApplyResult {AR_ERROR, AR_OK, AR_NEEDCOMMIT};
 static void serializeConfig(HttpResponse* resp){
     auto conf = elfletConfig;
     auto obj = json11::Json::object({
-            {JSON_BOARDTYPE, "elflet"},
-            {JSON_BOARDVERSION, conf->getBoardVersion()},
-            {JSON_FWVERSION, getVersionString()},
-            {JSON_FUNCTIONMODE, functionModeStr[conf->getFunctionMode()]},
-            {JSON_NODENAME, conf->getNodeName()},
-            {JSON_SSID, conf->getSSIDtoConnect()},
-            {JSON_NTPSERVER, conf->getNtpServer()},
-            {JSON_TIMEZONE, conf->getTimezone()},
-            {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
-            {JSON_IRRCRECEIVERMODE,
-                    irrcReceiverModeStr[conf->getIrrcReceiverMode()]},
-            {JSON_BLEHID, conf->getBleHid()},
-        });
+        {JSON_BOARDTYPE, "elflet"},
+        {JSON_BOARDVERSION, conf->getBoardVersion()},
+        {JSON_FWVERSION, getVersionString()},
+        {JSON_FUNCTIONMODE, functionModeStr[conf->getFunctionMode()]},
+        {JSON_NODENAME, conf->getNodeName()},
+        {JSON_SSID, conf->getSSIDtoConnect()},
+        {JSON_NTPSERVER, conf->getNtpServer()},
+        {JSON_TIMEZONE, conf->getTimezone()},
+        {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
+        {JSON_IRRCRECEIVERMODE,
+         irrcReceiverModeStr[conf->getIrrcReceiverMode()]},
+        {JSON_BLEHID, conf->getBleHid()},
+        {JSON_BUTTON_MODE, buttonModeStr[conf->getButtonMode()]},
+        {JSON_BUTTON_BLEHIDCODE, bleHidDataToJson(conf->getButtonBleHidCode())},
+    });
     auto pubsub = json11::Json::object({
             {JSON_PUBSUBSERVERADDR, conf->getPubSubServerAddr()},
             {JSON_PUBSUBSESSIONTYPE,
@@ -86,7 +93,7 @@ static void serializeConfig(HttpResponse* resp){
             {JSON_SHADOWTOPIC, conf->getShadowTopic()},
             {JSON_DOWNLOADFIRMWARETOPIC, conf->getDownloadFirmwareTopic()},
     });
-    
+
     if (conf->getNodeName() != conf->getAPSSID()){
         obj[JSON_APSSID] = conf->getAPSSID();
     }
@@ -260,7 +267,29 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
     ApplyBoolValue(input, JSON_BLEHID,
                [](const bool v) -> bool{
                    return elfletConfig->setBleHid(v);});
-    
+
+    ApplyValue(input, JSON_BUTTON_MODE, [&](const std::string &v) -> bool {
+        int i;
+        for (i = 0; buttonModeStr[i]; i++){
+            if (v == buttonModeStr[i]){
+                break;
+            }
+        }
+        if (buttonModeStr[i]){
+            elfletConfig->setButtonMode((Config::ButtonMode)i);
+            return true;
+        }else{
+            *msg = "invalid button mode is specified";
+            return false;
+        }
+    });
+
+    auto hidcode = input[JSON_BUTTON_BLEHIDCODE];
+    if (hidcode.is_object()){
+        auto data = bleHidJsonToData(hidcode);
+        elfletConfig->setButtonBleHidCode(data);
+    }
+
     bool commit =
         input[JSON_COMMIT].is_bool() && input[JSON_COMMIT].bool_value();
     

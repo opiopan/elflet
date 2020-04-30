@@ -5,6 +5,7 @@
 #include <json11.hpp>
 #include <nvs_flash.h>
 #include "DeepSleep.h"
+#include "BleHidService.h"
 
 class Config {
 public:
@@ -13,6 +14,7 @@ public:
     enum SessionType{SessionTCP, SessionTLS,
                      SessionWebSocket, SessionWebSocketSecure};
     enum IrrcReceiverMode{IrrcReceiverOnDemand, IrrcReceiverContinuous};
+    enum ButtonMode{ButtonIrrcReciever, ButtonBleHid};
     
 protected:
     static const char* defaultTimezone;
@@ -63,6 +65,9 @@ protected:
     int32_t irrcReceiverMode;
 
     bool bleHid;
+
+    int32_t        buttonMode;
+    BleHidCodeData buttonBleHidCode;
     
 public:
     Config(WakeupCause cause);
@@ -116,6 +121,8 @@ public:
         return (IrrcReceiverMode)irrcReceiverMode;
     };
     bool getBleHid()const {return bleHid;};
+    ButtonMode getButtonMode()const {return (ButtonMode)buttonMode;};
+    const BleHidCodeData& getButtonBleHidCode()const {return buttonBleHidCode;};
     
     const char* getVerificationKeyPath() const;
     const char* getShadowDefsPath() const;
@@ -157,6 +164,9 @@ public:
     bool setIrrcReceiverMode(IrrcReceiverMode mode);
 
     bool setBleHid(bool enabled);
+
+    bool setButtonMode(ButtonMode mode);
+    bool setButtonBleHidCode(const BleHidCodeData& code);
 
 protected:
     void applyValue(const json11::Json& json, const std::string& key,
@@ -209,6 +219,9 @@ extern const char JSON_SHADOWTOPIC[];
 
 extern const char JSON_IRRCRECEIVERMODE[];
 extern const char JSON_BLEHID[];
+
+extern const char JSON_BUTTON_MODE[];
+extern const char JSON_BUTTON_BLEHIDCODE[];
 
 extern const char JSON_DATE[];
 extern const char JSON_TEMP_UNIT[];

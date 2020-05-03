@@ -7,6 +7,7 @@
 #include "Mutex.h"
 #include "Config.h"
 #include "IRService.h"
+#include "BleHidService.h"
 #include "ButtonService.h"
 
 #include "boardconfig.h"
@@ -92,8 +93,15 @@ void ButtonEventTask::run(void *data){
                         esp_restart();
                     }else if (elfletConfig->getFunctionMode() ==
                               Config::FullSpec){
-                        ESP_LOGI(tag, "start IR receiver");
-                        startIRReceiver();
+                        auto bmode = elfletConfig->getButtonMode();
+                        if (bmode == Config::ButtonIrrcReciever){
+                            ESP_LOGI(tag, "start IR receiver");
+                            startIRReceiver();
+                        }else{
+                            ESP_LOGI(tag, "sent HID code");
+                            auto code = elfletConfig->getButtonBleHidCode();
+                            bleHidSendCode(&code);
+                        }
                     }
                 }else if (mode == Config::Configuration){
                     ESP_LOGI(tag, "go back to normal mode");

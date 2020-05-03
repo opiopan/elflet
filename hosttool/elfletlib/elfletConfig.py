@@ -13,6 +13,11 @@ irModeMap = {
     'continuous': 'Continuous'
 }
 
+buttonModeMap = {
+    'remote-receiver': 'RemoteReceiver',
+    'blehid': 'BLEHID',
+}
+
 def parser():
     usage = "usage: %prog -h|--help \n"\
             "       %prog [--raw|--stat] elflet-address\n"\
@@ -70,6 +75,31 @@ def parser():
                  help="disable BLE keyboard emurator function")
     p.add_option_group(g)
 
+    g = OptionGroup(p, 'Button settings Options')
+    g.add_option('--button-mode',
+                 action='store', dest='buttonMode', metavar='MODE',
+                 choices=['remote-receiver', 'blehid'],
+                 help="change funciton vnvoked when a button is pressed, MODE must be specified "
+                      "eather 'remote-receiver' or 'blehid'")
+    g.add_option('--button-keycode',
+                 action='store', dest='buttonKeyCode', metavar='CODE',
+                 help="set HID key combination sending when button is pressed. "
+                      "Key combination is specified  as key code stream separated by commas, "
+                      "such as '31,32,33'. "
+                      "If modifier code such as shift key is specified, "
+                      "add logical sum of modifier code wihth '+' at the beggining, "
+                      "such as '3+31,32,33'.")
+    g.add_option('--button-consumercode',
+                 action='store', dest='buttonConsumerCode', metavar='CODE',
+                 type='int',
+                 help="set HID consumer code sending when button is pressed. ")
+    g.add_option('--button-code-duration',
+                 action='store', dest='buttonDuration', metavar='DURATION',
+                 type = 'int',
+                 help="change keypress duration in milli second for sending HID "
+                      "code when button is pressed.")
+    p.add_option_group(g)
+
     g = OptionGroup(p, 'MQTT PubSub related Options')
     g.add_option('--pubsub-server',
                  action='store', dest='pubsubServer', metavar='SERVER',
@@ -116,6 +146,45 @@ def parser():
 
     return p
 
+def hid_opt_to_json(parser, options):
+    data = {}
+    if options.buttonKeyCode is not None:
+        try:
+            seq = options.buttonKeyCode
+            mask = 0
+            if '+' in seq:
+                parts = seq.split('+')
+                if len(parts) > 2:
+                    parser.error('invalid key code sequence')
+                mask = int(parts[0])
+                if mask < 0 or mask > 255:
+                    parser.error('modifier code must be positive integer value less than 256')
+                seq = parts[1]
+            def validate_code(scode):
+                code = int(scode)
+                if code < 0 or code > 255:
+                    parser.error('key code must be positive integer value less than 256')
+                return code
+            data['KeyCodes'] = map(validate_code, seq.split(','))
+            data['SpecialKeyMask'] = mask
+        except:
+            parser.error('invalide key code sequence')
+    elif options.buttonConsumerCode is not None:
+        if options.buttonConsumerCode < 0 or options.buttonConsumerCode > 255:
+            parser.error('consumer code must be positive integer value less than 256')
+        data['ConsumerCode'] = options.buttonConsumerCode
+    if options.buttonDuration is not None:
+        data['Duration'] = options.buttonDuration
+    return data
+
+def hid_json_to_keyseq(json):
+    if "ConsumerCode" in json:
+        return '{0}'.format(json['ConsumerCode'])
+    else:
+        mask = json['SpecialKeyMask']
+        seq = ','.join(map(lambda x: str(x), json['KeyCodes']))
+        return '{0}+{1}'.format(mask, seq)
+
 def genBody(parser, options):
     body = {}
     if options.jsonFile != None:
@@ -142,6 +211,11 @@ def genBody(parser, options):
         body['IrrcReceiverMode'] = irModeMap[options.irmode]
     if options.blehid != None:
         body['EnableBLEHID'] = options.blehid
+    if options.buttonMode is not None:
+        body['ButtonMode'] = buttonModeMap[options.buttonMode]
+    hidobj = hid_opt_to_json(parser, options)
+    if len(hidobj) > 0:
+        body['ButtonBleHidCode'] = hidobj
     if options.pubsubServer != None:
         body['PubSubServerAddr'] = options.pubsubServer
     if options.pubsubSession != None:
@@ -220,6 +294,20 @@ def printConfig(rdata):
     print '    IR Receiver Mode:       {0}'.format(rdata['IrrcReceiverMode'])
     print '    Sensor Interval:        {0} sec'.format(
         rdata['SensorFrequency'])
+
+    print '\n' + HEADER + 'Button Settings:' + ENDC
+    if 'ButtonMode' in rdata:
+        bmode = rdata['ButtonMode']
+        print '    Button Mode:            {0}'.format(bmode)
+        if bmode == 'BLEHID':
+            hid = rdata['ButtonBleHidCode']
+            print SUBHEADER + '\n    HID codes to send:' + ENDC
+            print '        Type:               {0}'.\
+                format('Consumer' if 'ConsumerCode' in hid else 'Keyboard')
+            print '        Key Combination:    {0}'.format(hid_json_to_keyseq(hid))
+            print '        Duration:           {0} msec'.format(hid['Duration'])
+    else:
+        print '    Button Mode:            {0}\n'.format('RemoteReceiver')
 
     if not pdata['PubSubServerAddr']:
         return

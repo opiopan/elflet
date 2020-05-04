@@ -132,6 +132,8 @@ void IRAM_ATTR ButtonFilterTask::isrHandler(void* arg){
 }
 
 void ButtonFilterTask::initButton(){
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+
     evtQueue = xQueueCreate(10, sizeof(uint32_t));
 
     gpio_config_t conf;

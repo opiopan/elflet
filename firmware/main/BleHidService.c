@@ -95,7 +95,7 @@ static void hidd_event_callback(esp_hidd_cb_event_t event,
         }
         case ESP_HIDD_EVENT_DEINIT_FINISH:
              break;
-                case ESP_HIDD_EVENT_BLE_CONNECT: {
+        case ESP_HIDD_EVENT_BLE_CONNECT: {
             ESP_LOGI(HID_DEMO_TAG, "ESP_HIDD_EVENT_BLE_CONNECT");
             hid_conn_id = param->connect.conn_id;
             break;

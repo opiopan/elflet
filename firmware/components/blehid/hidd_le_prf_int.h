@@ -16,12 +16,14 @@
 
 #ifndef __HID_DEVICE_LE_PRF__
 #define __HID_DEVICE_LE_PRF__
+#include <stdbool.h>
 #include "esp_gatts_api.h"
 #include "esp_gatt_defs.h"
 #include "esp_hidd_prf_api.h"
 #include "esp_gap_ble_api.h"
 #include "hid_dev.h"
 
+#define SUPPORT_REPORT_VENDOR                 false
 //HID BLE profile log tag
 #define HID_LE_PRF_TAG                        "HID_LE_PRF"
 
@@ -49,7 +51,7 @@
 #define HID_RPT_ID_LED_OUT       0  // LED output report ID
 #define HID_RPT_ID_FEATURE       0  // Feature report ID
 
-#define HIDD_APP_ID                     0x1812//ATT_SVC_HID
+#define HIDD_APP_ID			0x1812//ATT_SVC_HID
 
 #define BATTRAY_APP_ID       0x180f
 
@@ -141,11 +143,12 @@ enum {
     HIDD_LE_IDX_REPORT_LED_OUT_VAL,
     HIDD_LE_IDX_REPORT_LED_OUT_REP_REF,
 
+#if (SUPPORT_REPORT_VENDOR  == true)
     /// Report Vendor
     HIDD_LE_IDX_REPORT_VENDOR_OUT_CHAR,
     HIDD_LE_IDX_REPORT_VENDOR_OUT_VAL,
     HIDD_LE_IDX_REPORT_VENDOR_OUT_REP_REF,
-
+#endif
     HIDD_LE_IDX_REPORT_CC_IN_CHAR,
     HIDD_LE_IDX_REPORT_CC_IN_VAL,
     HIDD_LE_IDX_REPORT_CC_IN_CCC,

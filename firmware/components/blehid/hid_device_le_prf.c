@@ -168,7 +168,9 @@ static const uint8_t hidReportMap[] = {
     0x81, 0x00,   //     Input (Data, Ary, Abs)
     0xC0,           //   End Collection
     0x81, 0x03,   //   Input (Const, Var, Abs)
-    0xC0,            // End Collection
+    0xC0,            // End Collectionq
+
+#if (SUPPORT_REPORT_VENDOR == true)
     0x06, 0xFF, 0xFF, // Usage Page(Vendor defined)
     0x09, 0xA5,       // Usage(Vendor Defined)
     0xA1, 0x01,       // Collection(Application)
@@ -179,6 +181,8 @@ static const uint8_t hidReportMap[] = {
     0x95, 0x7F,   // Report Count = 127 Btyes
     0x91, 0x02,   // Output(Data, Variable, Absolute)
     0xC0,         // End Collection
+#endif
+
 };
 
 /// Battery Service Attributes Indexes
@@ -239,8 +243,11 @@ static uint8_t hidReportRefKeyIn[HID_REPORT_REF_LEN] =
 static uint8_t hidReportRefLedOut[HID_REPORT_REF_LEN] =
              { HID_RPT_ID_LED_OUT, HID_REPORT_TYPE_OUTPUT };
 
+#if (SUPPORT_REPORT_VENDOR  == true)
+
 static uint8_t hidReportRefVendorOut[HID_REPORT_REF_LEN] =
              {HID_RPT_ID_VENDOR_OUT, HID_REPORT_TYPE_OUTPUT};
+#endif
 
 // HID Report Reference characteristic descriptor, Feature
 static uint8_t hidReportRefFeature[HID_REPORT_REF_LEN] =
@@ -278,7 +285,7 @@ static const uint16_t hid_mouse_input_uuid = ESP_GATT_UUID_HID_BT_MOUSE_INPUT;
 static const uint16_t hid_repot_map_ext_desc_uuid = ESP_GATT_UUID_EXT_RPT_REF_DESCR;
 static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
 ///the propoty definition
-//static const uint8_t char_prop_notify = ESP_GATT_CHAR_PROP_BIT_NOTIFY;
+static const uint8_t char_prop_notify = ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t char_prop_read = ESP_GATT_CHAR_PROP_BIT_READ;
 static const uint8_t char_prop_write_nr = ESP_GATT_CHAR_PROP_BIT_WRITE_NR;
 static const uint8_t char_prop_read_write = ESP_GATT_CHAR_PROP_BIT_WRITE|ESP_GATT_CHAR_PROP_BIT_READ;
@@ -305,11 +312,11 @@ static const esp_gatts_attr_db_t bas_att_db[BAS_IDX_NB] =
                                                    CHAR_DECLARATION_SIZE,CHAR_DECLARATION_SIZE, (uint8_t *)&char_prop_read_notify}},
 
     // Battary level Characteristic Value
-    [BAS_IDX_BATT_LVL_VAL]              = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&bat_lev_uuid, ESP_GATT_PERM_READ,
+    [BAS_IDX_BATT_LVL_VAL]             	= {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&bat_lev_uuid, ESP_GATT_PERM_READ,
                                                                 sizeof(uint8_t),sizeof(uint8_t), &battary_lev}},
 
     // Battary level Characteristic - Client Characteristic Configuration Descriptor
-    [BAS_IDX_BATT_LVL_NTF_CFG]          =  {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_client_config_uuid, ESP_GATT_PERM_READ|ESP_GATT_PERM_WRITE,
+    [BAS_IDX_BATT_LVL_NTF_CFG]     	=  {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_client_config_uuid, ESP_GATT_PERM_READ|ESP_GATT_PERM_WRITE,
                                                           sizeof(uint16_t),sizeof(bat_lev_ccc), (uint8_t *)bat_lev_ccc}},
 
     // Battary level report Characteristic Declaration
@@ -436,6 +443,7 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
                                                                        ESP_GATT_PERM_READ,
                                                                        sizeof(hidReportRefLedOut), sizeof(hidReportRefLedOut),
                                                                        hidReportRefLedOut}},
+#if (SUPPORT_REPORT_VENDOR  == true)
     // Report Characteristic Declaration
     [HIDD_LE_IDX_REPORT_VENDOR_OUT_CHAR]        = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_declaration_uuid,
                                                                          ESP_GATT_PERM_READ,
@@ -449,8 +457,8 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
                                                                        ESP_GATT_PERM_READ,
                                                                        sizeof(hidReportRefVendorOut), sizeof(hidReportRefVendorOut),
                                                                        hidReportRefVendorOut}},
-
-        // Report Characteristic Declaration
+#endif
+    // Report Characteristic Declaration
     [HIDD_LE_IDX_REPORT_CC_IN_CHAR]         = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_declaration_uuid,
                                                                          ESP_GATT_PERM_READ,
                                                                          CHAR_DECLARATION_SIZE, CHAR_DECLARATION_SIZE,
@@ -462,7 +470,7 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
                                                                        NULL}},
     // Report KEY INPUT Characteristic - Client Characteristic Configuration Descriptor
     [HIDD_LE_IDX_REPORT_CC_IN_CCC]              = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_client_config_uuid,
-                                                                      (ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE),
+                                                                      (ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE_ENCRYPTED),
                                                                       sizeof(uint16_t), 0,
                                                                       NULL}},
      // Report Characteristic - Report Reference Descriptor
@@ -534,10 +542,11 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
 static void hid_add_id_tbl(void);
 
 void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
-                                                                        esp_ble_gatts_cb_param_t *param)
+									esp_ble_gatts_cb_param_t *param)
 {
     switch(event) {
         case ESP_GATTS_REG_EVT: {
+            esp_ble_gap_config_local_icon (ESP_BLE_APPEARANCE_GENERIC_HID);
             esp_hidd_cb_param_t hidd_param;
             hidd_param.init_finish.state = param->reg.status;
             if(param->reg.app_id == HIDD_APP_ID) {
@@ -564,8 +573,8 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
             break;
         case ESP_GATTS_CONNECT_EVT: {
             esp_hidd_cb_param_t cb_param = {0};
-                        ESP_LOGI(HID_LE_PRF_TAG, "HID connection establish, conn_id = %x",param->connect.conn_id);
-                        memcpy(cb_param.connect.remote_bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
+			ESP_LOGI(HID_LE_PRF_TAG, "HID connection establish, conn_id = %x",param->connect.conn_id);
+			memcpy(cb_param.connect.remote_bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
             cb_param.connect.conn_id = param->connect.conn_id;
             hidd_clcb_alloc(param->connect.conn_id, param->connect.remote_bda);
             esp_ble_set_encryption(param->connect.remote_bda, ESP_BLE_SEC_ENCRYPT_NO_MITM);
@@ -575,7 +584,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
             break;
         }
         case ESP_GATTS_DISCONNECT_EVT: {
-                         if(hidd_le_env.hidd_cb != NULL) {
+			 if(hidd_le_env.hidd_cb != NULL) {
                     (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_DISCONNECT, NULL);
              }
             hidd_clcb_dealloc(param->disconnect.conn_id);
@@ -584,6 +593,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
         case ESP_GATTS_CLOSE_EVT:
             break;
         case ESP_GATTS_WRITE_EVT: {
+#if (SUPPORT_REPORT_VENDOR == true)
             esp_hidd_cb_param_t cb_param = {0};
             if (param->write.handle == hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_VENDOR_OUT_VAL] &&
                 hidd_le_env.hidd_cb != NULL) {
@@ -593,6 +603,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                 cb_param.vendor_write.data = param->write.value;
                 (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_VENDOR_REPORT_WRITE_EVT, &cb_param);
             }
+#endif
             break;
         }
         case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
@@ -611,7 +622,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                             HIDD_LE_IDX_NB*sizeof(uint16_t));
                 ESP_LOGI(HID_LE_PRF_TAG, "hid svc handle = %x",hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
                 hid_add_id_tbl();
-                        esp_ble_gatts_start_service(hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
+		        esp_ble_gatts_start_service(hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
             } else {
                 esp_ble_gatts_start_service(param->add_attr_tab.handles[0]);
             }
@@ -707,9 +718,9 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
 
 esp_err_t hidd_register_cb(void)
 {
-        esp_err_t status;
-        status = esp_ble_gatts_register_callback(gatts_event_handler);
-        return status;
+	esp_err_t status;
+	status = esp_ble_gatts_register_callback(gatts_event_handler);
+	return status;
 }
 
 void hidd_set_attr_value(uint16_t handle, uint16_t val_len, const uint8_t *value)

@@ -29,12 +29,33 @@ _Noreturn static void systemFault(){
     }
 }
 
+static void showBanner(){
+    printf(
+        "\033[96m"
+        "========================================"
+        "========================================\n"
+        "        Home IoT controller based on ESP-WROOM-32\n\n"
+        "                      ___       ___  ___           __\n"
+        "                     /\\_ \\    /'___\\/\\_ \\         /\\ \\__\n"
+        "                   __\\//\\ \\  /\\ \\__/\\//\\ \\      __\\ \\ ,_\\ \n"
+        "                 /'__`\\\\ \\ \\ \\ \\ ,__\\ \\ \\ \\   /'__`\\ \\ \\/ \n"
+        "                /\\  __/ \\_\\ \\_\\ \\ \\_/  \\_\\ \\_/\\  __/\\ \\ \\_ \n"
+        "                \\ \\____\\/\\____\\\\ \\_\\   /\\____\\ \\____\\\\ \\__\\ \n"
+        "                 \\/____/\\/____/ \\/_/   \\/____/\\/____/ \\/__/ \n\n"
+        "        Fiemware Version: %s\n"
+        "        Author:           Hiroshi Murayama <opiopan@gmail.com>\n"
+        "        Web:              http://github.com/opiopan/elflet/\n"
+        "========================================"
+        "========================================\n"
+        "\033[0m",
+        getVersionString());
+}
+
 class MainTask : public Task {
     void run(void *data) override;
 };
 
 void MainTask::run(void *data){
-    ESP_LOGI(tag, "elflet firmware version %s", getVersionString());
     updateWatchDog();
 
     //--------------------------------------------------------------
@@ -157,6 +178,7 @@ void MainTask::run(void *data){
 
 extern "C" void app_main() {
     initialHeapSize = xPortGetFreeHeapSize();
+    showBanner();
     ESP_LOGI(tag, "free heap size: %d", initialHeapSize);
     auto task = new MainTask;
     task->setStackSize(15000);

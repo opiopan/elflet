@@ -45,7 +45,6 @@ ButtonEventTask::ButtonEventTask(): level(false){
 }
 
 void ButtonEventTask::sendEvent(bool level){
-    printf("detected raw button event: %d\n", level);
     LockHolder holder(mutex);
     if (this->level != level){
         this->level = level;
@@ -67,8 +66,7 @@ void ButtonEventTask::run(void *data){
         while (!level){
             waitForEvent(portMAX_DELAY);
         }
-        printf("button down\n");
-
+        ESP_LOGI(tag, "button down event detected");
         while (level){
             if (!waitForEvent(5 * 1000 / portTICK_PERIOD_MS)){
                 auto mode = elfletConfig->getBootMode();
@@ -84,7 +82,7 @@ void ButtonEventTask::run(void *data){
                     esp_restart();
                 }
             }else{
-                printf("button up\n");
+                ESP_LOGI(tag, "button up event detected");
                 auto mode = elfletConfig->getBootMode();
                 if (mode == Config::Normal){
                     if (elfletConfig->getWakeupCause() == WC_BUTTON &&

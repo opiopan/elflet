@@ -110,6 +110,12 @@ void MainTask::run(void *data){
             systemFault();
         }
         startWebService();
+    }else if (!elfletConfig->getWifi()){
+        ledSetDefaultMode(LEDDM_BOOT_ONLY_BLE);
+        initBleHidService(elfletConfig->getNodeName().c_str());
+        startBleHidService();
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        ledSetDefaultMode(LEDDM_STANDBY);
     }else{
         if (wakeupCause == WC_NOTSLEEP){
             ledSetDefaultMode(LEDDM_SCAN_WIFI);

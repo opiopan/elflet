@@ -7,6 +7,7 @@ extern "C" {
 enum LED_DefaultMode {
     LEDDM_STANDBY,
     LEDDM_SCAN_WIFI,
+    LEDDM_BOOT_ONLY_BLE,
     LEDDM_CONFIGURATION,
     LEDDM_FACTORY_RESET,
 };

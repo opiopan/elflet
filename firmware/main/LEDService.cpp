@@ -47,6 +47,14 @@ BlinkSeqUnit SEQ_SCAN_WIFI[] = {
     SEQ_LOOP
 };
 
+BlinkSeqUnit SEQ_BOOT_ONLY_BLE[] = {
+    SEQ_FADE(125, 0, 461, 600),
+    SEQ_FADE(125, 0, 0, 0),
+    SEQ_FADE(125, 0, 461, 600),
+    SEQ_FADE(125, 0, 0, 0),
+    SEQ_WAIT(1000),
+    SEQ_LOOP};
+
 BlinkSeqUnit SEQ_CONFIGURATION[] = {
     SEQ_FADE(250, 600, 300, 0),
     SEQ_FADE(250, 0, 0, 0),
@@ -86,7 +94,7 @@ BlinkSeqUnit SEQ_RESTRICT_DEEP_SLEEP[] = {
 
 
 BlinkSeqUnit* defaultSequences[] = {
-    SEQ_STANDBY, SEQ_SCAN_WIFI, SEQ_CONFIGURATION, SEQ_FACTORY_RESET
+    SEQ_STANDBY, SEQ_SCAN_WIFI, SEQ_BOOT_ONLY_BLE, SEQ_CONFIGURATION, SEQ_FACTORY_RESET
 };
 
 BlinkSeqUnit* otherSequences[] = {

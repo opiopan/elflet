@@ -64,6 +64,7 @@ protected:
 
     int32_t irrcReceiverMode;
 
+    bool wifi;
     bool bleHid;
 
     int32_t        buttonMode;
@@ -120,6 +121,7 @@ public:
     IrrcReceiverMode getIrrcReceiverMode() const{
         return (IrrcReceiverMode)irrcReceiverMode;
     };
+    bool getWifi() const {return wifi;};
     bool getBleHid()const {return bleHid;};
     ButtonMode getButtonMode()const {return (ButtonMode)buttonMode;};
     const BleHidCodeData& getButtonBleHidCode()const {return buttonBleHidCode;};
@@ -163,6 +165,7 @@ public:
 
     bool setIrrcReceiverMode(IrrcReceiverMode mode);
 
+    bool setWifi(bool enabled);
     bool setBleHid(bool enabled);
 
     bool setButtonMode(ButtonMode mode);
@@ -183,6 +186,8 @@ extern Config* elfletConfig;
 extern size_t initialHeapSize;
 
 bool initConfig();
+void backupConfig();
+void restoreConfig();
 
 extern const char JSON_CONFIGVERSION[];
 extern const char JSON_FUNCTIONMODE[];
@@ -218,6 +223,7 @@ extern const char JSON_DOWNLOADFIRMWARETOPIC[];
 extern const char JSON_SHADOWTOPIC[];
 
 extern const char JSON_IRRCRECEIVERMODE[];
+extern const char JSON_WIFI[];
 extern const char JSON_BLEHID[];
 
 extern const char JSON_BUTTON_MODE[];

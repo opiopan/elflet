@@ -34,6 +34,7 @@ const char JSON_DOWNLOADFIRMWARETOPIC[] = "DownloadFirmwareTopic";
 const char JSON_SHADOWTOPIC[] = "ShadowTopic";
 
 const char JSON_IRRCRECEIVERMODE[] = "IrrcReceiverMode";
+const char JSON_WIFI[] = "EnableWiFi";
 const char JSON_BLEHID[] = "EnableBLEHID";
 
 const char JSON_BUTTON_MODE[] = "ButtonMode";

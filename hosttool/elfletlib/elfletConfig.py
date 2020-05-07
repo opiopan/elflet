@@ -73,6 +73,14 @@ def parser():
     g.add_option('-B', '--disable-ble-keyboard',
                  action='store_false', dest='blehid',
                  help="disable BLE keyboard emurator function")
+    g.add_option('-w', '--enable-wifi',
+                 action='store_true', dest='wifi',
+                 help="enable WiFi connectivity")
+    g.add_option('-W', '--disable-wifi',
+                 action='store_false', dest='wifi',
+                 help="disable WiFi connectivity, "
+                      "this option can be specified if BLE keyboard "
+                      "emurator is enabled (-b) and button is in 'BLEHID' mode")
     p.add_option_group(g)
 
     g = OptionGroup(p, 'Button settings Options')
@@ -211,6 +219,8 @@ def genBody(parser, options):
         body['IrrcReceiverMode'] = irModeMap[options.irmode]
     if options.blehid != None:
         body['EnableBLEHID'] = options.blehid
+    if options.wifi != None:
+        body['EnableWiFi'] = options.wifi
     if options.buttonMode is not None:
         body['ButtonMode'] = buttonModeMap[options.buttonMode]
     hidobj = hid_opt_to_json(parser, options)
@@ -268,19 +278,27 @@ def printConfig(rdata):
 
     print '\n' + HEADER + 'Function Avalability:' + ENDC
     sensorOnly = rdata['FunctionMode'] == 'SensorOnly'
+    wifiEnabled = ('EnableWiFi' in rdata and rdata['EnableWiFi']) or \
+                  sensorOnly
+    remoteEnabled = not sensorOnly and wifiEnabled
+    shadowEnabled = (rdata['IrrcReceiverMode'] == 'Continuous' and
+                     not sensorOnly and wifiEnabled)
+    mqttEnabled = ('PubSubServerAddr' in pdata and pdata['PubSubServerAddr'] and
+                   (wifiEnabled or sensorOnly))
+    bleEnabled = ('EnableBLEHID' in rdata and rdata['EnableBLEHID'] and
+                  not sensorOnly)
+    print '    WiFi Connectivity:      {0}'.format('Enabled'
+                                                   if wifiEnabled
+                                                   else 'Disabled')
     print '    IR Remote Controller:   {0}'.format('Enabled'
-                                                   if not sensorOnly
+                                                   if remoteEnabled
                                                    else 'Disabled')
     print '    MQTT PubSub Function:   {0}'.format('Enabled'
-                                                   if pdata['PubSubServerAddr']
+                                                   if mqttEnabled
                                                    else 'Disabled')
-    shadowEnabled = (rdata['IrrcReceiverMode'] == 'Continuous' and
-                     not sensorOnly)
     print '    Device Shadow Funciton: {0}'.format('Enabled'
                                                    if shadowEnabled
                                                    else 'Disabled')
-    bleEnabled = ('EnableBLEHID' in rdata and rdata['EnableBLEHID'] and
-                  not sensorOnly)
     print '    BLE Keyboard Emulation: {0}'.format('Enabled'
                                                    if bleEnabled
                                                    else 'Disabled')

@@ -76,6 +76,7 @@ static void serializeConfig(HttpResponse* resp){
         {JSON_SENSORFREQUENCY, conf->getSensorFrequency()},
         {JSON_IRRCRECEIVERMODE,
          irrcReceiverModeStr[conf->getIrrcReceiverMode()]},
+        {JSON_WIFI, conf->getWifi()},
         {JSON_BLEHID, conf->getBleHid()},
         {JSON_BUTTON_MODE, buttonModeStr[conf->getButtonMode()]},
         {JSON_BUTTON_BLEHIDCODE, bleHidDataToJson(conf->getButtonBleHidCode())},
@@ -264,6 +265,9 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
             }
         });
 
+    ApplyBoolValue(input, JSON_WIFI,
+                   [](const bool v) -> bool { return elfletConfig->setWifi(v); });
+
     ApplyBoolValue(input, JSON_BLEHID,
                [](const bool v) -> bool{
                    return elfletConfig->setBleHid(v);});
@@ -288,6 +292,14 @@ static ApplyResult applyConfig(const WebString& json, const char** msg){
     if (hidcode.is_object()){
         auto data = bleHidJsonToData(hidcode);
         elfletConfig->setButtonBleHidCode(data);
+    }
+
+    if (!elfletConfig->getWifi() && 
+        !(elfletConfig->getBleHid() && 
+          elfletConfig->getButtonMode() == Config::ButtonBleHid)){
+        *msg = "If WiFi function is disabled, "
+               "BLE HID emulation must be enabled and "
+               "the button mode must be 'BLEHID'";
     }
 
     bool commit =
@@ -328,12 +340,18 @@ class SetConfigHandler : public WebServerHandler {
             contentType = "application/json";
         }else if (req->method() == HttpRequest::MethodPost &&
             req->header("Content-Type") == "application/json"){
+            backupConfig();
             const char* msg;
             auto result = applyConfig(req->body(), &msg);
             if (result == AR_ERROR){
+                restoreConfig();
                 httpStatus = HttpResponse::RESP_500_InternalServerError;
-                resp->setBody("invalid request body");
-            }else if (result == AR_NEEDCOMMIT && !commitAndReboot()){
+                //resp->setBody("invalid request body");
+                resp->setBody(msg);
+            }
+            else if (result == AR_NEEDCOMMIT && !commitAndReboot())
+            {
+                restoreConfig();
                 httpStatus = HttpResponse::RESP_500_InternalServerError;
                 resp->setBody("cannot transition to normalmode "
                               "due to there is no information to "

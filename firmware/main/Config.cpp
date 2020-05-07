@@ -44,6 +44,7 @@ static const int MAX_PASSWORD_LEN = 64;
 const char* Config::defaultTimezone = "JST-9";
 
 Config* elfletConfig = NULL;
+static Config* backupedConfig = NULL;
 size_t initialHeapSize = 0;
 
 //----------------------------------------------------------------------
@@ -88,7 +89,16 @@ bool initConfig(){
     
     // load configuration
     elfletConfig = new Config(wakeupCause);
+    backupedConfig = new Config(wakeupCause);
     return elfletConfig->load();
+}
+
+void backupConfig(){
+    *backupedConfig = *elfletConfig;
+}
+
+void restoreConfig(){
+    *elfletConfig = *backupedConfig;
 }
 
 //----------------------------------------------------------------------
@@ -100,16 +110,13 @@ Config::Config(WakeupCause cause) :
     configVersion(0),
     functionMode(FullSpec), sensorFrequency(0), 
     pubSubSessionType(SessionTCP), irrcReceiverMode(IrrcReceiverOnDemand),
-    bleHid(false), buttonMode(BLEHID_KEYCODE){
+    wifi(true), bleHid(false), buttonMode(BLEHID_KEYCODE){
 }
 
 Config::~Config(){
 }
 
 Config& Config::operator = (const Config& src){
-    isDirty = true;
-    isDirtyBootMode = true;
-
     otaCount = src.otaCount;
     bootMode = src.bootMode;
     wakeupCause = src.wakeupCause;
@@ -137,6 +144,7 @@ Config& Config::operator = (const Config& src){
     downloadFirmwareTopic = src.downloadFirmwareTopic;
     shadowTopic = src.shadowTopic;
     irrcReceiverMode = src.irrcReceiverMode;
+    wifi = src.wifi;
     bleHid = src.bleHid;
     buttonMode = src.buttonMode;
     buttonBleHidCode = src.buttonBleHidCode;
@@ -223,6 +231,7 @@ bool Config::load(){
     applyValue(config, JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic);
     applyValue(config, JSON_SHADOWTOPIC, shadowTopic);
     applyValue(config, JSON_IRRCRECEIVERMODE, irrcReceiverMode);
+    applyValue(config, JSON_WIFI, wifi);
     applyValue(config, JSON_BLEHID, bleHid);
     applyValue(config, JSON_BUTTON_MODE, buttonMode);
 
@@ -294,6 +303,7 @@ bool Config::commit(){
                 {JSON_DOWNLOADFIRMWARETOPIC, downloadFirmwareTopic},
                 {JSON_SHADOWTOPIC, shadowTopic},
                 {JSON_IRRCRECEIVERMODE, (int32_t)irrcReceiverMode},
+                {JSON_WIFI, wifi},
                 {JSON_BLEHID, bleHid},
                 {JSON_BUTTON_MODE, buttonMode},
                 {JSON_BUTTON_BLEHIDCODE, hidcode},
@@ -524,6 +534,12 @@ bool Config::setShadowTopic(const std::string& topic){
 
 bool Config::setIrrcReceiverMode(IrrcReceiverMode mode){
     irrcReceiverMode = mode;
+    isDirty = true;
+    return true;
+}
+
+bool Config::setWifi(bool enabled){
+    wifi = enabled;
     isDirty = true;
     return true;
 }

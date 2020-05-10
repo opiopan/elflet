@@ -27,7 +27,7 @@ CONFIG_APP_OFFSET=0x10000
 #
 # Compiler options
 #
-CONFIG_CXX_EXCEPTIONS=y
+CONFIG_COMPILER_CXX_EXCEPTIONS=y
 
 #
 # SPIFFS Configuration
@@ -37,7 +37,7 @@ CONFIG_SPIFFS_META_LENGTH=0
 #
 # WiFi configuration
 #
-CONFIG_SW_COEXIST_ENABLE=n
+CONFIG_ESP32_WIFI_SW_COEXIST_ENABLE=n
 
 #
 # Bluetooth configuration

@@ -2,6 +2,7 @@
 # This is a project Makefile. It is assumed the directory this Makefile
 # resides in is a project subdirectory.
 #
+IDF_SKIP_CHECK_SUBMODULES := 1
 
 PROJECT_NAME 		:= elflet
 EXCLUDE_COMPONENTS	:= asio aws_iot coap \

@@ -6,9 +6,8 @@
                 "${workspaceFolder}/firmware/build/include",
                 "${workspaceFolder}/firmware/**",
                 "${workspaceFolder}/firmware/main/foundations",
-                "${env:IDF_PATH}/components/mdns/include",
-                "${env:IDF_PATH}/**",
-                "${env:HOME}/esp/xtensa-esp32-elf/include"
+                "${env:IDF_PATH}/components/**",
+                "${env:HOME}/.espressif/tools/xtensa-esp32-elf/**"
             ],
             "defines": [
                 "MG_ENABLE_HTTP_STREAMING_MULTIPART",
@@ -17,9 +16,8 @@
                 "LWIP_MDNS_RESPONDER"
             ],
             "macFrameworkPath": [
-                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"
             ],
-            "compilerPath": "${env:HOME}/esp/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc",
+            "compilerPath": "${env:HOME}/.espressif/tools/xtensa-esp32-elf/esp-2019r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64"

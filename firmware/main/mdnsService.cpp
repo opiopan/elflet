@@ -1,5 +1,6 @@
 #include <esp_log.h>
 #include <esp_system.h>
+#include <esp_event_loop.h>
 #include <mdns.h>
 #include <string.h>
 #include <GeneralUtils.h>
@@ -14,6 +15,7 @@
 static const char tag[] = "mdnsService";
 
 bool startmdnsService(){
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(mdns_init());
     ESP_ERROR_CHECK(mdns_hostname_set(
                         elfletConfig->getNodeName().c_str()));

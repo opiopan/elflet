@@ -7,10 +7,10 @@
 Sorry, I could not verify that these souce codes are compiled well on Windows environment since I have no PC running Windows.
 
 - **ESP-IDF**<br>
-elflet firmware cannot be compiled using ESP-IDF ver 4.x. You need version 3.x.<br>
-IDF version taht I confirmed working this firmware is v3.3.2.
+elflet firmware is able to compiled only using ESP-IDF ver 4.x. You cannot use ESP-IDF ver 3.x.<br>
+IDF version taht I confirmed working this firmware is v4.0.
 Install the ESP-IDF according to 
-[this procedure](https://docs.espressif.com/projects/esp-idf/en/v3.3.2/get-started/index.html).
+[this procedure](https://docs.espressif.com/projects/esp-idf/en/v4.0/get-started/index.html).
 
 - **mkspiffs**<br>
 Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy `mksspiffs` to a directory which is listed in `PATH` ernvironment variable such as `/usr/local/bin`.

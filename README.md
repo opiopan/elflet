@@ -102,6 +102,7 @@ Folowing four binary files must be download at correct address in ESP-WROOM-32's
 |:---------------------------------------|--------:|
 | firmware/buld/bootloader/bootloader.bin|   0x1000|
 | firmware/buld/partitions.bin           |   0x8000|
+| firmware/build/ota_data_initial.bin    |   0xd000|
 | firmware/buld/elflet.bin               |  0x10000|
 | firmware/buld/spiffsimage.bin          | 0x3f0000|
 

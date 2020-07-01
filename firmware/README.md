@@ -58,4 +58,13 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
     ```
 
 ## Downloading Firmware
-Please refer [this section](../README.md#inital-firmware-downloading).
+### Downloading via UART
+Regarding steps to download via UART, please refer [this section](../README.md#inital-firmware-downloading).
+
+### OTA updating
+Once elflet firmware runs on elflet board, you can download firmware binary via WiFi (OTA updating).<br>
+By making ```otaflash``` target with ```OTAADDR``` variable for elflet network address and ```OTAPASS`` variable for password of elflet as below, OTA updating will be proceeded.
+
+```
+$ make OTAPASS=elflet000000.local OTAPASS=elflet00 otaflash
+```

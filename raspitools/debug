@@ -1,7 +1,8 @@
 #!/bin/sh
-SOC=`grep Hardware /proc/cpuinfo | cut -d' ' -f 2`
-if [ "$SOC" = BCM2835 ];then
-    exec sudo openocd-esp32 -f cfg/esp32-raspi1.cfg
+if grep 'ARMv6' /proc/cpuinfo > /dev/null;then
+    IF=interface/raspberrypi-native.cfg
 else
-    exec sudo openocd-esp32 -f cfg/esp32-raspi2.cfg
+    IF=interface/raspberrypi2-native.cfg
 fi
+
+exec sudo openocd-esp32 -f $IF -f cfg/esp32-raspi.cfg

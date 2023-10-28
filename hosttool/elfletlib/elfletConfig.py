@@ -1,7 +1,7 @@
 import sys
 import json
 from optparse import OptionParser, OptionGroup
-import elflet
+from elfletlib import elflet
 
 functionModeMap = {
     'full': 'FullSpec',
@@ -271,12 +271,12 @@ def printConfig(rdata):
         ENDC = ''
         
     pdata = rdata['PubSub']
-    print HEADER + 'Board Information:' + ENDC
-    print '    Hardware:               {0} ver. {1}'.\
-        format(rdata['BoardType'], rdata['BoardVersion'])
-    print '    Firmware Version:       {0}'.format(rdata['FirmwareVersion'])
+    print(HEADER + 'Board Information:' + ENDC)
+    print('    Hardware:               {0} ver. {1}'.\
+        format(rdata['BoardType'], rdata['BoardVersion']))
+    print('    Firmware Version:       {0}'.format(rdata['FirmwareVersion']))
 
-    print '\n' + HEADER + 'Function Avalability:' + ENDC
+    print('\n' + HEADER + 'Function Avalability:' + ENDC)
     sensorOnly = rdata['FunctionMode'] == 'SensorOnly'
     wifiEnabled = ('EnableWiFi' in rdata and rdata['EnableWiFi']) or \
                   sensorOnly
@@ -287,70 +287,70 @@ def printConfig(rdata):
                    (wifiEnabled or sensorOnly))
     bleEnabled = ('EnableBLEHID' in rdata and rdata['EnableBLEHID'] and
                   not sensorOnly)
-    print '    WiFi Connectivity:      {0}'.format('Enabled'
+    print('    WiFi Connectivity:      {0}'.format('Enabled'
                                                    if wifiEnabled
-                                                   else 'Disabled')
-    print '    IR Remote Controller:   {0}'.format('Enabled'
+                                                   else 'Disabled'))
+    print('    IR Remote Controller:   {0}'.format('Enabled'
                                                    if remoteEnabled
-                                                   else 'Disabled')
-    print '    MQTT PubSub Function:   {0}'.format('Enabled'
+                                                   else 'Disabled'))
+    print('    MQTT PubSub Function:   {0}'.format('Enabled'
                                                    if mqttEnabled
-                                                   else 'Disabled')
-    print '    Device Shadow Funciton: {0}'.format('Enabled'
+                                                   else 'Disabled'))
+    print('    Device Shadow Funciton: {0}'.format('Enabled'
                                                    if shadowEnabled
-                                                   else 'Disabled')
-    print '    BLE Keyboard Emulation: {0}'.format('Enabled'
+                                                   else 'Disabled'))
+    print('    BLE Keyboard Emulation: {0}'.format('Enabled'
                                                    if bleEnabled
-                                                   else 'Disabled')
+                                                   else 'Disabled'))
 
-    print '\n' + HEADER + 'Basic Configuration:' + ENDC
-    print '    Node Name:              {0}'.format(rdata['NodeName'])
-    print '    Connecting WiFi:        {0}'.format(rdata['SSID'])
-    print '    NTP:                    {0} ({1})'.format(rdata['NTPServer'],
-                                                         rdata['Timezone'])
-    print '    Function Mode:          {0}'.format(rdata['FunctionMode'])
-    print '    IR Receiver Mode:       {0}'.format(rdata['IrrcReceiverMode'])
-    print '    Sensor Interval:        {0} sec'.format(
-        rdata['SensorFrequency'])
+    print('\n' + HEADER + 'Basic Configuration:' + ENDC)
+    print('    Node Name:              {0}'.format(rdata['NodeName']))
+    print('    Connecting WiFi:        {0}'.format(rdata['SSID']))
+    print('    NTP:                    {0} ({1})'.format(rdata['NTPServer'],
+                                                         rdata['Timezone']))
+    print('    Function Mode:          {0}'.format(rdata['FunctionMode']))
+    print('    IR Receiver Mode:       {0}'.format(rdata['IrrcReceiverMode']))
+    print('    Sensor Interval:        {0} sec'.format(
+        rdata['SensorFrequency']))
 
-    print '\n' + HEADER + 'Button Settings:' + ENDC
+    print('\n' + HEADER + 'Button Settings:' + ENDC)
     if 'ButtonMode' in rdata:
         bmode = rdata['ButtonMode']
-        print '    Button Mode:            {0}'.format(bmode)
+        print('    Button Mode:            {0}'.format(bmode))
         if bmode == 'BLEHID':
             hid = rdata['ButtonBleHidCode']
-            print SUBHEADER + '\n    HID codes to send:' + ENDC
-            print '        Type:               {0}'.\
-                format('Consumer' if 'ConsumerCode' in hid else 'Keyboard')
-            print '        Key Combination:    {0}'.format(hid_json_to_keyseq(hid))
-            print '        Duration:           {0} msec'.format(hid['Duration'])
+            print(SUBHEADER + '\n    HID codes to send:' + ENDC)
+            print('        Type:               {0}'.\
+                format('Consumer' if 'ConsumerCode' in hid else 'Keyboard'))
+            print('        Key Combination:    {0}'.format(hid_json_to_keyseq(hid)))
+            print('        Duration:           {0} msec'.format(hid['Duration']))
     else:
-        print '    Button Mode:            {0}\n'.format('RemoteReceiver')
+        print('    Button Mode:            {0}\n'.format('RemoteReceiver'))
 
     if not pdata['PubSubServerAddr']:
         return
 
-    print '\n' + HEADER + 'MQTT Configuration:' + ENDC
-    print '    MQTT server:            {0}'.format(pdata['PubSubServerAddr'])
-    print '    Session Type:           {0}'.format(pdata['PubSubSessionType'])
-    print '    User/Password:          {0}{1}'.format(pdata['PubSubUser'],
+    print('\n' + HEADER + 'MQTT Configuration:' + ENDC)
+    print('    MQTT server:            {0}'.format(pdata['PubSubServerAddr']))
+    print('    Session Type:           {0}'.format(pdata['PubSubSessionType']))
+    print('    User/Password:          {0}{1}'.format(pdata['PubSubUser'],
                                                       '/*****'
                                                       if pdata['PubSubUser']
-                                                      else '')
-    print '    Server Certification:   {0}\n'.format('Registered'
+                                                      else ''))
+    print('    Server Certification:   {0}\n'.format('Registered'
                                                      if
                                                      pdata['PubSubServerCert']
-                                                     else 'Unregistered')
-    print SUBHEADER + '    Publishing Topic:' + ENDC
-    print '        Sensor Value:       {0}'.format(pdata['SensorTopic'])
-    print '        Received IR Data:   {0}'.\
-        format(pdata['IrrcReceivedDataTopic'])
-    print '        Shadow Status:      {0}\n'.format(pdata['ShadowTopic'])
-    print SUBHEADER + '    Subscribed Topic:' + ENDC
-    print '        Start IR receiving: {0}'.format(pdata['IrrcReceiveTopic'])
-    print '        Send IR data:       {0}'.format(pdata['IrrcSendTopic'])
-    print '        Download Firmware:  {0}'.\
-        format(pdata['DownloadFirmwareTopic'])
+                                                     else 'Unregistered'))
+    print(SUBHEADER + '    Publishing Topic:' + ENDC)
+    print('        Sensor Value:       {0}'.format(pdata['SensorTopic']))
+    print('        Received IR Data:   {0}'.\
+        format(pdata['IrrcReceivedDataTopic']))
+    print('        Shadow Status:      {0}\n'.format(pdata['ShadowTopic']))
+    print(SUBHEADER + '    Subscribed Topic:' + ENDC)
+    print('        Start IR receiving: {0}'.format(pdata['IrrcReceiveTopic']))
+    print('        Send IR data:       {0}'.format(pdata['IrrcSendTopic']))
+    print('        Download Firmware:  {0}'.\
+        format(pdata['DownloadFirmwareTopic']))
     
 def getInformation(options, host):
     raw = (options.stat or options.rawOutput)
@@ -358,13 +358,12 @@ def getInformation(options, host):
     result, rdata = elflet.request(host, path, method = elflet.GET)
     if result:
         if raw:
-            print json.dumps(rdata, indent = 4, sort_keys = True)
+            print(json.dumps(rdata, indent = 4, sort_keys = True))
         else:
             printConfig(rdata)
     else:
-        print >> sys.stderr, \
-            "an error occurred while communicating with elflet: {0}" \
-            .format(rdata)
+        print("an error occurred while communicating with elflet: {0}" \
+            .format(rdata), file=sys.stderr)
         sys.exit(1)
 
 def changeConfig(data, host, password):
@@ -373,9 +372,8 @@ def changeConfig(data, host, password):
                                    method = elflet.POST, data = data,
                                    password = password)
     if not result:
-        print >> sys.stderr, \
-            "an error occurred while communicating with elflet: {0}" \
-            .format(rdata)
+        print("an error occurred while communicating with elflet: {0}" \
+            .format(rdata), file=sys.stderr)
         sys.exit(1)
 
 def main():

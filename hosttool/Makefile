@@ -19,4 +19,4 @@ uninstall:
 	rm -rf $(INSTALLDIR)/$(PLIBDIR)
 
 clean:
-	rm -f $(TARGETS) $(OBJS)
+	rm -f irtx $(OBJS)

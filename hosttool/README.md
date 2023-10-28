@@ -7,22 +7,22 @@ There are CLI tools to controll elflet as below:
 - **elfelt-shadow**: manage and controll device shadow
 - **irtx**: send IR remote controll command
 
-## Requirement
+## Requirements
 - **Mac or Linux**
-- **Python 2.7**<br>
+- **Python 3**<br>
     ```
-    $ python2 --version
-    2.7.13
+    $ python3 --version
+    Python 3.7.16
     ```
 - **requests** <br>
     ```
-    $ pip2 install requests
+    $ pip3 install requests
     ```
 
-## Install
+## How to install
 ```
 $ make
-$ sudo install
+$ sudo make install
 ```
 
 ## Usage

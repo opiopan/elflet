@@ -1,7 +1,7 @@
 import sys
 import json
 from optparse import OptionParser, OptionGroup
-import elflet
+from elfletlib import elflet
 
 LIST = 0
 SHOW = 1
@@ -87,7 +87,7 @@ def parse():
             with open(options.file, 'r') as f:
                 options.data = f.read()
         except IOError as e:
-            print >> sys.stderr, 'elflet-shadow: {0}'.format(e)
+            print('elflet-shadow: {0}'.format(e), file=sys.stderr)
             sys.exit(1)
 
     if options.data != None:
@@ -95,14 +95,14 @@ def parse():
             jdata = json.loads(options.data)
             options.data = jdata
         except:
-            print >> sys.stderr, \
-                'elflet-shadow: specified data is invalid JSON format'
+            print('elflet-shadow: specified data is invalid JSON format',
+                  file=sys.stderr)
             sys.exit(1)
 
     if (options.mode == ADDDEF or options.mode == DELDEF or 
         options.mode == SHOWDEF) and shadow == None:
-        print >> sys.stderr, \
-            'elflet-shadow: shadow name must be specified'
+        print('elflet-shadow: shadow name must be specified',
+              file=sys.stderr)
         sys.exit(1)
         
     return options, host, shadow
@@ -110,9 +110,9 @@ def parse():
 def listShadow(options, host, shadow):
     result, data = elflet.request(host, '/shadow')
     if result:
-        print '{0} shadows are registered'.format(len(data))
+        print('{0} shadows are registered'.format(len(data)))
         for name in data:
-            print '    {0}'.format(name)
+            print('    {0}'.format(name))
 
     return result, data
 
@@ -120,22 +120,22 @@ def showStatus(options, host, shadow):
     result, data = elflet.request(host, '/shadow/{0}'.format(shadow))
     if result:
         if options.raw:
-            print json.dumps(data, indent=4, sort_keys=True)
+            print(json.dumps(data, indent=4, sort_keys=True))
         else:
-            print 'Node Name:    {0}'.format(data['NodeName'])
-            print 'Shadow Name:  {0}'.format(data['ShadowName'])
-            print 'Power Status: {0}'.format('ON' if data['IsOn'] else 'OFF')
+            print('Node Name:    {0}'.format(data['NodeName']))
+            print('Shadow Name:  {0}'.format(data['ShadowName']))
+            print('Power Status: {0}'.format('ON' if data['IsOn'] else 'OFF'))
 
             if 'Attributes' in data:
                 attrs = data['Attributes']
                 if len(attrs) > 0:
-                    print 'Atrributes:'
+                    print('Atrributes:')
                     maxkeylen = 0
                     for key in attrs:
                         maxkeylen = max(maxkeylen, len(key))
                         fstr = '    {0:' + str(maxkeylen + 1) + 's}: {1}'
                     for key in attrs:
-                        print fstr.format(key, attrs[key])
+                        print(fstr.format(key, attrs[key]))
                 
     return result, data
     
@@ -146,7 +146,7 @@ def changeStatus(options, host, shadow):
 def showDef(options, host, shadow):
     result, data = elflet.request(host, '/shadowDefs/{0}'.format(shadow))
     if result:
-        print json.dumps(data, indent=4, sort_keys=True)
+        print(json.dumps(data, indent=4, sort_keys=True))
                 
     return result, data
     
@@ -166,5 +166,5 @@ def main():
     options, host, shadow = parse()
     result, data = operations[options.mode](options, host, shadow)
     if not result:
-        print >> sys.stderr, 'elflet-shadow: {0}'.format(data)
+        print('elflet-shadow: {0}'.format(data), file=sys.stderr)
         sys.exit(1)

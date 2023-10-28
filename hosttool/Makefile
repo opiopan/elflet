@@ -2,6 +2,7 @@ DEBUGFLAGS	= -g
 CFLAGS		= -I../firmware/main $(DEBUGFLAGS) -std=c99
 INSTALLDIR	= /usr/local/bin
 PLIBDIR     	= elfletlib
+PLIBCACHE	= $(PLIBDIR)/__pycache__
 TARGETS 	= irtx elflet-config elflet-shadow
 OBJS		= irtx.o irslib.o
 
@@ -11,6 +12,7 @@ irtx: $(OBJS)
 	$(CC) -o $(LFLAGS) $@ $(OBJS)
 
 install: all
+	rm -rf $(PLIBCACHE)
 	cp $(TARGETS) $(INSTALLDIR)
 	cp -R $(PLIBDIR) $(INSTALLDIR)
 
@@ -19,4 +21,4 @@ uninstall:
 	rm -rf $(INSTALLDIR)/$(PLIBDIR)
 
 clean:
-	rm -f irtx $(OBJS)
+	rm -rf irtx $(OBJS) $(PLIBCACHE)

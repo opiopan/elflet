@@ -115,6 +115,7 @@
                 "Type": "PORTION",
                 "Offset" : 14,
                 "Mask": "ff",
+                "IsSigned": true,
                 "DividedBy": 10,
                 "Bias": 0
             },

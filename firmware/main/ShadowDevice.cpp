@@ -61,6 +61,7 @@ static const char JSON_ATTRVAL_MASK[] = "Mask";
 static const char JSON_ATTRVAL_BIAS[] = "Bias";
 static const char JSON_ATTRVAL_DIV[] = "DividedBy";
 static const char JSON_ATTRVAL_MUL[] = "MultiplyBy";
+static const char JSON_ATTRVAL_ISSIGNED[] = "IsSigned";
 static const char JSON_ATTRVAL_CHILDREN[] = "Values";
 static const char JSON_SYN_PROTOCOL[] = "Protocol";
 static const char JSON_SYN_BITS[] = "BitCount";
@@ -636,6 +637,7 @@ protected:
     using Base = ValueFormulaNode;
     int offset;
     uint8_t mask;
+    bool isSigned = false;
     float divFactor;
     float mulFactor;
     float bias;
@@ -667,6 +669,10 @@ bool PortionNode::deserialize(const json11::Json& in, std::string& err){
         err = "Maks in portion node  must be 1 byte hex data as string.";
         return false;
     }
+    ApplyBoolValue(in, JSON_ATTRVAL_ISSIGNED, true, [&](bool v){
+        isSigned = v;
+        return true;
+    });
     ApplyNumValue(in, JSON_ATTRVAL_BIAS, true, [&](float v){
             bias = v;
             return true;
@@ -693,6 +699,9 @@ void PortionNode::serialize(std::ostream& out){
             << (int)mask << "\"";
         out << std::setfill(' ') << std::dec;
     }
+    if (isSigned){
+        out << ",\"" << JSON_ATTRVAL_ISSIGNED << "\":" << (isSigned ? "true" : "false");
+    }
     if (bias != 0){
         out << ",\"" << JSON_ATTRVAL_BIAS << "\":" << bias;
     }
@@ -708,7 +717,11 @@ void PortionNode::serialize(std::ostream& out){
 float PortionNode::extract(const IRCommand* cmd){
     auto rc = std::numeric_limits<float>::quiet_NaN();
     if ((cmd->bits + 7) / 8 >= offset){
-        rc = (((uint8_t*)cmd->data)[offset] & mask);
+        if (isSigned){
+            rc = (int8_t)(((uint8_t *)cmd->data)[offset] & mask);
+        }else{
+            rc = (((uint8_t *)cmd->data)[offset] & mask);
+        }
         rc = rc * mulFactor / divFactor + bias;
     }
     return rc;

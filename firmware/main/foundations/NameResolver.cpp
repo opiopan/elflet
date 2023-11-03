@@ -91,7 +91,7 @@ RNAME_RESULT resolveHostname(std::string& hostname){
     // resolve mDNS name
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     std::string in(hostname.data() + name, namelen - sizeof(domain));
-    struct ip4_addr addr;
+    struct esp_ip4_addr addr;
     addr.addr = 0;
     esp_err_t err = -1;
     for (int i = 0; i < 6 && err != ESP_OK; i++){

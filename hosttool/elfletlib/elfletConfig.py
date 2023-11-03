@@ -173,7 +173,7 @@ def hid_opt_to_json(parser, options):
                 if code < 0 or code > 255:
                     parser.error('key code must be positive integer value less than 256')
                 return code
-            data['KeyCodes'] = map(validate_code, seq.split(','))
+            data['KeyCodes'] = list(map(validate_code, seq.split(',')))
             data['SpecialKeyMask'] = mask
         except:
             parser.error('invalide key code sequence')

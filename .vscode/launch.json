@@ -38,7 +38,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/hosttool/elflet-config",
-            "args": ["-p", "elflet00", "--pubsub-server=janus.local", "elflet-test.local"],
+            "args": ["-p", "elflet00", "--button-keycode='aa'", "elflet-test.local"],
             "console": "integratedTerminal",
             "stopOnEntry": false,
             "justMyCode": false

@@ -6,11 +6,19 @@
 - **Mac or Linux**<br>
 Sorry, I could not verify that these souce codes are compiled well on Windows environment since I have no PC running Windows.
 
-- **ESP-IDF**<br>
-elflet firmware is able to compiled only using ESP-IDF ver 4.x. You cannot use ESP-IDF ver 3.x.<br>
-IDF version taht I confirmed working this firmware is v4.0.
-Install the ESP-IDF according to 
-[this procedure](https://docs.espressif.com/projects/esp-idf/en/v4.0/get-started/index.html).
+- **Python 3.x**
+
+- **ESP-IDF 4.1**<br>
+elflet firmware is able to compiled only using ESP-IDF ver 4.1. <br>
+Install according to following procedure.
+
+    ```
+    $ mkdir ~/esp
+    $ cd ~/esp
+    $ git clone -b release/v4.1 --recursive https://github.com/espressif/esp-idf.git esp-idf-4.1
+    $ cd esp-idf-4.1
+    $ ./install.sh esp32
+    ```
 
 - **mkspiffs**<br>
 Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy `mksspiffs` to a directory which is listed in `PATH` ernvironment variable such as `/usr/local/bin`.

@@ -18,8 +18,8 @@ def request(host, path, method = GET, data = None, password = None):
     elif method == DELETE:
         proc = requests.delete
     else:
-        return false, 'invalid method is specified'
-
+        return False, 'invalid method is specified'
+    
     def doreq():
         auth = HTTPDigestAuth('admin', password) if password else None
         body = data

@@ -137,7 +137,7 @@
     ],
     "Synthesizing":{
         "Protocol": "AEHA",
-        "Placeholder": "1463001010fe1a400000000000000012030000000040102400000000ffffff0000",
+        "Placeholder": "1463001010fe1a40ad01000000000012030000000040102400000000ffffff0000",
         "Variables": [
             {
                 "Offset": 9,
@@ -179,8 +179,9 @@
             }
         ],
         "Redundant": {
-            "Operator": "4BITSUB",
-            "Seed": "7e"
+            "Operator": "CHECKSUM",
+            "BitwiseNot": true,
+            "Compensation": -80
         }
     },
     "SynthesizingToOff":{

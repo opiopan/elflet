@@ -82,6 +82,8 @@ static const char JSON_SYNVAL_SUBFORMULA[] = "SubFormula";
 static const char JSON_SYNRED_OPERATOR[] = "Operator";
 static const char JSON_SYNRED_OFFSET[] = "Offset";
 static const char JSON_SYNRED_SEED[] = "Seed";
+static const char JSON_SYNRED_BITWISENOT[] = "BitwiseNot";
+static const char JSON_SYNRED_COMPENSATION[] = "Compensation";
 
 static const char* FORMULA_TYPE_STR[] = {
     "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
@@ -1386,6 +1388,8 @@ protected:
     Type type;
     int32_t offset;
     int32_t seed;
+    bool bitwise_not = false;
+    int32_t compensation = 0;
 public:
     RedundantCode(): offset(-1), seed(0){};
     virtual ~RedundantCode(){};
@@ -1425,6 +1429,14 @@ bool RedundantCode::deserialize(const json11::Json& in, std::string& err){
     }else if (json.is_number()){
         seed = json.number_value();
     }
+    ApplyBoolValue(in, JSON_SYNRED_BITWISENOT, true, [&](bool value){
+        bitwise_not = value;
+        return true;
+    });
+    ApplyNumValue(in, JSON_SYNRED_COMPENSATION, true, [&](float value){
+        compensation = value;
+        return true;
+    });
         
     return true;
 }
@@ -1437,6 +1449,12 @@ void RedundantCode::serialize(std::ostream& out){
     }
     if (seed != 0){
         out << ",\"" << JSON_SYNRED_SEED << "\":" << seed;
+    }
+    if (bitwise_not){
+        out << ",\"" << JSON_SYNRED_BITWISENOT << "\":" << (bitwise_not ? "true" : "false");
+    }
+    if (compensation != 0){
+        out << ",\"" << JSON_SYNRED_COMPENSATION << "\":" << compensation;
     }
     out << "}";
 }
@@ -1454,6 +1472,12 @@ bool RedundantCode::addRedundantCode(std::string& code){
     if (type == CHECKSUM){
         for (int i = 0; i < offset; i++){
             rc += code[i];
+        }
+        if (bitwise_not){
+            rc = ~rc & 0xff;
+        }
+        if (compensation != 0){
+            rc = (rc + compensation) & 0xff;
         }
     }else if (type == SUB4BIT){
         int32_t hrc = 0xf0 & seed;

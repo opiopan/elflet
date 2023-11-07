@@ -11,6 +11,7 @@ Sorry, I could not verify that these souce codes are compiled well on Windows en
 - **ESP-IDF 4.1**<br>
 elflet firmware is able to compiled only using ESP-IDF ver 4.1. <br>
 Install according to following procedure.
+This proedure allows you the coexistence of the version of ESP-IDF you usually use and version 4.1.
 
     ```
     $ mkdir ~/esp
@@ -50,7 +51,12 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
     ```
     $ git clone --recursive https://github.com/opiopan/elflet.git
     ```
-3. **Configuration**<br>
+3. **Setting environment variables for using ESP-IDF 4.1**
+    ```
+    $ . ~/esp/esp-idf-4.1/export.sh
+    ```
+
+4. **Configuring build settings**<br>
     Execute configuration utility with:
     ```
     $ cd elflet/firmware
@@ -59,7 +65,7 @@ Clone [this repository](https://github.com/igrr/mkspiffs) and compile, then copy
     Select `elflet Configuration` sub menu, then configure corresponding to your environment.<br>
     You need to specify path of key files for digital signing at least. You can also change initial administration password at here.
 
-4. **Building**<br>
+5. **Building**<br>
     Just execute `make` command.
     ```
     $ make
@@ -71,8 +77,8 @@ Regarding steps to download via UART, please refer [this section](../README.md#i
 
 ### OTA updating
 Once elflet firmware runs on elflet board, you can download firmware binary via WiFi (OTA updating).<br>
-By making ```otaflash``` target with ```OTAADDR``` variable for elflet network address and ```OTAPASS`` variable for password of elflet as below, OTA updating will be proceeded.
+By making ```otaflash``` target with ```OTAADDR``` variable for elflet network address and ```OTAPASS``` variable for password of elflet as below, OTA updating will be proceeded.
 
 ```
-$ make OTAPASS=elflet000000.local OTAPASS=elflet00 otaflash
+$ make OTAADDR=elflet000000.local OTAPASS=elflet00 otaflash
 ```

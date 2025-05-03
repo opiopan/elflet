@@ -1,8 +1,19 @@
 #!/bin/sh
-if grep 'ARMv6' /proc/cpuinfo > /dev/null;then
-    IF=interface/raspberrypi-native.cfg
-else
-    IF=interface/raspberrypi2-native.cfg
-fi
+IF=interface/raspberrypi-native.cfg
+CMDS="
+adapter gpio tck -chip 0 11
+adapter gpio tms -chip 0 25
+adapter gpio tdi -chip 0 10
+adapter gpio tdo -chip 0 9
+transport select jtag
+adapter speed 800
+adapter gpio trst -chip 0 7
+reset_config trst_only
 
-exec sudo openocd-esp32 -f $IF -f cfg/esp32-raspi.cfg
+source [find target/esp32.cfg]
+
+esp32 flashbootstrap 3.3
+
+bindto 0.0.0.0
+"
+exec sudo openocd-esp32 -f $IF -c"$CMDS"

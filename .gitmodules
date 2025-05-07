@@ -1,6 +1,3 @@
-[submodule "firmware/components/espmqtt"]
-	path = firmware/components/espmqtt
-	url = https://github.com/tuanpmt/espmqtt.git
 [submodule "firmware/components/mongoose/mongoose"]
 	path = firmware/components/mongoose/mongoose
 	url = https://github.com/cesanta/mongoose.git

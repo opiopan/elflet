@@ -17,21 +17,9 @@ OTAADDR			:=
 
 myall : all $(SIGNEDIMAGE)
 
-all: update_version
+all:
 
 include $(IDF_PATH)/make/project.mk
-
-update_version:
-	OLD=`if [ build/.version ];then cat build/.version;fi`;\
-	NEW=`tools/version`;\
-	if ! [ "$$NEW" = "$$OLD" ];then\
-	    echo GEN main/version.string;\
-	    echo 'static const char verstr[] = "'`tools/version`'";' > \
-	        main/version.string;\
-	    echo "$$NEW" > build/.version;\
-	    rm -f build/elflet.bin;\
-	    rm -f build/elflet.sbin;\
-	fi
 
 #
 # Rules regarding OTA update
@@ -68,4 +56,4 @@ complete-clean: clean
 # show version
 #
 version:
-	echo `tools/version`
+	echo `components//elflet-version/version`

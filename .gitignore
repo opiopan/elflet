@@ -18,7 +18,7 @@
 firmware/build
 firmware/sdkconfig
 firmware/sdkconfig.old
-firmware/main/version.string
+firmware/components/elflet-version/version.string
 *.o
 hosttool/irtx
 *.htmlz

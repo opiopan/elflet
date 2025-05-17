@@ -1,0 +1,37 @@
+idf_component_register()
+
+set(COMPONENT_TARGET libspiffsimage.a)
+set(MAKE_FLAGS
+    BUILD_DIR_BASE=${BUILD_DIR};
+    COMPONENT_BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR};
+    COMPONENT_PATH=${COMPONENT_DIR};
+    CONFIG_HW_VERSION=${CONFIG_HW_VERSION};
+    CONFIG_ELFLET_NODE_NAME=${CONFIG_ELFLET_NODE_NAME};
+    CONFIG_ELFLET_ADMIN_PASSWORD=${CONFIG_ELFLET_ADMIN_PASSWORD};
+    CONFIG_OTA_IMAGE__VERIFICATION_KEY=${CONFIG_OTA_IMAGE__VERIFICATION_KEY};
+    )
+
+externalproject_add(
+    spiffsimage-build
+    PREFIX ${COMPONENT_DIR}
+    SOURCE_DIR ${COMPONENT_DIR}
+    CONFIGURE_COMMAND ""
+    BUILD_IN_SOURCE 1
+    BUILD_COMMAND make -C${COMPONENT_DIR} ${MAKE_FLAGS} build
+    INSTALL_COMMAND ""
+    )
+
+# Add libquirc.a to the build process
+add_library(spiffsimage STATIC IMPORTED GLOBAL)
+add_dependencies(spiffsimage spiffsimage-build)
+
+set_target_properties(spiffsimage
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_CURRENT_BINARY_DIR}/${COMPONENT_TARGET})
+set_target_properties(spiffsimage
+    PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
+    ${COMPONENT_DIR})
+
+set_directory_properties(PROPERTIES
+    ADDITIONAL_MAKE_CLEAN_FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${COMPONENT_TARGET}")

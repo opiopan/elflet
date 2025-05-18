@@ -45,7 +45,7 @@ $(VKEY): $(FSSRCDIR)
 	cp $(CONFIG_OTA_IMAGE__VERIFICATION_KEY) $@
 
 $(FSSRCDIR): $(COMPONENT_BUILD_DIR)
-	mkdir $@
+	mkdir $@ || true
 
 $(COMPONENT_BUILD_DIR):
-	mkdir $@
+	mkdir $@ || true

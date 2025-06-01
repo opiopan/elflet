@@ -1,0 +1,258 @@
+{
+    "CommonCondition" : {
+        "Type" : "COMBINATION",
+        "Operator" : "AND",
+        "Formulas" : [
+            {
+                "Type" : "PROTOCOL",
+                "Protocol" : "AEHA",
+                "BitCount" : 152
+            },
+            {
+                "Type" : "DATA",
+                "Data" : "0220e00400"
+            }
+        ]
+    },
+    "OnCondition" : {
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Mask" : "01",
+        "Data" : "01"
+    },
+    "OffCondition" : {
+        "Type" : "DATA",
+        "Offset" : 5,
+        "Mask" : "01",
+        "Data" : "00"
+    },
+    "Attributes": [
+        {
+            "AttrName": "Mode",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 5,
+                "Mask": "f0"
+            },
+            "Dictionary": {
+                "Auto": "00",
+                "Dehum": "20",
+                "Cooler": "30",
+                "Heater": "40",
+                "Blower": "60"
+            },
+            "Default": "Auto"
+        },
+        {
+            "AttrName": "SubMode",
+            "Value": {
+                "Type": "ADD",
+                "Values": [
+                    {
+                        "Type": "AND",
+                        "Values": [
+                            {
+                                "Type": "PORTION",
+                                "Offset": 6,
+                                "Mask": "80"
+                            },
+                            {
+                                "Type": "PORTION",
+                                "Offset": 6,
+                                "BitwiseFlip": true,
+                                "Mask": "40",
+                                "MultiplyBy": 2
+                            }
+                        ]
+                    },
+                    {
+                        "Type": "AND",
+                        "Values": [
+                            {
+                                "Type": "PORTION",
+                                "Offset": 6,
+                                "BitwiseFlip": true,
+                                "Mask": "80",
+                                "DividedBy": 2
+                            },
+                            {
+                                "Type": "PORTION",
+                                "Offset": 6,
+                                "Mask": "20",
+                                "MultiplyBy": 2
+                            }
+                        ]
+                    },
+                    {
+                        "Type": "PORTION",
+                        "Offset": 7,
+                        "BitwiseFlip": true,
+                        "Mask": "80",
+                        "DividedBy": 4
+                    }
+                ]
+            },
+            "Dictionary": {
+                "None": "00",
+                "RelativeTemperature": "80",
+                "Temperature": "40",
+                "Humidity": "20"
+            },
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "Mode",
+                "Value": "Dehum"
+            },
+            "Default": "None"
+        },
+        {
+            "AttrName": "Temperature",
+            "Value": {
+                "Type": "ADD",
+                "Values": [
+                    {
+                        "Type": "PORTION",
+                        "Offset": 6,
+                        "Mask": "1f",
+                        "DividedBy": 2,
+                        "Bias": 16
+                    },
+                    {
+                        "Type": "PORTION",
+                        "Offset": 14,
+                        "Mask": "80",
+                        "DividedBy": 256
+                    }
+                ]
+            },
+            "Default": 25,
+            "Min": 16,
+            "Max": 30,
+            "Unit": 0.5,
+            "ApplyCondition": {
+                "Type": "DATA",
+                "Offset": 6,
+                "Mask": "e0",
+                "Data": "20"
+            },
+            "VisibleCondition": {
+                "Type": "COMBINATION",
+                "Operator": "AND",
+                "Formulas": [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "SubMode",
+                        "Value": "Temperature"
+                    },
+                    {
+                        "Type": "COMBINATION",
+                        "Operator": "NAND",
+                        "Formulas": [
+                            {
+                                "Type": "ATTRIBUTE",
+                                "AttrName": "Mode",
+                                "Value": "Blower"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "AttrName": "RelativeTemperature",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 6,
+                "Mask": "3f",
+                "DividedBy": 2,
+                "Bias": -8
+            },
+            "Default": 0,
+            "Min": -8,
+            "Max": 8,
+            "Unit": 0.5,
+            "ApplyCondition": {
+                "Type": "DATA",
+                "Offset": 6,
+                "Mask": "c0",
+                "Data": "80"
+            },
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "SubMode",
+                "Value": "RelativeTemperature"
+            }
+        },
+        {
+            "AttrName": "Humidity",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 7,
+                "Mask": "7f"
+            },
+            "Default": 60,
+            "Min": 50,
+            "Max": 60,
+            "Unit": 5,
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "SubMode",
+                "Value": "Humidity"
+            }
+        },
+        {
+            "AttrName": "FanSpeed",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 8,
+                "Mask": "f0"
+            },
+            "Dictionary": {
+                "Auto": "a0",
+                "Low": "30",
+                "Medium": "40",
+                "High": "50",
+                "Turbo": "70"
+            },
+            "Default": "Auto"
+        },
+        {
+            "AttrName": "SwingV",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 8,
+                "Mask": "0f"
+            },
+            "Dictionary": {
+                "Auto": "0f",
+                "SwingUpDown": "0e",
+                "Fixed1": "01",
+                "Fixed2": "02",
+                "Fixed3": "03",
+                "Fixed4": "04",
+                "Fixed5": "05"
+            },
+            "Default": "Auto"
+        },
+        {
+            "AttrName": "SwingH",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 9,
+                "Mask": "0f"
+            },
+            "Dictionary": {
+                "Auto": "0d",
+                "SwingLeftRightFull": "0e",
+                "SwingLeftRightNarrow": "08",
+                "FixedMiddle": "06",
+                "FixedConversing": "07",
+                "FixedLeft": "09",
+                "FixedLeftMiddle": "0a",
+                "FixedMiddleRight": "0b",
+                "FixedRight": "0c"
+            },
+            "Default": "Auto"
+        }
+    ]
+}

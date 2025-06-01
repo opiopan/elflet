@@ -58,6 +58,7 @@ static const char JSON_ATTR_VISIBLE_COND[] = "VisibleCondition";
 static const char JSON_ATTRVAL_TYPE[] = "Type";
 static const char JSON_ATTRVAL_OFFSET[] = "Offset";
 static const char JSON_ATTRVAL_MASK[] = "Mask";
+static const char JSON_ATTRVAL_BITFLIP[] = "BitwiseFlip";
 static const char JSON_ATTRVAL_BIAS[] = "Bias";
 static const char JSON_ATTRVAL_DIV[] = "DividedBy";
 static const char JSON_ATTRVAL_MUL[] = "MultiplyBy";
@@ -90,7 +91,7 @@ static const char* FORMULA_TYPE_STR[] = {
 };
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
-static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", NULL};
+static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", "AND", NULL};
 static const char* SYNVAL_TYPE_STR[] = {
     "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT"
 };
@@ -608,7 +609,7 @@ static void createFormula(const json11::Json& in, std::string& err,
 //----------------------------------------------------------------------
 class ValueFormulaNode {
 public:
-    enum Type {PORTION, ADD};
+    enum Type {PORTION, ADD, AND};
     using Ptr = SmartPtr<ValueFormulaNode>;
 
 protected:
@@ -638,6 +639,7 @@ class PortionNode : public ValueFormulaNode{
 protected:
     using Base = ValueFormulaNode;
     int offset;
+    bool isBitwiseFlip = false;
     uint8_t mask;
     bool isSigned = false;
     float divFactor;
@@ -671,22 +673,26 @@ bool PortionNode::deserialize(const json11::Json& in, std::string& err){
         err = "Maks in portion node  must be 1 byte hex data as string.";
         return false;
     }
+    ApplyBoolValue(in, JSON_ATTRVAL_BITFLIP, true, [&](bool v){
+        isBitwiseFlip = v;
+        return true;
+    });
     ApplyBoolValue(in, JSON_ATTRVAL_ISSIGNED, true, [&](bool v){
         isSigned = v;
         return true;
     });
     ApplyNumValue(in, JSON_ATTRVAL_BIAS, true, [&](float v){
-            bias = v;
-            return true;
-        });
+        bias = v;
+        return true;
+    });
     ApplyNumValue(in, JSON_ATTRVAL_DIV, true, [&](float v){
-            divFactor = v;
-            return true;
-        });
+        divFactor = v;
+        return true;
+    });
     ApplyNumValue(in, JSON_ATTRVAL_MUL, true, [&](float v){
-            mulFactor = v;
-            return true;
-        });
+        mulFactor = v;
+        return true;
+    });
 
     return true;
 }
@@ -700,6 +706,9 @@ void PortionNode::serialize(std::ostream& out){
             << std::setw(2) << std::setfill('0') << std::hex
             << (int)mask << "\"";
         out << std::setfill(' ') << std::dec;
+    }
+    if (isBitwiseFlip){
+        out << ",\"" << JSON_ATTRVAL_BITFLIP << "\":" << (isBitwiseFlip ? "true" : "false");
     }
     if (isSigned){
         out << ",\"" << JSON_ATTRVAL_ISSIGNED << "\":" << (isSigned ? "true" : "false");
@@ -719,10 +728,11 @@ void PortionNode::serialize(std::ostream& out){
 float PortionNode::extract(const IRCommand* cmd){
     auto rc = std::numeric_limits<float>::quiet_NaN();
     if ((cmd->bits + 7) / 8 >= offset){
+        auto value = isBitwiseFlip ? ~((uint8_t*)cmd->data)[offset] : ((uint8_t*)cmd->data)[offset];
         if (isSigned){
-            rc = (int8_t)(((uint8_t *)cmd->data)[offset] & mask);
+            rc = (int8_t)(value & mask);
         }else{
-            rc = (((uint8_t *)cmd->data)[offset] & mask);
+            rc = value & mask;
         }
         rc = rc * mulFactor / divFactor + bias;
     }
@@ -792,6 +802,69 @@ float AddValueNode::extract(const IRCommand* cmd){
 }
 
 //----------------------------------------------------------------------
+// bitand value node
+//----------------------------------------------------------------------
+class BitAndValueNode : public ValueFormulaNode {
+protected:
+    using Base = ValueFormulaNode;
+    std::vector<Base::Ptr> children;
+
+public:
+    BitAndValueNode() : Base(Base::AND){};
+    virtual ~BitAndValueNode(){};
+    
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float extract(const IRCommand* cmd) override;
+};
+
+bool BitAndValueNode::deserialize(const json11::Json& in, std::string& err){
+    auto elements = in[JSON_ATTRVAL_CHILDREN];
+    if (elements.is_array()){
+        for (auto &f : elements.array_items()){
+            if (!f.is_object()){
+                err = "Sub-formula of bit-and value node must be "
+                      "specified as JSON object.";
+                return false;
+            }
+            typename Base::Ptr child;
+            createValueFormula(json11::Json(f.object_items()), err, child);
+            if (child.isNull()){
+                return false;
+            }
+            children.push_back(child);
+        }
+    }
+    if (children.size() == 0){
+        err = "At least one sub-formula must be specified "
+              "for bit-and value node.";
+        return false;
+    }
+    return true;
+}
+
+void BitAndValueNode::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_ATTRVAL_CHILDREN << "\":[";
+    for (auto i = children.begin(); i != children.end(); i++){
+        if (i != children.begin()){
+            out << ",";
+        }
+        (*i)->serialize(out);
+    }
+    out << "]}";
+}
+
+float BitAndValueNode::extract(const IRCommand* cmd){
+    int rc = 0xffff;
+    for (auto i = children.begin(); i != children.end(); i++){
+        rc = rc & ((int)(*i)->extract(cmd) & 0xffff);
+    }
+    return (float)rc;
+}
+
+//----------------------------------------------------------------------
 // value formula node factory
 //----------------------------------------------------------------------
 static void createValueFormula(const json11::Json& in, std::string& err,
@@ -806,6 +879,8 @@ static void createValueFormula(const json11::Json& in, std::string& err,
             ptr = Formula::Ptr(new AddValueNode);
         }else if (typeStr == VFORMULA_TYPE_STR[Formula::PORTION]){
             ptr = Formula::Ptr(new PortionNode);
+        }else if (typeStr == VFORMULA_TYPE_STR[Formula::AND]){
+            ptr = Formula::Ptr(new BitAndValueNode);
         }else{
             err = "Invalid value formula type was specified: ";
             err += typeStr;

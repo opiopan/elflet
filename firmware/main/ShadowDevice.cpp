@@ -67,8 +67,11 @@ static const char JSON_ATTRVAL_CHILDREN[] = "Values";
 static const char JSON_SYN_PROTOCOL[] = "Protocol";
 static const char JSON_SYN_BITS[] = "BitCount";
 static const char JSON_SYN_PLACEHOLDER[] = "Placeholder";
+static const char JSON_SYN_PLACEHOLDERS[] = "Placeholders";
+static const char JSON_SYN_FRAME_INTERVAL[] = "FrameInterval";
 static const char JSON_SYN_VARS[] = "Variables";
 static const char JSON_SYN_REDUNDANT[] = "Redundant";
+static const char JSON_SYNVER_FRAME[] = "Frame";
 static const char JSON_SYNVER_OFFSET[] = "Offset";
 static const char JSON_SYNVER_MASK[] = "Mask";
 static const char JSON_SYNVER_BIAS[] = "Bias";
@@ -1575,6 +1578,7 @@ bool RedundantCode::addRedundantCode(std::string& code){
 //======================================================================
 class SynVariable{
 protected:
+    int32_t frame;
     int32_t offset;
     uint8_t mask;
     float bias;
@@ -1585,17 +1589,26 @@ protected:
     
 public:
     using Ptr = SmartPtr<SynVariable>;
-    SynVariable(): offset(0), mask(0xff),
+    SynVariable(): frame(1), offset(0), mask(0xff),
                    bias(0), mulFactor(1), divFactor(1){};
     virtual ~SynVariable(){};
 
     virtual bool deserialize(const json11::Json& in, std::string& err);
     virtual void serialize(std::ostream& out);
     virtual bool isApplicable(const ShadowDevice* shadow);
-    virtual bool apply(const ShadowDevice* shadow, std::string& code);
+    virtual bool apply(const ShadowDevice *shadow, int32_t frame, std::string &code);
 };
 
 bool SynVariable::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYNVER_FRAME, true, [&](int32_t v){
+                if (v < 1){
+                    return false;
+                }
+                this->frame = v;
+                return true;
+            })){
+        err = "Frame must be grater than 0.";
+    }
     if (!ApplyValue(in, JSON_SYNVER_OFFSET, false, [&](int32_t v){
                 this->offset = v;
                 return true;
@@ -1642,7 +1655,8 @@ bool SynVariable::deserialize(const json11::Json& in, std::string& err){
 }
 
 void SynVariable::serialize(std::ostream& out){
-    out << "{\"" << JSON_SYNVER_OFFSET << "\":" << offset;
+    out << "{\"" << JSON_SYNVER_FRAME << "\":" << frame;
+    out << ",\"" << JSON_SYNVER_OFFSET << "\":" << offset;
     if (mask != 0xff){
         out << ",\"" << JSON_SYNVER_MASK << "\":\""
             << std::setw(2) << std::setfill('0') << std::hex
@@ -1680,9 +1694,9 @@ bool SynVariable::isApplicable(const ShadowDevice* shadow){
     return true;
 }
 
-bool SynVariable::apply(const ShadowDevice* shadow, std::string& code){
-    ESP_LOGD(tag, "offset: %d, mask: %.2x", offset, mask);
-    if (!isApplicable(shadow)){
+bool SynVariable::apply(const ShadowDevice* shadow, int32_t frame, std::string& code){
+    ESP_LOGD(tag, "frame: %d, offset: %d, mask: %.2x", frame, offset, mask);
+    if (frame != this->frame || !isApplicable(shadow)){
         ESP_LOGD(tag, "not applicable");
         return false;
     }
@@ -1702,7 +1716,8 @@ bool SynVariable::apply(const ShadowDevice* shadow, std::string& code){
 class Synthesizer{
 protected:
     IRRC_PROTOCOL protocol;
-    std::string placeholder;
+    std::vector<std::string> placeholders;
+    int32_t frame_interval{100};
     int32_t bits;
     std::vector<SynVariable::Ptr> variables;
     RedundantCode::Ptr redundant;
@@ -1731,21 +1746,48 @@ bool Synthesizer::deserialize(const json11::Json& in, std::string& err){
         err = "Invalid protocol type or no protocol type was specivied.";
         return false;
     }
-    if (!ApplyHexValue(in, JSON_SYN_PLACEHOLDER, true,
+    auto placeholdersDef = in[JSON_SYN_PLACEHOLDERS];
+    if (placeholdersDef.is_array()){
+        for (auto &p : placeholdersDef.array_items()){
+            if (!p.is_string()){
+                err = "Placeholder must be specified as string.";
+                return false;
+            }
+            auto hex = strToHex(p.string_value());
+            if (hex.length() == 0){
+                err = "Placeholder must be specified as one byte hex string.";
+                return false;
+            }
+            placeholders.emplace_back(std::move(hex));
+        }
+    }
+    if (placeholders.size() == 0 &&
+        !ApplyHexValue(in, JSON_SYN_PLACEHOLDER, true,
                        [&](std::string& v)->bool{
-                           this->placeholder = std::move(v);
+                           this->placeholders.emplace_back(std::move(v));
                            return true;
                        })){
         err = "Invalid hex data was specified for synthesizer placeholder.";
+        return false;
+    }
+    if (!ApplyValue(in, JSON_SYN_FRAME_INTERVAL, true,
+                    [&](int32_t v) -> bool{
+                        if (v < 0){
+                            return false;
+                        }
+                        this->frame_interval = v;
+                        return true;
+                    })){
+        err = "Frame interval must be 0 or greater than 0.";
         return false;
     }
     ApplyValue(in, JSON_SYN_BITS, true, [&](int32_t v) -> bool{
             this->bits = v;
             return true;
         });
-    if (placeholder.length() == 0 && bits <= 0){
+    if (placeholders.size() == 0 && bits <= 0){
         err = "Placeholder or bit count must be specified "
-              "for synthsizer definition at least.";
+              "for synthesizer definition at least.";
         return false;
     }
 
@@ -1780,10 +1822,19 @@ bool Synthesizer::deserialize(const json11::Json& in, std::string& err){
 void Synthesizer::serialize(std::ostream& out){
     out << "{\"" << JSON_SYN_PROTOCOL << "\":\""
         << PROTOCOL_STR[(int)protocol] << "\"";
-    if (placeholder.length() > 0){
-        out << ",\"" << JSON_SYN_PLACEHOLDER << "\":\"";
-        printhex(out, placeholder);
-        out << "\"";
+    if (placeholders.size() > 0){
+        out << ",\"" << JSON_SYN_PLACEHOLDERS << "\":[";
+        for (auto i = placeholders.begin(); i != placeholders.end(); i++){
+            if (i != placeholders.begin()){
+                out << ",";
+            }
+            out << "\"";
+            printhex(out, *i);
+            out << "\"";
+        }
+        out << "]";
+        out << ",\"" << JSON_SYN_FRAME_INTERVAL << "\":";
+        out << frame_interval;
     }
     if (bits > 0){
         out << ",\"" << JSON_SYN_BITS << "\":" << bits;
@@ -1806,24 +1857,37 @@ void Synthesizer::serialize(std::ostream& out){
 }
 
 void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
-    std::string cmd;
-    if (placeholder.length() > 0){
-        cmd = placeholder;
+    auto applyVariablesThenIssueCommand = [&](const std::string& cmd_template, int32_t frame){
+        std::string cmd;
+        if (cmd_template.length() > 0){
+            cmd = cmd_template;
+        }else{
+            cmd.assign((bits + 7) / 8, 0);
+        }
+        auto bits = this->bits;
+        if (bits <= 0){
+            bits = cmd.length() * 8;
+        }
+        for (auto &v : variables){
+            v->apply(shadow, frame, cmd);
+        }
+        if (!redundant.isNull()){
+            redundant->addRedundantCode(cmd);
+        }
+        sendIRData(protocol, bits, (uint8_t*)cmd.data());
+    };
+
+    if (placeholders.size() > 0){
+        for (int32_t i = 0; i < placeholders.size(); i++){
+            if (i != 0){
+                vTaskDelay(pdMS_TO_TICKS(frame_interval));
+            }
+            applyVariablesThenIssueCommand(placeholders[i], i + 1);
+        }
     }else{
-        cmd.assign((bits + 7) / 8, 0);
-    }
-    auto bits = this->bits;
-    if (bits <= 0){
-        bits = cmd.length() * 8;
-    }
-    for (auto &v : variables){
-        v->apply(shadow, cmd);
-    }
-    if (!redundant.isNull()){
-        redundant->addRedundantCode(cmd);
+        applyVariablesThenIssueCommand("", 1);
     }
 
-    sendIRData(protocol, bits, (uint8_t*)cmd.data());
     shadowStat.synthesizeCount++;
 }
 

@@ -254,5 +254,26 @@
             },
             "Default": "Auto"
         }
-    ]
+    ],
+    "Synthesizing": {
+        "Protocol": "AEHA",
+        "Placeholders": [
+            "0220e00400000000",
+            "0220e00400089480af0d000ee000788d500400"
+        ],
+        "FrameInterval": 150,
+        "Variables": [
+            {
+                "Frame": 2,
+                "Offset": 5,
+                "Mask": "01",
+                "Value": {
+                    "Type": "POWER"
+                }
+            }
+        ],
+        "Redundant": {
+            "Operator": "CHECKSUM"
+        }
+    }
 }

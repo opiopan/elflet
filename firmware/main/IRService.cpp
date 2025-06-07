@@ -31,7 +31,8 @@ static TransmitterTask* txTask;
 class TransmitterTask : public Task {
 protected:
     enum Status{ST_IDLE, ST_RUNNING};
-    static const int EV_WAKE_SERVER = 1;
+    static constexpr uint32_t EV_WAKE_SERVER = 1;
+    static constexpr uint32_t EV_DONE_TRANSMIT = 2;
 
     Status status;
     Mutex mutex;
@@ -40,6 +41,7 @@ protected:
     IRRC_PROTOCOL protocol;
     uint8_t data[IRS_REQMAXSIZE];
     int32_t bits;
+    int32_t sendCount{0};
 
 public:
     TransmitterTask();
@@ -62,19 +64,31 @@ TransmitterTask::~TransmitterTask(){
 
 bool TransmitterTask::sendData(IRRC_PROTOCOL protocol,
                                int32_t bits, const uint8_t* data){
-    
-    LockHolder holder(mutex);
+    mutex.lock();
     if (status != ST_IDLE){
         return false;
     }
     if (bits / 8 > sizeof(this->data)){
         return false;
     }
+    auto count = sendCount;
     status = ST_RUNNING;
     this->protocol = protocol;
     this->bits = bits;
     memcpy(this->data, data, bits / 8);
     xEventGroupSetBits(events, EV_WAKE_SERVER);
+    mutex.unlock();
+
+    mutex.lock();
+    while (sendCount == count){
+        mutex.unlock();
+        xEventGroupWaitBits(events, EV_DONE_TRANSMIT,
+                            pdTRUE, pdFALSE,
+                            portMAX_DELAY);
+        mutex.lock();
+    }
+    mutex.unlock();
+
     return true;
 }
 
@@ -98,6 +112,8 @@ void TransmitterTask::run(void *){
 
         mutex.lock();
         status = ST_IDLE;
+        sendCount++;
+        xEventGroupSetBits(events, EV_DONE_TRANSMIT);
         mutex.unlock();
     }
 }

@@ -1,4 +1,5 @@
 {
+    "TimeDifference": 9.0,
     "CommonCondition" : {
         "Type" : "COMBINATION",
         "Operator" : "AND",
@@ -259,7 +260,8 @@
         "Protocol": "AEHA",
         "Placeholders": [
             "0220e00400000000",
-            "0220e00400089480af0d000ee000788d500400"
+            "0220e00400089480af0d000ee000788d500400",
+            "0220e004410801000000000000193354050500"
         ],
         "FrameInterval": 150,
         "Variables": [
@@ -269,6 +271,60 @@
                 "Mask": "01",
                 "Value": {
                     "Type": "POWER"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 13,
+                "Mask": "7f",
+                "Value": {
+                    "Type": "DATETIME",
+                    "Element": "YY"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 13,
+                "Mask": "80",
+                "MultiplyBy": 128,
+                "Value": {
+                    "Type": "DATETIME",
+                    "Element": "DD"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 14,
+                "Mask": "07",
+                "DividedBy": 2,
+                "Value": {
+                    "Type": "DATETIME",
+                    "Element": "DD"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 14,
+                "Mask": "f8",
+                "MultiplyBy": 8,
+                "Value": {
+                    "Type": "DATETIME",
+                    "Element": "MM"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 15,
+                "Value": {
+                    "Type": "MINUTEOFDAY"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 16,
+                "DividedBy": 256,
+                "Value": {
+                    "Type": "MINUTEOFDAY"
                 }
             }
         ],

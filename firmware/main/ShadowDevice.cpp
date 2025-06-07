@@ -28,6 +28,7 @@
 static const char tag[] = "ShadowDevice";
 
 static const char JSON_SHADOW_NAME[] = "ShadowName";
+static const char JSON_SHADOW_TIME_DIFFERENCE[] = "TimeDifference";
 static const char JSON_SHADOW_COMMON_COND[] = "CommonCondition";
 static const char JSON_SHADOW_ON_COND[] = "OnCondition";
 static const char JSON_SHADOW_OFF_COND[] = "OffCondition";
@@ -83,6 +84,7 @@ static const char JSON_SYNVAL_TYPE[] = "Type";
 static const char JSON_SYNVAL_ATTRNAME[] = "AttrName";
 static const char JSON_SYNVAL_CONSTVAL[] = "Value";
 static const char JSON_SYNVAL_SUBFORMULA[] = "SubFormula";
+static const char JSON_SYNVAL_DATETIME_ELEMENT[] = "Element";
 static const char JSON_SYNRED_OPERATOR[] = "Operator";
 static const char JSON_SYNRED_OFFSET[] = "Offset";
 static const char JSON_SYNRED_SEED[] = "Seed";
@@ -95,8 +97,11 @@ static const char* FORMULA_TYPE_STR[] = {
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
 static const char* VFORMULA_TYPE_STR[] = {"PORTION", "ADD", "AND", NULL};
-static const char* SYNVAL_TYPE_STR[] = {
-    "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT"
+static const char *SYNVAL_TYPE_STR[] = {
+    "INTEGER", "DECIMAL", "POWER", "ATTRIBUTE", "CONSTANT", "DATETIME", "MINUTEOFDAY"
+};
+static const char *SYNVAL_DATETIME_ELEMENT_STR[] = {
+    "YYYY", "YY", "MM", "DD", "h", "m", "s", NULL
 };
 static const char* SYN_REDUNDANT_TYPE_STR[] = {"CHECKSUM", "4BITSUB", NULL};
 
@@ -1233,7 +1238,7 @@ bool AttributeImp::setStringValue(const std::string& value){
 //----------------------------------------------------------------------
 class SvFormulaNode {
 public:
-    enum Type {INTEGER, DECIMAL, POWER, ATTRIBUTE, CONSTANT};
+    enum Type {INTEGER, DECIMAL, POWER, ATTRIBUTE, CONSTANT, DATETIME, MINUTEOFDAY};
     using Ptr = SmartPtr<SvFormulaNode>;
 
 protected:
@@ -1424,6 +1429,102 @@ void SvConstant::serialize(std::ostream& out){
 }
 
 //----------------------------------------------------------------------
+// datetime value node
+//----------------------------------------------------------------------
+class SvDateTime : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+    enum Element {YYYY, YY, MM, DD, h, m, s};
+    Element element;
+public:
+    SvDateTime():Base(Base::DATETIME), element(YYYY){};
+    virtual ~SvDateTime(){};
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override;
+};
+
+bool SvDateTime::deserialize(const json11::Json& in, std::string& err){
+    auto type = in[JSON_SYNVAL_DATETIME_ELEMENT];
+    if (type.is_string()){
+        auto typeStr = type.string_value();
+        if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[YYYY]){
+            element = YYYY;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[YY]){
+            element = YY;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[MM]){
+            element = MM;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[DD]){
+            element = DD;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[h]){
+            element = h;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[m]){
+            element = m;
+        }else if (typeStr == SYNVAL_DATETIME_ELEMENT_STR[s]){
+            element = s;
+        }else{
+            err = "Invalid datetime element type was specified.";
+            return false;
+        }
+    }else{
+        err = "No datetime element type was specified.";
+        return false;
+    }
+    return true;
+}
+
+void SvDateTime::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << ",\"" << JSON_SYNVAL_DATETIME_ELEMENT << "\":\""
+        << SYNVAL_DATETIME_ELEMENT_STR[element] << "\"";
+    out << "}";
+}
+
+float SvDateTime::getValue(const ShadowDevice* shadow){
+    auto& tm = shadow->getDateTime();
+    switch (element){
+        case YYYY: return tm.tm_year + 1900;
+        case YY:   return tm.tm_year % 100;
+        case MM:   return tm.tm_mon + 1;
+        case DD:   return tm.tm_mday;
+        case h:    return tm.tm_hour;
+        case m:    return tm.tm_min;
+        case s:    return tm.tm_sec;
+        default:   return std::numeric_limits<float>::quiet_NaN();
+    }
+}
+
+//----------------------------------------------------------------------
+// minute of day value node
+//----------------------------------------------------------------------
+class SvMinuteOfDay : public SvFormulaNode{
+protected:
+    using Base = SvFormulaNode;
+public:
+    SvMinuteOfDay():Base(Base::MINUTEOFDAY){};
+    virtual ~SvMinuteOfDay(){};
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    float getValue(const ShadowDevice* shadow) override;
+};
+
+bool SvMinuteOfDay::deserialize(const json11::Json& in, std::string& err){
+    return true; // No parameters
+}
+
+void SvMinuteOfDay::serialize(std::ostream& out){
+    out << "{";
+    Base::serialize(out);
+    out << "}";
+}
+
+float SvMinuteOfDay::getValue(const ShadowDevice* shadow){
+    auto& tm = shadow->getDateTime();
+    return tm.tm_hour * 60 + tm.tm_min;
+}
+
+//----------------------------------------------------------------------
 // synthesizer variable formula node factory
 //----------------------------------------------------------------------
 static void createSvFormula(const json11::Json& in, std::string& err,
@@ -1444,6 +1545,10 @@ static void createSvFormula(const json11::Json& in, std::string& err,
             ptr = Formula::Ptr(new SvAttribute);
         }else if (typeStr == SYNVAL_TYPE_STR[Formula::CONSTANT]){
             ptr = Formula::Ptr(new SvConstant);
+        }else if (typeStr == SYNVAL_TYPE_STR[Formula::DATETIME]){
+            ptr = Formula::Ptr(new SvDateTime);
+        }else if (typeStr == SYNVAL_TYPE_STR[Formula::MINUTEOFDAY]){
+            ptr = Formula::Ptr(new SvMinuteOfDay);
         }else{
             err = "Invalid synthesizer variable value type was specified.";
         }
@@ -1897,6 +2002,8 @@ void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
 class ShadowDeviceImp : public ShadowDevice {
 protected:
     std::string name;
+    float time_difference{0.0f};
+    tm date_time;
     FormulaNode<IRCommand>::Ptr commonCondition;
     FormulaNode<IRCommand>::Ptr onCondition;
     FormulaNode<IRCommand>::Ptr offCondition;
@@ -1938,7 +2045,11 @@ public:
     const Attribute* getAttribute(const std::string& name)const override;
     bool setStatus(const json11::Json& json, std::string& err,
                    bool ignorePower = false) override;
-    
+
+    const tm& getDateTime() const override{
+        return date_time;
+    }
+
 protected:
     void backup();
     void restore();
@@ -1953,6 +2064,11 @@ bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
         err = "Shadow name specified in uri is not same name in JSON data.";
         return false;
     }
+    ApplyNumValue(in, JSON_SHADOW_TIME_DIFFERENCE, true,
+                  [&](float v){
+                      time_difference = v;
+                      return true;
+                  });
 
     auto applyFormula =
         [&](const char* tag, FormulaNode<IRCommand>::Ptr& ptr)->bool{
@@ -2029,6 +2145,9 @@ bool ShadowDeviceImp::deserialize(const json11::Json& in, std::string& err){
 
 void ShadowDeviceImp::serialize(std::ostream& out){
     out << "{\"" << JSON_SHADOW_NAME << "\":\"" << name << "\"";
+    if (time_difference != 0.0f){
+        out << ",\"" << JSON_SHADOW_TIME_DIFFERENCE << "\":" << time_difference;
+    }
     if (!commonCondition.isNull()){
         out << ",\"" << JSON_SHADOW_COMMON_COND << "\":";
         commonCondition->serialize(out);
@@ -2224,6 +2343,9 @@ bool ShadowDeviceImp::setStatus(const json11::Json& status, std::string& err,
     // synthesize IR command and issue IR command
     //
     if (!ignorePower){
+        auto now = time(NULL);
+        auto adjustedTime = now + (int)(time_difference * 3600.0f);
+        gmtime_r(&adjustedTime, &date_time);
         if (!powerStatus && !synthesizerToOff.isNull()){
             synthesizerToOff->issueIRCommand(this);
         }else if (!synthesizer.isNull()){

@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <json11.hpp>
+#include <time.h>
 #include "irrc.h"
 
 class ShadowDevice {
@@ -24,6 +25,7 @@ public:
     virtual const Attribute* getAttribute(const std::string& name)const = 0;
     virtual bool setStatus(const json11::Json& json, std::string& err,
                            bool ignorePower = false) = 0;
+    virtual const tm& getDateTime() const = 0;
 };
 
 struct IRCommand {

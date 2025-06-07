@@ -1962,8 +1962,7 @@ void Synthesizer::serialize(std::ostream& out){
 }
 
 void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
-    auto applyVariablesThenIssueCommand = [&](const std::string& cmd_template, int32_t frame){
-        std::string cmd;
+    auto applyVariablesThenIssueCommand = [&](const std::string& cmd_template, int32_t frame, std::string& cmd){
         if (cmd_template.length() > 0){
             cmd = cmd_template;
         }else{
@@ -1979,18 +1978,28 @@ void Synthesizer::issueIRCommand(const ShadowDevice* shadow){
         if (!redundant.isNull()){
             redundant->addRedundantCode(cmd);
         }
-        sendIRData(protocol, bits, (uint8_t*)cmd.data());
+        return bits;
     };
 
+    std::vector<std::pair<std::string, int32_t>> ir_commands;
     if (placeholders.size() > 0){
         for (int32_t i = 0; i < placeholders.size(); i++){
-            if (i != 0){
-                vTaskDelay(pdMS_TO_TICKS(frame_interval));
-            }
-            applyVariablesThenIssueCommand(placeholders[i], i + 1);
+            std::string cmd;
+            auto bits = applyVariablesThenIssueCommand(placeholders[i], i + 1, cmd);
+            ir_commands.emplace_back(std::move(cmd), bits);
         }
     }else{
-        applyVariablesThenIssueCommand("", 1);
+        std::string cmd;
+        auto bits = applyVariablesThenIssueCommand("", 1, cmd);
+        ir_commands.emplace_back(std::move(cmd), bits);
+    }
+
+    for (auto i = 0; i < ir_commands.size(); i++){
+        if (i != 0){
+            vTaskDelay(pdMS_TO_TICKS(frame_interval));
+        }
+        auto& cmd = ir_commands[i];
+        sendIRData(protocol, cmd.second, (uint8_t *)cmd.first.data());
     }
 
     shadowStat.synthesizeCount++;

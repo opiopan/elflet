@@ -260,7 +260,7 @@
         "Protocol": "AEHA",
         "Placeholders": [
             "0220e00400000000",
-            "0220e00400000080af0d000ee000788d500400",
+            "0220e00400080000af0d000ee000788d500400",
             "0220e004410801000000000000193354050000"
         ],
         "FrameInterval": 150,
@@ -365,7 +365,8 @@
                 "Value": {
                     "Type": "ATTRIBUTE",
                     "AttrName": "Humidity"
-                }
+                },
+                "RelateWithVisibilityOfAttribute": "Humidity"
             },
             {
                 "Frame": 2,

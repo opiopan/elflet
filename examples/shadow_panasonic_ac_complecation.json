@@ -261,7 +261,7 @@
         "Placeholders": [
             "0220e00400000000",
             "0220e00400089480af0d000ee000788d500400",
-            "0220e004410801000000000000193354050500"
+            "0220e004410801000000000000193354050000"
         ],
         "FrameInterval": 150,
         "Variables": [
@@ -325,6 +325,39 @@
                 "DividedBy": 256,
                 "Value": {
                     "Type": "MINUTEOFDAY"
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 17,
+                "Mask": "0f",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Mode"
+                },
+                "Mapping" : [
+                    {"From": "00", "To": "05"},
+                    {"From": "20", "To": "02"},
+                    {"From": "30", "To": "01"},
+                    {"From": "40", "To": "03"},
+                    {"From": "60", "To": "06"}
+                ],
+                "ActivationCondition": {
+                    "Type": "POWER",
+                    "IsOn": true
+                }
+            },
+            {
+                "Frame": 3,
+                "Offset": 17,
+                "Mask": "0f",
+                "Value": {
+                    "Type": "CONSTANT",
+                    "Value": "08"
+                },
+                "ActivationCondition": {
+                    "Type": "POWER",
+                    "IsOn": false
                 }
             }
         ],

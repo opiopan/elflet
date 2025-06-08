@@ -46,6 +46,7 @@ static const char JSON_FORMULA_DATA[] = "Data";
 static const char JSON_FORMULA_MASK[] = "Mask";
 static const char JSON_FORMULA_ATTRNAME[] = "AttrName";
 static const char JSON_FORMULA_ATTRVALUE[] = "Value";
+static const char JSON_FORMULA_POWER_IS_ON[] = "IsOn";
 static const char JSON_ATTR_NAME[] = "AttrName";
 static const char JSON_ATTR_NOAPPINOFF[] = "NotApplyInOff";
 static const char JSON_ATTR_VALUE[] = "Value";
@@ -72,14 +73,18 @@ static const char JSON_SYN_PLACEHOLDERS[] = "Placeholders";
 static const char JSON_SYN_FRAME_INTERVAL[] = "FrameInterval";
 static const char JSON_SYN_VARS[] = "Variables";
 static const char JSON_SYN_REDUNDANT[] = "Redundant";
-static const char JSON_SYNVER_FRAME[] = "Frame";
-static const char JSON_SYNVER_OFFSET[] = "Offset";
-static const char JSON_SYNVER_MASK[] = "Mask";
-static const char JSON_SYNVER_BIAS[] = "Bias";
-static const char JSON_SYNVER_MUL[] = "MultiplyBy";
-static const char JSON_SYNVER_DIV[] = "DividedBy";
-static const char JSON_SYNVER_RELATTR[] = "RelateWithVisibilityOfAttribute";
-static const char JSON_SYNVER_VALUE[] = "Value";
+static const char JSON_SYNVAR_FRAME[] = "Frame";
+static const char JSON_SYNVAR_OFFSET[] = "Offset";
+static const char JSON_SYNVAR_MASK[] = "Mask";
+static const char JSON_SYNVAR_BIAS[] = "Bias";
+static const char JSON_SYNVAR_MUL[] = "MultiplyBy";
+static const char JSON_SYNVAR_DIV[] = "DividedBy";
+static const char JSON_SYNVAR_RELATTR[] = "RelateWithVisibilityOfAttribute";
+static const char JSON_SYNVAR_VALUE[] = "Value";
+static const char JSON_SYNVAR_ACTIVATION_CONDITION[] = "ActivationCondition";
+static const char JSON_SYNVAR_MAPPING[] = "Mapping";
+static const char JSON_SYNVAR_FROM[] = "From";
+static const char JSON_SYNVAR_TO[] = "To";
 static const char JSON_SYNVAL_TYPE[] = "Type";
 static const char JSON_SYNVAL_ATTRNAME[] = "AttrName";
 static const char JSON_SYNVAL_CONSTVAL[] = "Value";
@@ -92,7 +97,7 @@ static const char JSON_SYNRED_BITWISENOT[] = "BitwiseNot";
 static const char JSON_SYNRED_COMPENSATION[] = "Compensation";
 
 static const char* FORMULA_TYPE_STR[] = {
-    "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", NULL
+    "COMBINATION", "PROTOCOL", "DATA", "ATTRIBUTE", "POWER", NULL
 };
 static const char* OP_TYPE_STR[] = {"AND", "OR", "NAND", "NOR", NULL};
 static const char* PROTOCOL_STR[] = {"NEC", "AEHA", "SONY", NULL};
@@ -207,7 +212,7 @@ static void printhex(std::ostream& out, const std::string& data){
 //----------------------------------------------------------------------
 template <typename T>  class FormulaNode {
 public:
-    enum Type {COMBINATION, PROTOCOL, DATA, ATTRIBUTE};
+    enum Type {COMBINATION, PROTOCOL, DATA, ATTRIBUTE, POWER};
     using Ptr = SmartPtr<FormulaNode<T>>;
 
 protected:
@@ -558,6 +563,43 @@ bool AttributeNode::test(const ShadowDevice* shadow){
 }
 
 //----------------------------------------------------------------------
+// power status comparison node
+//----------------------------------------------------------------------
+class PowerNode : public FormulaNode<ShadowDevice> {
+protected:
+    using Base = FormulaNode<ShadowDevice>;
+    bool isOn;
+public:
+    PowerNode() : Base(Base::POWER), isOn(true){};
+    virtual ~PowerNode(){};
+    bool deserialize(const json11::Json& in, std::string& err) override;
+    void serialize(std::ostream& out) override;
+    bool test(const ShadowDevice* shadow) override;
+};
+
+bool PowerNode::deserialize(const json11::Json& in, std::string& err){
+    ApplyBoolValue(in, JSON_FORMULA_POWER_IS_ON, false,
+        [&](bool v) -> bool{
+            this->isOn = v;
+            return true;
+        }
+    );
+    return true;
+}
+
+void PowerNode::serialize(std::ostream& out){
+    out << "{";
+    FormulaNode::serialize(out);
+    out << ",\"" << JSON_FORMULA_POWER_IS_ON << "\":"
+        << (isOn ? "true" : "false") << "}";
+}
+
+bool PowerNode::test(const ShadowDevice* shadow){
+    auto rc = shadow->isOn() == isOn;
+    return rc;
+}
+
+//----------------------------------------------------------------------
 // formula node factory
 //----------------------------------------------------------------------
 static void createFormula(const json11::Json& in, std::string& err,
@@ -597,6 +639,8 @@ static void createFormula(const json11::Json& in, std::string& err,
             ptr = Formula::Ptr(new CombinationNode<ShadowDevice>);
         }else if (typeStr == FORMULA_TYPE_STR[Formula::ATTRIBUTE]){
             ptr = Formula::Ptr(new AttributeNode);
+        }else if (typeStr == FORMULA_TYPE_STR[Formula::POWER]){
+            ptr = Formula::Ptr(new PowerNode);
         }else{
             err = "Invalid formula type was specified.";
         }
@@ -1230,7 +1274,7 @@ bool AttributeImp::setStringValue(const std::string& value){
 }
 
 //======================================================================
-// synthesizer variable formula node
+// synthesizer variable value formula node
 //======================================================================
 
 //----------------------------------------------------------------------
@@ -1561,7 +1605,215 @@ static void createSvFormula(const json11::Json& in, std::string& err,
 }
 
 //======================================================================
-// redundant code generator inmplementation
+// synthesizer variable
+//======================================================================
+class SynVariable{
+protected:
+    int32_t frame;
+    int32_t offset;
+    uint8_t mask;
+    float bias;
+    float mulFactor;
+    float divFactor;
+    std::string relativeAttribute;
+    FormulaNode<ShadowDevice>::Ptr activationCondition;
+    SvFormulaNode::Ptr value;
+    std::vector<std::pair<uint8_t, uint8_t>> mapping;
+    
+public:
+    using Ptr = SmartPtr<SynVariable>;
+    SynVariable(): frame(1), offset(0), mask(0xff),
+                   bias(0), mulFactor(1), divFactor(1){};
+    virtual ~SynVariable(){};
+
+    virtual bool deserialize(const json11::Json& in, std::string& err);
+    virtual void serialize(std::ostream& out);
+    virtual bool isApplicable(const ShadowDevice* shadow);
+    virtual bool apply(const ShadowDevice *shadow, int32_t frame, std::string &code);
+};
+
+bool SynVariable::deserialize(const json11::Json& in, std::string& err){
+    if (!ApplyValue(in, JSON_SYNVAR_FRAME, true, [&](int32_t v){
+                if (v < 1){
+                    return false;
+                }
+                this->frame = v;
+                return true;
+            })){
+        err = "Frame must be grater than 0.";
+    }
+    if (!ApplyValue(in, JSON_SYNVAR_OFFSET, false, [&](int32_t v){
+                this->offset = v;
+                return true;
+            })){
+        err = "Offset must be specified for synthesizer variable.";
+        return false;
+    }
+    if (!ApplyHexValue(in, JSON_SYNVAR_MASK, true, [&](const std::string& v){
+                if (v.length() != 1){
+                    return false;
+                }
+                this->mask = v[0];
+                return true;
+            })){
+        err = "Mask in synthesizer variable must be "
+              "one byte hex data as string.";
+        return false;
+    }
+    ApplyNumValue(in, JSON_SYNVAR_BIAS, true, [&](float v){
+            bias = v;
+            return true;
+        });
+    ApplyNumValue(in, JSON_SYNVAR_DIV, true, [&](float v){
+            divFactor = v;
+            return true;
+        });
+    ApplyNumValue(in, JSON_SYNVAR_MUL, true, [&](float v){
+            mulFactor = v;
+            return true;
+        });
+    ApplyValue(in, JSON_SYNVAR_RELATTR, true, [&](const std::string& v){
+            this->relativeAttribute = v;
+            return true;
+        });
+
+    auto condDef = in[JSON_SYNVAR_ACTIVATION_CONDITION];
+    if (condDef.is_object()){
+        createFormula(json11::Json(condDef.object_items()), err,
+                      activationCondition);
+        if (activationCondition.isNull()){
+            return false;
+        }
+    }
+
+    auto valDef = in[JSON_SYNVAR_VALUE];
+    if (valDef.is_object()){
+        createSvFormula(json11::Json(valDef.object_items()), err, value);
+        if (value.isNull()){
+            return false;
+        }
+    }
+
+    auto mappingsDef = in[JSON_SYNVAR_MAPPING];
+    if (mappingsDef.is_array()){
+        for (auto &m : mappingsDef.array_items()){
+            if (m.is_object()){
+                uint8_t from{0}, to{0};
+                if (!ApplyHexValue(m, JSON_SYNVAR_FROM, false,
+                                   [&](const std::string& v) -> bool {
+                                    if (v.length() !=1){
+                                            return false;
+                                    }
+                                    from = v[0];
+                                    return true;
+                                    })){
+                    err = "Mapping 'from' value must be one byte hex string.";
+                    return false;
+                 }
+                if (!ApplyHexValue(m, JSON_SYNVAR_TO, false,
+                                   [&](const std::string& v) -> bool {
+                                    if (v.length() !=1){
+                                            return false;
+                                    }
+                                    to = v[0];
+                                    return true;
+                                    })){
+                    err = "Mapping 'to' value must be one byte hex string.";
+                    return false;
+                }
+                mapping.emplace_back(from, to);
+            }
+        }
+    }
+
+    return true;
+}
+
+void SynVariable::serialize(std::ostream& out){
+    out << "{\"" << JSON_SYNVAR_FRAME << "\":" << frame;
+    out << ",\"" << JSON_SYNVAR_OFFSET << "\":" << offset;
+    if (mask != 0xff){
+        out << ",\"" << JSON_SYNVAR_MASK << "\":\""
+            << std::setw(2) << std::setfill('0') << std::hex
+            << (int)mask << "\"";
+        out << std::setfill(' ') << std::dec;
+    }
+    if (bias != 0){
+        out << ",\"" << JSON_SYNVAR_BIAS << "\":" << bias;
+    }
+    if (mulFactor != 1){
+        out << ",\"" << JSON_SYNVAR_MUL << "\":" << mulFactor;
+    }
+    if (divFactor != 1){
+        out << ",\"" << JSON_SYNVAR_DIV << "\":" << divFactor;
+    }
+    if (!value.isNull()){
+        out << ",\"" << JSON_SYNVAR_VALUE << "\":";
+        value->serialize(out);
+    }
+    if (relativeAttribute.length() > 0){
+        out << ",\"" << JSON_SYNVAR_RELATTR << "\":\""
+            << relativeAttribute << "\"";
+    }
+    if (!activationCondition.isNull()){
+        out << ",\"" << JSON_SYNVAR_ACTIVATION_CONDITION << "\":";
+        activationCondition->serialize(out);
+    }
+    if (mapping.size() > 0){
+        out << ",\"" << JSON_SYNVAR_MAPPING << "\":[";
+        for (auto i = mapping.begin(); i != mapping.end(); i++){
+            if (i != mapping.begin()){
+                out << ",";
+            }
+            out << "{\"" << JSON_SYNVAR_FROM << "\":\""
+                << std::setw(2) << std::setfill('0') << std::hex
+                << (int)i->first << "\",\"" << JSON_SYNVAR_TO
+                << "\":\"" << std::setw(2) << std::setfill('0') << std::hex
+                << (int)i->second << "\"}";
+        }
+        out << "]" << std::dec;
+    }
+    out << "}";
+}
+
+bool SynVariable::isApplicable(const ShadowDevice* shadow){
+    auto rc{true};
+    if (relativeAttribute.length() > 0){
+        auto attr = shadow->getAttribute(relativeAttribute);
+        if (!attr){
+            return false;
+        }
+        rc = rc && attr->isVisible();
+    }
+    if (!activationCondition.isNull()){
+        rc = rc && activationCondition->test(shadow);
+    }
+    return rc;
+}
+
+bool SynVariable::apply(const ShadowDevice* shadow, int32_t frame, std::string& code){
+    ESP_LOGD(tag, "frame: %d, offset: %d, mask: %.2x", frame, offset, mask);
+    if (frame != this->frame || !isApplicable(shadow)){
+        ESP_LOGD(tag, "not applicable");
+        return false;
+    }
+
+    float v = (value->getValue(shadow) + bias) * mulFactor / divFactor;
+    int32_t iv = (int32_t)v & 0xff;
+    for (auto &m : mapping){
+        if (m.first == iv){
+            iv = m.second;
+            break;
+        }
+    }
+    int32_t byte = (iv & mask) | (code[offset] & ~mask);
+    code[offset] = byte;
+    
+    return true;
+}
+
+//======================================================================
+// redundant code generator implementation
 //======================================================================
 class RedundantCode{
 public:
@@ -1674,143 +1926,6 @@ bool RedundantCode::addRedundantCode(std::string& code){
         rc = (hrc & 0xf0) | (lrc & 0x0f);
     }
     code[offset] = rc;
-    
-    return true;
-}
-
-//======================================================================
-// synthesizer variable
-//======================================================================
-class SynVariable{
-protected:
-    int32_t frame;
-    int32_t offset;
-    uint8_t mask;
-    float bias;
-    float mulFactor;
-    float divFactor;
-    std::string relativeAttribute;
-    SvFormulaNode::Ptr value;
-    
-public:
-    using Ptr = SmartPtr<SynVariable>;
-    SynVariable(): frame(1), offset(0), mask(0xff),
-                   bias(0), mulFactor(1), divFactor(1){};
-    virtual ~SynVariable(){};
-
-    virtual bool deserialize(const json11::Json& in, std::string& err);
-    virtual void serialize(std::ostream& out);
-    virtual bool isApplicable(const ShadowDevice* shadow);
-    virtual bool apply(const ShadowDevice *shadow, int32_t frame, std::string &code);
-};
-
-bool SynVariable::deserialize(const json11::Json& in, std::string& err){
-    if (!ApplyValue(in, JSON_SYNVER_FRAME, true, [&](int32_t v){
-                if (v < 1){
-                    return false;
-                }
-                this->frame = v;
-                return true;
-            })){
-        err = "Frame must be grater than 0.";
-    }
-    if (!ApplyValue(in, JSON_SYNVER_OFFSET, false, [&](int32_t v){
-                this->offset = v;
-                return true;
-            })){
-        err = "Offset must be specified for synthesizer variable.";
-        return false;
-    }
-    if (!ApplyHexValue(in, JSON_SYNVER_MASK, true, [&](const std::string& v){
-                if (v.length() != 1){
-                    return false;
-                }
-                this->mask = v[0];
-                return true;
-            })){
-        err = "Mask in synthesizer variable must be "
-              "one byte hex data as string.";
-        return false;
-    }
-    ApplyNumValue(in, JSON_SYNVER_BIAS, true, [&](float v){
-            bias = v;
-            return true;
-        });
-    ApplyNumValue(in, JSON_SYNVER_DIV, true, [&](float v){
-            divFactor = v;
-            return true;
-        });
-    ApplyNumValue(in, JSON_SYNVER_MUL, true, [&](float v){
-            mulFactor = v;
-            return true;
-        });
-    ApplyValue(in, JSON_SYNVER_RELATTR, true, [&](const std::string& v){
-            this->relativeAttribute = v;
-            return true;
-        });
-
-    auto valDef = in[JSON_SYNVER_VALUE];
-    if (valDef.is_object()){
-        createSvFormula(json11::Json(valDef.object_items()), err, value);
-        if (value.isNull()){
-            return false;
-        }
-    }
-    return true;
-}
-
-void SynVariable::serialize(std::ostream& out){
-    out << "{\"" << JSON_SYNVER_FRAME << "\":" << frame;
-    out << ",\"" << JSON_SYNVER_OFFSET << "\":" << offset;
-    if (mask != 0xff){
-        out << ",\"" << JSON_SYNVER_MASK << "\":\""
-            << std::setw(2) << std::setfill('0') << std::hex
-            << (int)mask << "\"";
-        out << std::setfill(' ') << std::dec;
-    }
-    if (bias != 0){
-        out << ",\"" << JSON_SYNVER_BIAS << "\":" << bias;
-    }
-    if (mulFactor != 1){
-        out << ",\"" << JSON_SYNVER_MUL << "\":" << mulFactor;
-    }
-    if (divFactor != 1){
-        out << ",\"" << JSON_SYNVER_DIV << "\":" << divFactor;
-    }
-    if (!value.isNull()){
-        out << ",\"" << JSON_SYNVER_VALUE << "\":";
-        value->serialize(out);
-    }
-    if (relativeAttribute.length() > 0){
-        out << ",\"" << JSON_SYNVER_RELATTR << "\":\""
-            << relativeAttribute << "\"";
-    }
-    out << "}";
-}
-
-bool SynVariable::isApplicable(const ShadowDevice* shadow){
-    if (relativeAttribute.length() > 0){
-        auto attr = shadow->getAttribute(relativeAttribute);
-        if (!attr){
-            return false;
-        }
-        return attr->isVisible();
-    }
-    return true;
-}
-
-bool SynVariable::apply(const ShadowDevice* shadow, int32_t frame, std::string& code){
-    ESP_LOGD(tag, "frame: %d, offset: %d, mask: %.2x", frame, offset, mask);
-    if (frame != this->frame || !isApplicable(shadow)){
-        ESP_LOGD(tag, "not applicable");
-        return false;
-    }
-
-    float v = (value->getValue(shadow) + bias) * mulFactor / divFactor;
-    int32_t iv = (int32_t)v;
-    int32_t byte = (iv & mask) | (code[offset] & ~mask);
-    code[offset] = byte;
-    ESP_LOGD(tag, "applied: %.2x : %.2x", iv, byte);
     
     return true;
 }

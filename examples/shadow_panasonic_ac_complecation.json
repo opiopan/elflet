@@ -260,7 +260,7 @@
         "Protocol": "AEHA",
         "Placeholders": [
             "0220e00400000000",
-            "0220e00400089480af0d000ee000788d500400",
+            "0220e00400000080af0d000ee000788d500400",
             "0220e004410801000000000000193354050000"
         ],
         "FrameInterval": 150,
@@ -273,6 +273,142 @@
                     "Type": "POWER"
                 }
             },
+            {
+                "Frame": 2,
+                "Offset": 5,
+                "Mask": "f0",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Mode"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 6,
+                "Mask": "c0",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "SubMode"
+                },
+                "Mapping": [
+                    {"From": "00", "To": "00"},
+                    {"From": "20", "To": "c0"},
+                    {"From": "40", "To": "00"},
+                    {"From": "80", "To": "80"}
+                ]
+            },
+            {
+                "Frame": 2,
+                "Offset": 6,
+                "Mask": "3f",
+                "MultiplyBy": 2,
+                "Bias": 8,
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "RelativeTemperature"
+                },
+                "RelateWithVisibilityOfAttribute": "RelativeTemperature"
+            },
+            {
+                "Frame": 2,
+                "Offset": 6,
+                "Mask": "1e",
+                "MultiplyBy": 2,
+                "Bias": -16,
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Temperature"
+                },
+                "RelateWithVisibilityOfAttribute": "Temperature"
+            },
+            {
+                "Frame": 2,
+                "Offset": 6,
+                "Mask": "20",
+                "Value": {
+                    "Type": "CONSTANT",
+                    "Value": "20"
+                },
+                "RelateWithVisibilityOfAttribute": "Temperature"
+            },
+            {
+                "Frame": 2,
+                "Offset": 14,
+                "Mask": "80",
+                "Bias": -16,
+                "MultiplyBy": 256,
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Temperature"
+                },
+                "RelateWithVisibilityOfAttribute": "Temperature"
+            },
+            {
+                "Frame": 2,
+                "Offset": 7,
+                "Mask": "80",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "SubMode"
+                },
+                "Mapping": [
+                    {"From": "00", "To": "80"},
+                    {"From": "20", "To": "00"},
+                    {"From": "40", "To": "80"},
+                    {"From": "80", "To": "80"}
+                ]
+            },
+            {
+                "Frame": 2,
+                "Offset": 7,
+                "Mask": "7f",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Humidity"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 6,
+                "Mask": "3f",
+                "Value": {
+                    "Type": "CONSTANT",
+                    "Value": "36"
+                },
+                "ActivationCondition": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Mode",
+                    "Value": "Blower"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 8,
+                "Mask": "f0",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "FanSpeed"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 8,
+                "Mask": "0f",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "SwingV"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 9,
+                "Mask": "0f",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "SwingH"
+                }
+            },
+            
             {
                 "Frame": 3,
                 "Offset": 13,
@@ -289,7 +425,7 @@
                 "MultiplyBy": 128,
                 "Value": {
                     "Type": "DATETIME",
-                    "Element": "DD"
+                    "Element": "MM"
                 }
             },
             {
@@ -299,7 +435,7 @@
                 "DividedBy": 2,
                 "Value": {
                     "Type": "DATETIME",
-                    "Element": "DD"
+                    "Element": "MM"
                 }
             },
             {
@@ -309,7 +445,7 @@
                 "MultiplyBy": 8,
                 "Value": {
                     "Type": "DATETIME",
-                    "Element": "MM"
+                    "Element": "DD"
                 }
             },
             {

@@ -215,7 +215,18 @@
                 "High": "50",
                 "Turbo": "70"
             },
-            "Default": "Auto"
+            "Default": "Auto",
+            "VisibleCondition": {
+                "Type": "COMBINATION",
+                "Operator": "NAND",
+                "Formulas": [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "FanSpeed",
+                        "Value": "Auto"
+                    }
+                ]
+            }
         },
         {
             "AttrName": "SwingV",
@@ -233,7 +244,18 @@
                 "Fixed4": "04",
                 "Fixed5": "05"
             },
-            "Default": "Auto"
+            "Default": "Auto",
+            "VisibleCondition": {
+                "Type": "COMBINATION",
+                "Operator": "NAND",
+                "Formulas": [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "SwingV",
+                        "Value": "Auto"
+                    }
+                ]
+            }
         },
         {
             "AttrName": "SwingH",
@@ -253,7 +275,209 @@
                 "FixedMiddleRight": "0b",
                 "FixedRight": "0c"
             },
-            "Default": "Auto"
+            "Default": "Auto",
+            "VisibleCondition": {
+                "Type": "COMBINATION",
+                "Operator": "NAND",
+                "Formulas": [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "SwingH",
+                        "Value": "Auto"
+                    }
+                ]
+            }
+        },{
+            "AttrName": "Quiet",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 13,
+                "Mask": "20"
+            },
+            "Dictionary": {
+                "On": "20",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "Quiet",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "GentleCooling",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 13,
+                "Mask": "08"
+            },
+            "Dictionary": {
+                "On": "08",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "GentleCooling",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "Powerful",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 13,
+                "Mask": "01"
+            },
+            "Dictionary": {
+                "On": "01",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "Powerful",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "Intelligent",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 14,
+                "Mask": "10"
+            },
+            "Dictionary": {
+                "On": "10",
+                "Off": "00"
+            },
+            "Default": "On",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "Intelligent",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "MoldGuard",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 14,
+                "Mask": "08"
+            },
+            "Dictionary": {
+                "On": "08",
+                "Off": "00"
+            },
+            "Default": "On",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "MoldGuard",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "TemperatureGuard",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 16,
+                "Mask": "04"
+            },
+            "Dictionary": {
+                "On": "04",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "TemperatureGuard",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "LongThrow",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 17,
+                "Mask": "40"
+            },
+            "Dictionary": {
+                "On": "40",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "LongThrow",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "PersonalAirflow",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 17,
+                "Mask": "30"
+            },
+            "Dictionary": {
+                "NoDirectAir": "20",
+                "DirectAir": "30",
+                "Default": "00"
+            },
+            "Default": "Default",
+            "VisibleCondition": {
+                "Type": "COMBINATION",
+                "Operator": "OR",
+                "Formulas": [
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "PersonalAirflow",
+                        "Value": "NoDirectAir"
+                    },
+                    {
+                        "Type": "ATTRIBUTE",
+                        "AttrName": "PersonalAirflow",
+                        "Value": "DirectAir"
+                    }
+                ]
+            }
+        },
+        {
+            "AttrName": "EcoNavi",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 17,
+                "Mask": "08"
+            },
+            "Dictionary": {
+                "On": "08",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "EcoNavi",
+                "Value": "On"
+            }
+        },
+        {
+            "AttrName": "nanoeX",
+            "Value": {
+                "Type": "PORTION",
+                "Offset": 17,
+                "Mask": "04"
+            },
+            "Dictionary": {
+                "On": "04",
+                "Off": "00"
+            },
+            "Default": "Off",
+            "VisibleCondition": {
+                "Type": "ATTRIBUTE",
+                "AttrName": "nanoeX",
+                "Value": "On"
+            }
         }
     ],
     "Synthesizing": {
@@ -407,6 +631,96 @@
                 "Value": {
                     "Type": "ATTRIBUTE",
                     "AttrName": "SwingH"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 13,
+                "Mask": "20",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Quiet"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 13,
+                "Mask": "08",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "GentleCooling"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 13,
+                "Mask": "01",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Powerful"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 14,
+                "Mask": "10",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "Intelligent"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 14,
+                "Mask": "08",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "MoldGuard"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 16,
+                "Mask": "04",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "TemperatureGuard"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 17,
+                "Mask": "40",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "LongThrow"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 17,
+                "Mask": "30",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "PersonalAirflow"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 17,
+                "Mask": "08",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "EcoNavi"
+                }
+            },
+            {
+                "Frame": 2,
+                "Offset": 17,
+                "Mask": "04",
+                "Value": {
+                    "Type": "ATTRIBUTE",
+                    "AttrName": "nanoeX"
                 }
             },
             

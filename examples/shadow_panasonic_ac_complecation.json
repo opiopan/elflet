@@ -448,10 +448,10 @@
             "Value": {
                 "Type": "PORTION",
                 "Offset": 17,
-                "Mask": "08"
+                "Mask": "80"
             },
             "Dictionary": {
-                "On": "08",
+                "On": "80",
                 "Off": "00"
             },
             "Default": "Off",
@@ -708,7 +708,7 @@
             {
                 "Frame": 2,
                 "Offset": 17,
-                "Mask": "08",
+                "Mask": "80",
                 "Value": {
                     "Type": "ATTRIBUTE",
                     "AttrName": "EcoNavi"
